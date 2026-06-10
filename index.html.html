@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>GROOVE — Black Music Radio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --black:#0A0A0F; --black2:#111118; --panel:#16161F; --card:#1E1E2A;
+  --gold:#C8A84B; --gold-dim:#8B7235;
+  --purple:#2D1B4E; --purple-light:#4A2D7A;
+  --cream:#F0EBE0; --muted:#6B6B80; --border:#2A2A38; --red:#E53E3E;
+}
+
+html, body {
+  height: 100%;
+  background: var(--black); color: var(--cream);
+  font-family: 'Inter', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+.app { display: flex; flex-direction: column; height: 100dvh; overflow: hidden; }
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px 10px;
+  padding-top: max(14px, env(safe-area-inset-top));
+  flex-shrink: 0;
+}
+.logo { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:var(--gold); letter-spacing:3px; }
+.logo-sub { font-size:8px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; margin-top:1px; }
+.sound-status { font-size:10px; color:var(--muted); display:flex; align-items:center; gap:6px; }
+.sound-dot { width:8px; height:8px; border-radius:50%; background:var(--muted); }
+.sound-dot.on { background:#4CAF50; box-shadow:0 0 8px #4CAF50; }
+.sound-dot.loading { background:var(--gold); animation:pulse 0.8s ease-in-out infinite alternate; }
+@keyframes pulse { from{opacity:0.4} to{opacity:1} }
+
+.content { flex:1; overflow:hidden; position:relative; }
+.page {
+  position:absolute; inset:0;
+  overflow-y:auto; -webkit-overflow-scrolling:touch;
+  display:none; padding-bottom:12px;
+}
+.page.active { display:block; }
+
+.genre-wrap { padding:12px 20px 0; overflow-x:auto; scrollbar-width:none; }
+.genre-wrap::-webkit-scrollbar { display:none; }
+.pills { display:flex; gap:8px; width:max-content; padding-bottom:4px; }
+.pill {
+  padding:9px 18px; border-radius:20px; font-size:12px; font-weight:500;
+  border:1px solid var(--border); color:var(--muted);
+  white-space:nowrap; cursor:pointer; min-height:40px;
+  display:flex; align-items:center; user-select:none;
+  transition: all 0.15s;
+}
+.pill.active { background:var(--gold); color:var(--black); border-color:var(--gold); font-weight:600; }
+
+.section-title-row { display:flex; justify-content:space-between; align-items:center; padding:18px 20px 10px; }
+.section-title { font-family:'Playfair Display',serif; font-size:18px; font-weight:700; }
+.track-count { font-size:11px; color:var(--muted); }
+
+.track-row {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 20px; cursor:pointer;
+  transition: background 0.15s; user-select:none;
+}
+.track-row:active { background:var(--card); }
+.track-row.now { background:rgba(200,168,75,0.08); }
+.track-row.now .t-name { color:var(--gold); }
+.t-art {
+  width:50px; height:50px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:22px; flex-shrink:0; position:relative;
+  background-size:cover; background-position:center;
+}
+.t-art.has-img { font-size:0; }
+.t-playing-icon {
+  position:absolute; inset:0; border-radius:10px;
+  background:rgba(0,0,0,0.45);
+  display:none; align-items:center; justify-content:center;
+}
+.track-row.now .t-playing-icon { display:flex; }
+.t-eq { display:flex; align-items:flex-end; gap:2px; height:16px; }
+.t-eq span { width:3px; border-radius:1px; background:var(--gold); height:4px; }
+.playing-anim .t-eq span { animation:eq 0.7s ease-in-out infinite alternate; }
+.t-eq span:nth-child(2){animation-delay:0.15s}
+.t-eq span:nth-child(3){animation-delay:0.07s}
+@keyframes eq { from{height:4px;opacity:0.5} to{height:14px;opacity:1} }
+.t-info { flex:1; min-width:0; }
+.t-name { font-size:14px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.t-artist { font-size:11px; color:var(--muted); margin-top:2px; }
+.t-genre-tag {
+  font-size:9px; padding:3px 8px; border-radius:10px;
+  background:var(--card); color:var(--gold); flex-shrink:0;
+  letter-spacing:0.5px;
+}
+.fav-btn {
+  background:none; border:none; font-size:20px;
+  color:var(--muted); cursor:pointer; flex-shrink:0;
+  min-width:42px; min-height:42px;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform 0.15s, color 0.15s;
+}
+.fav-btn.faved { color:var(--gold); }
+.fav-btn:active { transform:scale(1.25); }
+
+.empty-msg { padding:40px 20px; text-align:center; color:var(--muted); font-size:13px; line-height:1.8; }
+
+.search-wrap { padding:16px 20px 4px; }
+.search-input {
+  width:100%; padding:13px 16px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:12px; color:var(--cream);
+  font-size:15px; font-family:'Inter',sans-serif;
+  outline:none;
+}
+.search-input:focus { border-color:var(--gold-dim); }
+.search-input::placeholder { color:var(--muted); }
+
+.station-row {
+  display:flex; align-items:center; gap:14px;
+  padding:14px 20px; cursor:pointer; user-select:none;
+  transition:background 0.15s;
+}
+.station-row:active { background:var(--card); }
+.station-row.now { background:rgba(200,168,75,0.08); }
+.s-art { width:54px; height:54px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; }
+.s-info { flex:1; min-width:0; }
+.s-name { font-size:14px; font-weight:500; }
+.station-row.now .s-name { color:var(--gold); }
+.s-genre { font-size:11px; color:var(--muted); margin-top:2px; }
+.s-listeners { font-size:10px; color:var(--muted); margin-top:3px; }
+.live-badge { font-size:8px; font-weight:700; letter-spacing:1px; background:var(--red); color:#fff; padding:3px 7px; border-radius:4px; }
+
+.mini {
+  flex-shrink:0; background:var(--panel);
+  border-top:1px solid var(--border);
+  padding:10px 16px;
+  display:flex; align-items:center; gap:12px;
+  cursor:pointer; position:relative;
+}
+.mini-prog { position:absolute; top:0; left:0; right:0; height:2px; background:var(--border); }
+.mini-prog-fill { height:100%; background:var(--gold); width:0%; }
+.mini-art {
+  width:42px; height:42px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; flex-shrink:0;
+  background-size:cover; background-position:center;
+}
+.mini-art.has-img { font-size:0; }
+.mini-info { flex:1; min-width:0; }
+.mini-title { font-size:13px; font-weight:500; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.mini-artist { font-size:11px; color:var(--gold); margin-top:2px; }
+.mini-btn {
+  width:44px; height:44px; background:var(--gold); border-radius:50%;
+  border:none; color:var(--black); font-size:16px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; cursor:pointer;
+}
+.mini-btn:active { transform:scale(0.92); }
+
+.nav {
+  flex-shrink:0; background:var(--black2);
+  border-top:1px solid var(--border);
+  display:flex;
+  padding-bottom:max(8px, env(safe-area-inset-bottom));
+}
+.nav-btn {
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
+  padding:10px 4px 6px; border:none; background:none;
+  color:var(--muted); min-height:56px; cursor:pointer;
+  transition:color 0.15s; user-select:none;
+}
+.nav-btn.active { color:var(--gold); }
+.nav-icon { font-size:20px; line-height:1; }
+.nav-txt { font-size:9px; letter-spacing:0.5px; text-transform:uppercase; font-weight:500; }
+
+.sheet {
+  position:fixed; inset:0; z-index:100;
+  background:var(--black);
+  transform:translateY(100%);
+  transition:transform 0.4s cubic-bezier(0.32,0.72,0,1);
+  display:flex; flex-direction:column;
+  padding-top:max(16px, env(safe-area-inset-top));
+  padding-bottom:max(16px, env(safe-area-inset-bottom));
+  overflow-y:auto;
+}
+.sheet.open { transform:translateY(0); }
+.drag-bar { width:36px; height:4px; background:var(--border); border-radius:2px; margin:0 auto 16px; flex-shrink:0; cursor:pointer; }
+.sheet-top { display:flex; align-items:center; justify-content:space-between; padding:0 20px 14px; flex-shrink:0; }
+.sheet-station { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--gold); }
+.sheet-close {
+  background:var(--card); border:none; color:var(--muted);
+  width:38px; height:38px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; cursor:pointer;
+}
+
+.vinyl-wrap { width:190px; height:190px; margin:0 auto 22px; position:relative; flex-shrink:0; }
+.vinyl {
+  width:100%; height:100%; border-radius:50%;
+  background:radial-gradient(circle at 50% 50%,
+    #1a1a1a 0%, #111 18%, #0d0d0d 18.5%, #1c1c1c 19%,
+    #1c1c1c 35%, #0d0d0d 35.5%, #1c1c1c 36%,
+    #1c1c1c 50%, #0d0d0d 50.5%, #1c1c1c 51%);
+  box-shadow:0 8px 50px rgba(200,168,75,0.25);
+}
+.vinyl.spin { animation:spin 3.5s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.vinyl-label {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:74px; height:74px; border-radius:50%; background:var(--gold);
+  display:flex; align-items:center; justify-content:center;
+  font-size:9px; font-weight:700; letter-spacing:1.5px;
+  color:var(--black); font-family:'Playfair Display',serif;
+  text-align:center; overflow:hidden;
+  background-size:cover; background-position:center;
+  border:3px solid var(--gold);
+}
+.vinyl-label.has-img { font-size:0; }
+
+.sheet-info { text-align:center; padding:0 24px 16px; flex-shrink:0; }
+.sheet-title { font-family:'Playfair Display',serif; font-size:21px; font-weight:700; margin-bottom:5px; }
+.sheet-artist { font-size:13px; color:var(--gold); letter-spacing:1px; }
+.preview-tag { font-size:10px; color:var(--muted); margin-top:6px; }
+.sheet-eq { display:flex; align-items:flex-end; justify-content:center; gap:5px; height:22px; margin-top:10px; }
+.sheet-eq span { width:4px; border-radius:2px; background:var(--gold); opacity:0.7; height:4px; }
+.playing-anim .sheet-eq span { animation:eq 0.7s ease-in-out infinite alternate; }
+.sheet-eq span:nth-child(2){animation-delay:0.1s}
+.sheet-eq span:nth-child(3){animation-delay:0.05s}
+.sheet-eq span:nth-child(4){animation-delay:0.18s}
+.sheet-eq span:nth-child(5){animation-delay:0.08s}
+.sheet-eq span:nth-child(6){animation-delay:0.22s}
+.sheet-eq span:nth-child(7){animation-delay:0.02s}
+
+.prog-section { padding:0 24px 12px; flex-shrink:0; }
+.prog-bar { height:20px; display:flex; align-items:center; cursor:pointer; }
+.prog-track { width:100%; height:4px; background:var(--border); border-radius:2px; position:relative; }
+.prog-fill { height:100%; background:var(--gold); border-radius:2px; width:0%; position:relative; }
+.prog-fill::after { content:''; position:absolute; right:-7px; top:-5px; width:14px; height:14px; border-radius:50%; background:var(--gold); }
+.prog-times { display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:4px; }
+
+.ctrls { display:flex; align-items:center; justify-content:center; gap:18px; padding:6px 24px 16px; flex-shrink:0; }
+.c-btn {
+  background:none; border:none; color:var(--muted); font-size:22px;
+  cursor:pointer; min-width:48px; min-height:48px;
+  display:flex; align-items:center; justify-content:center;
+  transition:color 0.15s;
+}
+.c-btn.on { color:var(--gold); }
+.c-btn:active { transform:scale(0.9); }
+.c-main {
+  width:66px; height:66px; background:var(--gold); border-radius:50%;
+  border:none; color:var(--black); font-size:24px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; box-shadow:0 0 28px rgba(200,168,75,0.5);
+  transition:transform 0.12s;
+}
+.c-main:active { transform:scale(0.92); }
+
+.vol-row { display:flex; align-items:center; gap:12px; padding:0 24px 16px; flex-shrink:0; }
+.vol-bar { flex:1; height:24px; display:flex; align-items:center; cursor:pointer; }
+.vol-track { width:100%; height:4px; background:var(--border); border-radius:2px; }
+.vol-fill { height:100%; background:var(--gold-dim); border-radius:2px; width:70%; }
+
+.q-section { padding:0 20px 20px; }
+.q-title { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+.q-row { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); cursor:pointer; }
+.q-row:last-child { border-bottom:none; }
+.q-row.now .qr-name { color:var(--gold); }
+.q-num { font-size:11px; color:var(--muted); width:18px; text-align:center; flex-shrink:0; }
+.qr-info { flex:1; min-width:0; }
+.qr-name { font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.qr-artist { font-size:11px; color:var(--muted); margin-top:2px; }
+.qr-dur { font-size:11px; color:var(--muted); }
+
+.c-soul   { background:linear-gradient(135deg,#3D1C1C,#6B2D2D); }
+.c-funk   { background:linear-gradient(135deg,#2A1C3D,#4A2D5F); }
+.c-hiphop { background:linear-gradient(135deg,#1C2A3D,#1E3A5F); }
+.c-gfunk  { background:linear-gradient(135deg,#1C3D2A,#2D6B4A); }
+.c-boogie { background:linear-gradient(135deg,#3D2A1C,#6B4A2D); }
+
+.notice {
+  margin:10px 20px 0; padding:10px 14px;
+  background:rgba(200,168,75,0.1); border:1px solid var(--gold-dim);
+  border-radius:10px; font-size:11px; color:var(--gold);
+  line-height:1.5;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="header">
+    <div>
+      <div class="logo">GROOVE</div>
+      <div class="logo-sub">Black Music Radio · v5</div>
+    </div>
+    <div class="sound-status">
+      <div class="sound-dot" id="sound-dot"></div>
+      <span id="sound-txt">サウンド OFF</span>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="page active" id="page-discover">
+      <div class="notice">🎵 実曲の公式30秒プレビューが流れます（Apple Music提供）。30秒ごとに自動で次の曲へ——ラジオ感覚でお楽しみください</div>
+      <div class="genre-wrap">
+        <div class="pills" id="genre-pills">
+          <div class="pill active" data-g="all">すべて</div>
+          <div class="pill" data-g="soul">Soul</div>
+          <div class="pill" data-g="funk">Funk</div>
+          <div class="pill" data-g="hiphop">Hip Hop</div>
+          <div class="pill" data-g="gfunk">G-Funk</div>
+          <div class="pill" data-g="boogie">Boogie Funk</div>
+        </div>
+      </div>
+      <div class="section-title-row">
+        <div class="section-title">トラック</div>
+        <div class="track-count" id="track-count"></div>
+      </div>
+      <div id="track-list"></div>
+    </div>
+
+    <div class="page" id="page-stations">
+      <div class="section-title-row"><div class="section-title">ライブ放送局</div></div>
+      <div id="station-list"></div>
+    </div>
+
+    <div class="page" id="page-favs">
+      <div class="section-title-row">
+        <div class="section-title">お気に入り</div>
+        <div class="track-count" id="fav-count"></div>
+      </div>
+      <div id="fav-list"></div>
+    </div>
+
+    <div class="page" id="page-search">
+      <div class="search-wrap">
+        <input type="text" class="search-input" id="search-input" placeholder="曲名・アーティストで検索...">
+      </div>
+      <div id="search-list"></div>
+    </div>
+  </div>
+
+  <div class="mini" id="mini">
+    <div class="mini-prog"><div class="mini-prog-fill" id="mini-fill"></div></div>
+    <div class="mini-art c-soul" id="mini-art">🎵</div>
+    <div class="mini-info">
+      <div class="mini-title" id="mini-title">トラックを選んでください</div>
+      <div class="mini-artist" id="mini-artist">GROOVE Radio</div>
+    </div>
+    <button class="mini-btn" id="mini-play">▶</button>
+  </div>
+
+  <nav class="nav">
+    <button class="nav-btn active" data-page="discover">
+      <span class="nav-icon">✦</span><span class="nav-txt">発見</span>
+    </button>
+    <button class="nav-btn" data-page="stations">
+      <span class="nav-icon">📡</span><span class="nav-txt">放送局</span>
+    </button>
+    <button class="nav-btn" data-page="favs">
+      <span class="nav-icon">♥</span><span class="nav-txt">お気に入り</span>
+    </button>
+    <button class="nav-btn" data-page="search">
+      <span class="nav-icon">🔍</span><span class="nav-txt">検索</span>
+    </button>
+  </nav>
+</div>
+
+<div class="sheet" id="sheet">
+  <div class="drag-bar" id="drag-bar"></div>
+  <div class="sheet-top">
+    <div class="sheet-station" id="sheet-station">GROOVE RADIO</div>
+    <button class="sheet-close" id="sheet-close">✕</button>
+  </div>
+  <div class="vinyl-wrap">
+    <div class="vinyl" id="vinyl"></div>
+    <div class="vinyl-label" id="vinyl-label">GROOVE</div>
+  </div>
+  <div class="sheet-info" id="sheet-info-wrap">
+    <div class="sheet-title" id="sheet-title">—</div>
+    <div class="sheet-artist" id="sheet-artist">—</div>
+    <div class="preview-tag" id="preview-tag"></div>
+    <div class="sheet-eq"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+  </div>
+  <div class="prog-section">
+    <div class="prog-bar" id="prog-bar">
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+    <div class="prog-times"><span id="time-cur">0:00</span><span id="time-tot">0:00</span></div>
+  </div>
+  <div class="ctrls">
+    <button class="c-btn" id="b-shuffle">⇄</button>
+    <button class="c-btn" id="b-prev">⏮</button>
+    <button class="c-main" id="b-play">▶</button>
+    <button class="c-btn" id="b-next">⏭</button>
+    <button class="c-btn" id="b-fav">♡</button>
+  </div>
+  <div class="vol-row">
+    <span style="color:var(--muted);font-size:15px">🔈</span>
+    <div class="vol-bar" id="vol-bar">
+      <div class="vol-track"><div class="vol-fill" id="vol-fill"></div></div>
+    </div>
+    <span style="color:var(--muted);font-size:15px">🔊</span>
+  </div>
+  <div class="q-section">
+    <div class="q-title">次のキュー</div>
+    <div id="queue-list"></div>
+  </div>
+</div>
+
+<script>
+'use strict';
+
+/* ════════ DATA ════════ */
+var TRACKS = [
+  { name:"What's Going On",        artist:"Marvin Gaye",          genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
+  { name:"Respect",                artist:"Aretha Franklin",      genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
+  { name:"Let's Stay Together",    artist:"Al Green",             genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
+  { name:"I Want You Back",        artist:"The Jackson 5",        genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
+  { name:"Super Freak",            artist:"Rick James",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
+  { name:"Give Up the Funk",       artist:"Parliament",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
+  { name:"Brick House",            artist:"Commodores",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
+  { name:"Flash Light",            artist:"Parliament",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
+  { name:"Nuthin' But a G Thang",  artist:"Dr. Dre",              genre:"hiphop", tag:"Hip Hop",     icon:"🎤", color:"c-hiphop" },
+  { name:"Juicy",                  artist:"The Notorious B.I.G.", genre:"hiphop", tag:"Hip Hop",     icon:"🎤", color:"c-hiphop" },
+  { name:"C.R.E.A.M.",             artist:"Wu-Tang Clan",         genre:"hiphop", tag:"Hip Hop",     icon:"🎤", color:"c-hiphop" },
+  { name:"The Message",            artist:"Grandmaster Flash",    genre:"hiphop", tag:"Hip Hop",     icon:"🎤", color:"c-hiphop" },
+  { name:"Regulate",               artist:"Warren G",             genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
+  { name:"It Was a Good Day",      artist:"Ice Cube",             genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
+  { name:"Gin and Juice",          artist:"Snoop Dogg",           genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
+  { name:"Let Me Ride",            artist:"Dr. Dre",              genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
+  { name:"Got to Be Real",         artist:"Cheryl Lynn",          genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" },
+  { name:"Bounce, Rock, Skate, Roll", artist:"Vaughan Mason & Crew", genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" },
+  { name:"Forget Me Nots",         artist:"Patrice Rushen",       genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" },
+  { name:"Juicy Fruit",            artist:"Mtume",                genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" }
+];
+
+var STATIONS = [
+  { name:"Soul Central FM",    genre:"Soul / Classic R&B",   icon:"🎵", color:"c-soul",   listeners:"12,430", g:"soul"   },
+  { name:"P-Funk Universe",    genre:"Funk / Parliament",    icon:"🎸", color:"c-funk",   listeners:"5,670",  g:"funk"   },
+  { name:"Boom Bap Radio",     genre:"Hip-Hop / Rap",        icon:"🎤", color:"c-hiphop", listeners:"19,880", g:"hiphop" },
+  { name:"West Coast Rollin'", genre:"G-Funk / West Coast",  icon:"🎧", color:"c-gfunk",  listeners:"9,210",  g:"gfunk"  },
+  { name:"Boogie Nights FM",   genre:"Boogie Funk / Electro",icon:"🕺", color:"c-boogie", listeners:"4,330",  g:"boogie" }
+];
+
+/* ════════ SAFE STORAGE ════════ */
+var memStore = {};
+function storeGet(k) {
+  try { var v = localStorage.getItem(k); return v !== null ? v : (memStore[k] || null); }
+  catch (e) { return memStore[k] || null; }
+}
+function storeSet(k, v) {
+  memStore[k] = v;
+  try { localStorage.setItem(k, v); } catch (e) {}
+}
+
+/* ════════ STATE ════════ */
+var state = {
+  currentIdx: -1, playing: false, shuffle: false,
+  volume: 0.7, filter: 'all', favs: new Set(), loading: false
+};
+(function() {
+  var saved = storeGet('groove-favs');
+  if (saved) { try { JSON.parse(saved).forEach(function(i){ state.favs.add(i); }); } catch (e) {} }
+})();
+function saveFavs() { storeSet('groove-favs', JSON.stringify(Array.from(state.favs))); }
+
+/* ════════ REAL MUSIC PLAYER (iTunes 30s preview) ════════ */
+var audio = new Audio();
+audio.preload = 'auto';
+
+// iOSのオーディオ解放（最初のタップで無音再生して許可を得る）
+var audioUnlocked = false;
+function unlockAudio() {
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  var silent = 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=';
+  audio.src = silent;
+  audio.play().catch(function(){});
+}
+document.addEventListener('touchstart', unlockAudio, { once: true });
+document.addEventListener('click', unlockAudio, { once: true });
+
+// iTunes Search APIで曲情報を取得（JSONP方式・キャッシュ付き）
+// fetch+CORSが失敗する環境でも動くよう、script読み込み方式を採用
+var jsonpCounter = 0;
+function itunesSearch(term, country) {
+  return new Promise(function(resolve) {
+    var cbName = '__itunesCB' + (++jsonpCounter);
+    var script = document.createElement('script');
+    var done = false;
+    var timer = setTimeout(function(){ finish(null); }, 8000);
+    function finish(data) {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
+      if (script.parentNode) script.parentNode.removeChild(script);
+      resolve(data);
+    }
+    window[cbName] = function(data){ finish(data); };
+    script.onerror = function(){ finish(null); };
+    script.src = 'https://itunes.apple.com/search?term=' + encodeURIComponent(term) +
+      '&media=music&entity=song&limit=5&country=' + country + '&callback=' + cbName;
+    document.head.appendChild(script);
+  });
+}
+function fetchTrackInfo(i) {
+  var t = TRACKS[i];
+  if (t.preview) return Promise.resolve(t);
+  var term = t.artist + ' ' + t.name;
+  return itunesSearch(term, 'JP').then(function(data) {
+    if (data && data.results && data.results.length) return data;
+    return itunesSearch(term, 'US'); // 日本ストアで見つからなければUSストアを試す
+  }).then(function(data) {
+    var hit = data && (data.results || []).find(function(r){ return r.previewUrl; });
+    if (hit) {
+      t.preview = hit.previewUrl;
+      t.artwork = (hit.artworkUrl100 || '').replace('100x100', '400x400');
+    }
+    return t;
+  });
+}
+
+audio.addEventListener('ended', function() {
+  if (state.currentIdx >= 0) nextTrack();
+});
+audio.addEventListener('timeupdate', renderProgress);
+audio.addEventListener('play',  function(){ if (state.currentIdx >= 0) { state.playing = true;  renderPlayState(); } });
+audio.addEventListener('pause', function(){ if (state.currentIdx >= 0 && !audio.ended) { state.playing = false; renderPlayState(); } });
+
+/* ════════ RENDER ════════ */
+function fmtTime(sec) {
+  if (!isFinite(sec)) sec = 0;
+  var m = Math.floor(sec/60), s = Math.floor(sec%60);
+  return m + ':' + String(s).padStart(2, '0');
+}
+function renderProgress() {
+  var pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('mini-fill').style.width = pct + '%';
+  document.getElementById('time-cur').textContent = fmtTime(audio.currentTime);
+  document.getElementById('time-tot').textContent = fmtTime(audio.duration);
+}
+
+function rowHTML(i) {
+  var t = TRACKS[i];
+  var isNow = i === state.currentIdx;
+  var isFav = state.favs.has(i);
+  var artStyle = t.artwork ? ' style="background-image:url(' + t.artwork + ')"' : '';
+  var artClass = t.artwork ? ' has-img' : '';
+  return '<div class="track-row' + (isNow ? ' now' : '') + '" data-i="' + i + '">' +
+    '<div class="t-art ' + t.color + artClass + '"' + artStyle + '>' + t.icon +
+      '<div class="t-playing-icon"><div class="t-eq"><span></span><span></span><span></span></div></div>' +
+    '</div>' +
+    '<div class="t-info"><div class="t-name">' + t.name + '</div><div class="t-artist">' + t.artist + '</div></div>' +
+    '<div class="t-genre-tag">' + t.tag + '</div>' +
+    '<button class="fav-btn' + (isFav ? ' faved' : '') + '" data-fav="' + i + '">' + (isFav ? '♥' : '♡') + '</button>' +
+  '</div>';
+}
+function wireRows(container) {
+  container.querySelectorAll('.track-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      playTrack(parseInt(this.dataset.i, 10));
+      openSheet();
+    });
+  });
+  container.querySelectorAll('.fav-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      toggleFav(parseInt(this.dataset.fav, 10));
+    });
+  });
+}
+function renderTrackList() {
+  var list = document.getElementById('track-list');
+  var idx = TRACKS.map(function(t,i){ return i; })
+    .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
+  document.getElementById('track-count').textContent = idx.length + ' 曲';
+  list.innerHTML = idx.map(rowHTML).join('');
+  wireRows(list);
+}
+function renderFavList() {
+  var list = document.getElementById('fav-list');
+  var idx = Array.from(state.favs).sort(function(a,b){ return a-b; });
+  document.getElementById('fav-count').textContent = idx.length + ' 曲';
+  if (!idx.length) {
+    list.innerHTML = '<div class="empty-msg">まだお気に入りがありません。<br>♡ をタップして曲を登録しましょう</div>';
+    return;
+  }
+  list.innerHTML = idx.map(rowHTML).join('');
+  wireRows(list);
+}
+function renderSearchList() {
+  var q = document.getElementById('search-input').value.trim().toLowerCase();
+  var list = document.getElementById('search-list');
+  if (!q) {
+    list.innerHTML = '<div class="empty-msg">曲名やアーティスト名を入力してください<br>例：「funk」「dre」「soul」</div>';
+    return;
+  }
+  var idx = TRACKS.map(function(t,i){ return i; })
+    .filter(function(i){
+      var t = TRACKS[i];
+      return t.name.toLowerCase().includes(q) || t.artist.toLowerCase().includes(q) || t.tag.toLowerCase().includes(q);
+    });
+  if (!idx.length) {
+    list.innerHTML = '<div class="empty-msg">「' + q + '」に一致する曲が見つかりませんでした</div>';
+    return;
+  }
+  list.innerHTML = idx.map(rowHTML).join('');
+  wireRows(list);
+}
+function renderStations() {
+  var list = document.getElementById('station-list');
+  list.innerHTML = STATIONS.map(function(s, i) {
+    return '<div class="station-row" data-s="' + i + '">' +
+      '<div class="s-art ' + s.color + '">' + s.icon + '</div>' +
+      '<div class="s-info"><div class="s-name">' + s.name + '</div><div class="s-genre">' + s.genre + '</div>' +
+      '<div class="s-listeners">' + s.listeners + ' 人が視聴中</div></div>' +
+      '<div class="live-badge">LIVE</div>' +
+    '</div>';
+  }).join('');
+  list.querySelectorAll('.station-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var s = STATIONS[parseInt(this.dataset.s, 10)];
+      var idx = TRACKS.findIndex(function(t){ return t.genre === s.g; });
+      if (idx >= 0) { playTrack(idx); openSheet(); }
+      list.querySelectorAll('.station-row').forEach(function(r){ r.classList.remove('now'); });
+      this.classList.add('now');
+    });
+  });
+}
+function renderQueue() {
+  var list = document.getElementById('queue-list');
+  var idx = TRACKS.map(function(t,i){ return i; })
+    .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
+  list.innerHTML = idx.map(function(i, n) {
+    var t = TRACKS[i];
+    var isNow = i === state.currentIdx;
+    return '<div class="q-row' + (isNow ? ' now' : '') + '" data-i="' + i + '">' +
+      '<div class="q-num">' + (isNow ? '♪' : (n+1)) + '</div>' +
+      '<div class="qr-info"><div class="qr-name">' + t.name + '</div><div class="qr-artist">' + t.artist + '</div></div>' +
+      '<div class="qr-dur">0:30</div>' +
+    '</div>';
+  }).join('');
+  list.querySelectorAll('.q-row').forEach(function(row) {
+    row.addEventListener('click', function(){ playTrack(parseInt(this.dataset.i, 10)); });
+  });
+}
+function renderAll() {
+  renderTrackList(); renderFavList(); renderQueue();
+  if (document.getElementById('search-input').value.trim()) renderSearchList();
+}
+function renderNowPlaying() {
+  if (state.currentIdx < 0) return;
+  var t = TRACKS[state.currentIdx];
+  document.getElementById('mini-title').textContent = t.name;
+  document.getElementById('mini-artist').textContent = t.artist;
+  var miniArt = document.getElementById('mini-art');
+  miniArt.className = 'mini-art ' + t.color + (t.artwork ? ' has-img' : '');
+  miniArt.style.backgroundImage = t.artwork ? 'url(' + t.artwork + ')' : '';
+  miniArt.textContent = t.icon;
+  document.getElementById('sheet-title').textContent = t.name;
+  document.getElementById('sheet-artist').textContent = t.artist;
+  document.getElementById('sheet-station').textContent = t.tag.toUpperCase() + ' CHANNEL';
+  var label = document.getElementById('vinyl-label');
+  label.textContent = t.artwork ? '' : t.tag.toUpperCase();
+  label.className = 'vinyl-label' + (t.artwork ? ' has-img' : '');
+  label.style.backgroundImage = t.artwork ? 'url(' + t.artwork + ')' : '';
+  document.getElementById('preview-tag').textContent = t.preview ? '30秒プレビュー · Apple Music提供' : '';
+  renderFavBtn();
+  renderAll();
+}
+function renderFavBtn() {
+  var btn = document.getElementById('b-fav');
+  var isFav = state.currentIdx >= 0 && state.favs.has(state.currentIdx);
+  btn.textContent = isFav ? '♥' : '♡';
+  btn.classList.toggle('on', isFav);
+}
+function renderPlayState() {
+  var icon = state.playing ? '⏸' : '▶';
+  document.getElementById('b-play').textContent = icon;
+  document.getElementById('mini-play').textContent = icon;
+  document.getElementById('vinyl').classList.toggle('spin', state.playing);
+  ['sheet-info-wrap','track-list','fav-list','search-list'].forEach(function(id) {
+    document.getElementById(id).classList.toggle('playing-anim', state.playing);
+  });
+  var dot = document.getElementById('sound-dot');
+  dot.classList.toggle('on', state.playing && !state.loading);
+  dot.classList.toggle('loading', state.loading);
+  document.getElementById('sound-txt').textContent =
+    state.loading ? '読み込み中...' : (state.playing ? 'サウンド ON' : 'サウンド OFF');
+}
+
+/* ════════ PLAYBACK ════════ */
+function playTrack(idx) {
+  state.currentIdx = idx;
+  state.loading = true;
+  renderNowPlaying(); renderPlayState();
+  fetchTrackInfo(idx).then(function(t) {
+    if (state.currentIdx !== idx) return; // 別の曲に切り替わってたら無視
+    state.loading = false;
+    if (t.preview) {
+      audio.src = t.preview;
+      audio.volume = state.volume;
+      audio.play().then(function() {
+        state.playing = true;
+        renderNowPlaying(); renderPlayState();
+      }).catch(function() {
+        state.playing = false;
+        renderPlayState();
+      });
+    } else {
+      state.playing = false;
+      document.getElementById('preview-tag').textContent = 'プレビューが見つかりませんでした';
+      renderPlayState();
+    }
+  });
+}
+function togglePlay() {
+  if (state.currentIdx < 0) { playTrack(0); return; }
+  if (audio.paused) {
+    audio.play().catch(function(){});
+  } else {
+    audio.pause();
+  }
+}
+function toggleFav(i) {
+  if (state.favs.has(i)) state.favs.delete(i);
+  else state.favs.add(i);
+  saveFavs();
+  renderFavBtn();
+  renderAll();
+}
+function getPool() {
+  return TRACKS.map(function(t,i){ return i; })
+    .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
+}
+function nextTrack() {
+  var pool = getPool();
+  if (!pool.length) return;
+  var next;
+  if (state.shuffle) next = pool[Math.floor(Math.random() * pool.length)];
+  else {
+    var pos = pool.indexOf(state.currentIdx);
+    next = pool[(pos + 1) % pool.length];
+  }
+  playTrack(next);
+}
+function prevTrack() {
+  var pool = getPool();
+  if (!pool.length) return;
+  if (audio.currentTime > 4) { audio.currentTime = 0; return; }
+  var pos = pool.indexOf(state.currentIdx);
+  playTrack(pool[(pos - 1 + pool.length) % pool.length]);
+}
+
+/* ════════ UI WIRING ════════ */
+function openSheet()  { document.getElementById('sheet').classList.add('open'); }
+function closeSheet() {
+  var s = document.getElementById('sheet');
+  s.classList.remove('open');
+  s.style.transform = ''; s.style.transition = '';
+}
+document.getElementById('sheet-close').addEventListener('click', closeSheet);
+document.getElementById('drag-bar').addEventListener('click', closeSheet);
+document.getElementById('mini').addEventListener('click', function(e) {
+  if (e.target.id !== 'mini-play') openSheet();
+});
+(function() {
+  var sheet = document.getElementById('sheet');
+  var startY = 0;
+  sheet.addEventListener('touchstart', function(e){ startY = e.touches[0].clientY; }, { passive: true });
+  sheet.addEventListener('touchmove', function(e) {
+    var dy = e.touches[0].clientY - startY;
+    if (dy > 0 && sheet.scrollTop <= 0) {
+      sheet.style.transform = 'translateY(' + dy + 'px)';
+      sheet.style.transition = 'none';
+    }
+  }, { passive: true });
+  sheet.addEventListener('touchend', function(e) {
+    var dy = e.changedTouches[0].clientY - startY;
+    sheet.style.transition = ''; sheet.style.transform = '';
+    if (dy > 110 && sheet.scrollTop <= 0) closeSheet();
+  });
+})();
+
+document.getElementById('b-play').addEventListener('click', togglePlay);
+document.getElementById('mini-play').addEventListener('click', function(e){ e.stopPropagation(); togglePlay(); });
+document.getElementById('b-prev').addEventListener('click', prevTrack);
+document.getElementById('b-next').addEventListener('click', nextTrack);
+document.getElementById('b-shuffle').addEventListener('click', function() {
+  state.shuffle = !state.shuffle;
+  this.classList.toggle('on', state.shuffle);
+});
+document.getElementById('b-fav').addEventListener('click', function() {
+  if (state.currentIdx >= 0) toggleFav(state.currentIdx);
+});
+
+function seekFromEvent(e) {
+  if (!audio.duration) return;
+  var bar = document.getElementById('prog-bar');
+  var rect = bar.getBoundingClientRect();
+  var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  audio.currentTime = Math.max(0, Math.min(1, x / rect.width)) * audio.duration;
+  renderProgress();
+}
+document.getElementById('prog-bar').addEventListener('click', seekFromEvent);
+document.getElementById('prog-bar').addEventListener('touchstart', seekFromEvent, { passive: true });
+
+function volFromEvent(e) {
+  var bar = document.getElementById('vol-bar');
+  var rect = bar.getBoundingClientRect();
+  var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  state.volume = Math.max(0, Math.min(1, x / rect.width));
+  document.getElementById('vol-fill').style.width = (state.volume * 100) + '%';
+  audio.volume = state.volume;
+}
+document.getElementById('vol-bar').addEventListener('click', volFromEvent);
+document.getElementById('vol-bar').addEventListener('touchstart', volFromEvent, { passive: true });
+
+document.querySelectorAll('.nav-btn[data-page]').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
+    document.getElementById('page-' + this.dataset.page).classList.add('active');
+    this.classList.add('active');
+    if (this.dataset.page === 'favs') renderFavList();
+  });
+});
+document.querySelectorAll('#genre-pills .pill').forEach(function(pill) {
+  pill.addEventListener('click', function() {
+    document.querySelectorAll('#genre-pills .pill').forEach(function(p){ p.classList.remove('active'); });
+    this.classList.add('active');
+    state.filter = this.dataset.g;
+    renderTrackList(); renderQueue();
+  });
+});
+document.getElementById('search-input').addEventListener('input', renderSearchList);
+
+/* ════════ INIT ════════ */
+renderTrackList();
+renderStations();
+renderFavList();
+renderSearchList();
+renderQueue();
+</script>
+</body>
+</html>
