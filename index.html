@@ -298,7 +298,7 @@ html, body {
   <header class="header">
     <div>
       <div class="logo">GROOVE</div>
-      <div class="logo-sub">Black Music Radio · v5</div>
+      <div class="logo-sub">Black Music Radio · v6</div>
     </div>
     <div class="sound-status">
       <div class="sound-dot" id="sound-dot"></div>
@@ -408,6 +408,9 @@ html, body {
       <div class="vol-track"><div class="vol-fill" id="vol-fill"></div></div>
     </div>
     <span style="color:var(--muted);font-size:15px">🔊</span>
+  </div>
+  <div style="padding:0 24px 16px; flex-shrink:0;">
+    <button id="b-spotify" style="width:100%; padding:14px; background:#1DB954; border:none; border-radius:24px; color:#000; font-size:14px; font-weight:600; font-family:'Inter',sans-serif; cursor:pointer;">♫ Spotifyでフル再生</button>
   </div>
   <div class="q-section">
     <div class="q-title">次のキュー</div>
@@ -802,6 +805,14 @@ document.getElementById('b-shuffle').addEventListener('click', function() {
 });
 document.getElementById('b-fav').addEventListener('click', function() {
   if (state.currentIdx >= 0) toggleFav(state.currentIdx);
+});
+
+// Spotifyでフル再生（ユーザーのSpotifyアプリで検索結果を開く）
+document.getElementById('b-spotify').addEventListener('click', function() {
+  if (state.currentIdx < 0) return;
+  var t = TRACKS[state.currentIdx];
+  var q = encodeURIComponent(t.artist + ' ' + t.name);
+  window.open('https://open.spotify.com/search/' + q, '_blank');
 });
 
 function seekFromEvent(e) {
