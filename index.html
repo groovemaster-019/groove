@@ -298,7 +298,7 @@ html, body {
   <header class="header">
     <div>
       <div class="logo">GROOVE</div>
-      <div class="logo-sub">Black Music Radio · v6</div>
+      <div class="logo-sub">Black Music Radio · v8</div>
     </div>
     <div class="sound-status">
       <div class="sound-dot" id="sound-dot"></div>
@@ -491,44 +491,91 @@ function unlockAudio() {
 document.addEventListener('touchstart', unlockAudio, { once: true });
 document.addEventListener('click', unlockAudio, { once: true });
 
-// iTunes Search APIで曲情報を取得（JSONP方式・キャッシュ付き）
-// fetch+CORSが失敗する環境でも動くよう、script読み込み方式を採用
+// 曲情報の取得（JSONP方式・Apple→Deezerの二段構え・診断付き）
 var jsonpCounter = 0;
-function itunesSearch(term, country) {
+function jsonp(buildUrl, timeoutMs) {
   return new Promise(function(resolve) {
-    var cbName = '__itunesCB' + (++jsonpCounter);
+    var cbName = '__cb' + (++jsonpCounter) + '_' + Date.now();
     var script = document.createElement('script');
     var done = false;
-    var timer = setTimeout(function(){ finish(null); }, 8000);
-    function finish(data) {
+    var timer = setTimeout(function(){ finish(null, 'タイムアウト'); }, timeoutMs || 8000);
+    function finish(data, err) {
       if (done) return;
       done = true;
       clearTimeout(timer);
       try { delete window[cbName]; } catch (e) { window[cbName] = undefined; }
       if (script.parentNode) script.parentNode.removeChild(script);
-      resolve(data);
+      resolve({ data: data, err: err || null });
     }
-    window[cbName] = function(data){ finish(data); };
-    script.onerror = function(){ finish(null); };
-    script.src = 'https://itunes.apple.com/search?term=' + encodeURIComponent(term) +
-      '&media=music&entity=song&limit=5&country=' + country + '&callback=' + cbName;
+    window[cbName] = function(data){ finish(data, null); };
+    script.onerror = function(){ finish(null, '通信エラー'); };
+    script.src = buildUrl(cbName);
     document.head.appendChild(script);
+  });
+}
+function searchApple(term, country) {
+  return jsonp(function(cb) {
+    return 'https://itunes.apple.com/search?term=' + encodeURIComponent(term) +
+      '&media=music&entity=song&limit=5&country=' + country + '&callback=' + cb;
+  });
+}
+function searchDeezer(term) {
+  return jsonp(function(cb) {
+    return 'https://api.deezer.com/search?q=' + encodeURIComponent(term) +
+      '&output=jsonp&callback=' + cb;
   });
 }
 function fetchTrackInfo(i) {
   var t = TRACKS[i];
   if (t.preview) return Promise.resolve(t);
   var term = t.artist + ' ' + t.name;
-  return itunesSearch(term, 'JP').then(function(data) {
-    if (data && data.results && data.results.length) return data;
-    return itunesSearch(term, 'US'); // 日本ストアで見つからなければUSストアを試す
-  }).then(function(data) {
-    var hit = data && (data.results || []).find(function(r){ return r.previewUrl; });
+  var diag = [];
+  function fetchJson(url, ms) {
+    return new Promise(function(resolve) {
+      var done = false;
+      var timer = setTimeout(function(){ if(!done){done=true;resolve({data:null,err:'タイムアウト'});} }, ms||8000);
+      fetch(url).then(function(r){
+        if (!r.ok) throw new Error('HTTP' + r.status);
+        return r.json();
+      }).then(function(j){
+        if(!done){done=true;clearTimeout(timer);resolve({data:j,err:null});}
+      }).catch(function(e){
+        if(!done){done=true;clearTimeout(timer);resolve({data:null,err:(e&&e.message)||'エラー'});}
+      });
+    });
+  }
+  function takeDeezer(r, label) {
+    var hit = r.data && (r.data.data || []).find(function(x){ return x.preview; });
     if (hit) {
-      t.preview = hit.previewUrl;
-      t.artwork = (hit.artworkUrl100 || '').replace('100x100', '400x400');
+      t.preview = hit.preview;
+      t.artwork = (hit.album && (hit.album.cover_big || hit.album.cover_medium)) || '';
+      t.source = 'Deezer';
+      return true;
     }
-    return t;
+    diag.push(label + ':' + (r.err || '0件'));
+    return false;
+  }
+  // ① Deezer 直接取得（あなたの環境で疎通確認済みのルート）
+  return fetchJson('https://api.deezer.com/search?q=' + encodeURIComponent(term)).then(function(r) {
+    if (takeDeezer(r, 'Deezer直')) return t;
+    // ② Deezer スクリプト方式
+    return searchDeezer(term).then(function(r2) {
+      if (takeDeezer(r2, 'Deezer別')) return t;
+      // ③ 最後の保険：Apple 直接取得
+      return fetchJson('https://itunes.apple.com/search?term=' + encodeURIComponent(term) +
+        '&media=music&entity=song&limit=5&country=JP').then(function(r3) {
+        var hit = r3.data && (r3.data.results || []).find(function(x){ return x.previewUrl; });
+        if (hit) {
+          t.preview = hit.previewUrl;
+          t.artwork = (hit.artworkUrl100 || '').replace('100x100', '400x400');
+          t.source = 'Apple Music';
+          return t;
+        }
+        diag.push('Apple:' + (r3.err || '0件'));
+        t.diag = diag.join(' / ');
+        return t;
+      });
+    });
   });
 }
 
@@ -677,7 +724,7 @@ function renderNowPlaying() {
   label.textContent = t.artwork ? '' : t.tag.toUpperCase();
   label.className = 'vinyl-label' + (t.artwork ? ' has-img' : '');
   label.style.backgroundImage = t.artwork ? 'url(' + t.artwork + ')' : '';
-  document.getElementById('preview-tag').textContent = t.preview ? '30秒プレビュー · Apple Music提供' : '';
+  document.getElementById('preview-tag').textContent = t.preview ? '30秒プレビュー · ' + (t.source || 'Apple Music') + '提供' : '';
   renderFavBtn();
   renderAll();
 }
@@ -716,19 +763,22 @@ function playTrack(idx) {
       audio.play().then(function() {
         state.playing = true;
         renderNowPlaying(); renderPlayState();
-      }).catch(function() {
+      }).catch(function(err) {
         state.playing = false;
+        document.getElementById('preview-tag').textContent = '再生がブロックされました。▶をもう一度押してください';
         renderPlayState();
       });
     } else {
       state.playing = false;
-      document.getElementById('preview-tag').textContent = 'プレビューが見つかりませんでした';
+      document.getElementById('preview-tag').textContent = '取得失敗 [' + (t.diag || '原因不明') + '] ▶で再試行';
       renderPlayState();
     }
   });
 }
 function togglePlay() {
   if (state.currentIdx < 0) { playTrack(0); return; }
+  var t = TRACKS[state.currentIdx];
+  if (!t.preview) { playTrack(state.currentIdx); return; } // 取得失敗してたら再試行
   if (audio.paused) {
     audio.play().catch(function(){});
   } else {
