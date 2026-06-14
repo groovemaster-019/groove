@@ -92,11 +92,11 @@ html, body {
 }
 .onair-art {
   width:118px; height:118px; border-radius:10px; flex-shrink:0;
-  background-size:contain; background-position:center; background-repeat:no-repeat;
+  background-color:var(--card);
   border:1px solid var(--line); position:relative; overflow:hidden;
   display:flex; align-items:center; justify-content:center; font-size:34px;
-  background-color:var(--card);
 }
+.onair-art img { width:100%; height:100%; object-fit:contain; display:block; }
 .onair-info { flex:1; min-width:0; }
 .onair-badge {
   display:inline-flex; align-items:center; gap:5px;
@@ -476,7 +476,7 @@ html, body {
       <div class="onair-sec">
         <div class="eyebrow">Now On Air</div>
         <div class="onair-card" id="onair-card">
-          <div class="onair-art c-hiphop" id="onair-art">🎤</div>
+          <div class="onair-art c-hiphop" id="onair-art"><span id="onair-ico">🎤</span><img id="onair-img" alt="" style="display:none;"></div>
           <div class="onair-info">
             <div class="onair-badge">ON AIR</div>
             <div class="onair-name" id="onair-name">トラックを選択</div>
@@ -969,10 +969,17 @@ function renderNowPlaying() {
   document.getElementById('onair-name').textContent = t.artist;
   document.getElementById('onair-track').textContent = t.name;
   var oart = document.getElementById('onair-art');
-  oart.className = 'onair-art ' + t.color + (t.artwork ? ' has-img' : '');
-  oart.style.backgroundImage = t.artwork ? 'url(' + t.artwork + ')' : '';
-  oart.textContent = t.artwork ? '' : t.icon;
-  oart.style.fontSize = t.artwork ? '0' : '34px';
+  oart.className = 'onair-art ' + t.color;
+  var oimg = document.getElementById('onair-img');
+  var oico = document.getElementById('onair-ico');
+  if (t.artwork) {
+    oimg.src = t.artwork; oimg.style.display = 'block';
+    oico.style.display = 'none';
+  } else {
+    oimg.style.display = 'none';
+    oico.style.display = 'block';
+    oico.textContent = t.icon;
+  }
   // SHEET
   document.getElementById('sheet-title').textContent = t.name;
   document.getElementById('sheet-artist').textContent = t.artist;
