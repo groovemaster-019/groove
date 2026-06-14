@@ -59,7 +59,21 @@ html, body {
 .page.active { display:block; }
 
 /* ── HERO ── */
-.hero { padding:24px 20px 16px; position:relative; }
+.hero {
+  padding:30px 20px 24px; position:relative; overflow:hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0; z-index:0;
+  background-image:url('https://images.unsplash.com/photo-1625806638987-35c560d4ca6e?fm=jpg&q=70&w=1200&auto=format&fit=crop');
+  background-size:cover; background-position:center;
+}
+/* 文字を読みやすくする暗いフィルター（左から濃く）*/
+.hero::after {
+  content:''; position:absolute; inset:0; z-index:1;
+  background:linear-gradient(90deg, rgba(5,6,8,.92) 0%, rgba(5,6,8,.78) 45%, rgba(5,6,8,.5) 100%),
+             linear-gradient(180deg, rgba(5,6,8,.4) 0%, transparent 30%, transparent 70%, rgba(5,6,8,.85) 100%);
+}
+.hero > * { position:relative; z-index:2; }
 .hero-lines { font-family:'Anton', sans-serif; font-size:54px; line-height:1.02; letter-spacing:1px; }
 .hero-lines span { display:block; text-transform:uppercase; }
 .hero-lines span.wide {
