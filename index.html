@@ -280,9 +280,10 @@ html, body {
   width:42px; height:42px; border-radius:6px;
   display:flex; align-items:center; justify-content:center;
   font-size:18px; flex-shrink:0;
-  background-size:cover; background-position:center;
-  border:1px solid var(--line);
+  background-color:var(--card);
+  border:1px solid var(--line); overflow:hidden;
 }
+.mini-art img { width:100%; height:100%; object-fit:contain; display:block; }
 .mini-art.has-img { font-size:0; }
 .mini-info { flex:1; min-width:0; }
 .mini-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -336,34 +337,50 @@ html, body {
 }
 
 /* ── HOLOGRAPHIC CD ── */
-.vinyl-wrap { width:220px; height:220px; margin:0 auto 22px; position:relative; flex-shrink:0; }
+.vinyl-wrap { width:240px; height:240px; margin:0 auto 22px; position:relative; flex-shrink:0; }
 .vinyl {
   width:100%; height:100%; border-radius:50%;
   background:conic-gradient(from 210deg,
     #9db8ff, #e3c4ff, #9ff0e0, #ffe9a8, #ffb3b3, #b3c1ff, #9db8ff);
   box-shadow:0 12px 60px rgba(59,130,246,.4), inset 0 0 0 2px rgba(230,238,249,.7);
-  position:relative;
+  position:relative; overflow:hidden;
 }
+/* ジャケット画像を円盤全面に */
+.vinyl-img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; border-radius:50%; display:none;
+}
+.vinyl.has-img .vinyl-img { display:block; }
+/* レコードの溝＆中央の光沢（ジャケットの上に薄く重ねる）*/
 .vinyl::after {
   content:''; position:absolute; inset:0; border-radius:50%;
   background:
-    radial-gradient(circle at 30% 25%, rgba(255,255,255,.5), transparent 38%),
-    repeating-conic-gradient(from 0deg, rgba(255,255,255,.10) 0deg 5deg, rgba(255,255,255,0) 5deg 11deg);
-  pointer-events:none;
+    radial-gradient(circle at 32% 26%, rgba(255,255,255,.35), transparent 34%),
+    repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.10) 0px, rgba(0,0,0,.10) 1px, rgba(255,255,255,0) 2px, rgba(255,255,255,0) 5px);
+  pointer-events:none; z-index:2;
+}
+/* 中央のスピンドル穴 */
+.vinyl-hole {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:34px; height:34px; border-radius:50%;
+  background:var(--bg); z-index:3;
+  box-shadow:0 0 0 5px rgba(255,255,255,.85), inset 0 0 6px rgba(0,0,0,.8);
 }
 .vinyl.spin { animation:spin 3.5s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
+/* テキストラベル（画像が無いとき用）*/
 .vinyl-label {
   position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   width:124px; height:124px; border-radius:50%;
-  background:#E6EEF9; background-size:cover; background-position:center;
+  background:#E6EEF9;
   display:flex; align-items:center; justify-content:center;
   font-family:'Anton',sans-serif; font-size:18px; letter-spacing:2px;
-  color:var(--bg);
+  color:var(--bg); z-index:1;
   border:3px solid rgba(230,238,249,.9);
   overflow:hidden;
   box-shadow:0 0 20px rgba(11,19,35,.5);
 }
+.vinyl.has-img + .vinyl-label, .vinyl-label.hide { display:none; }
 .vinyl-label::after {
   content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
   width:24px; height:24px; border-radius:50%;
@@ -562,7 +579,7 @@ html, body {
   <!-- MINI PLAYER -->
   <div class="mini" id="mini">
     <div class="mini-prog"><div class="mini-prog-fill" id="mini-fill"></div></div>
-    <div class="mini-art c-soul" id="mini-art">🎵</div>
+    <div class="mini-art c-soul" id="mini-art"><span id="mini-ico">🎵</span><img id="mini-img" alt="" style="display:none;"></div>
     <div class="mini-info">
       <div class="mini-title" id="mini-title">トラックを選んでください</div>
       <div class="mini-artist" id="mini-artist">GROOVE COLLECTIVE</div>
@@ -598,7 +615,7 @@ html, body {
     <button class="sheet-close" id="sheet-close">✕</button>
   </div>
   <div class="vinyl-wrap">
-    <div class="vinyl" id="vinyl"></div>
+    <div class="vinyl" id="vinyl"><img class="vinyl-img" id="vinyl-img" alt=""><div class="vinyl-hole" id="vinyl-hole" style="display:none;"></div></div>
     <div class="vinyl-label" id="vinyl-label">GC</div>
   </div>
   <div class="sheet-info" id="sheet-info-wrap">
@@ -962,9 +979,17 @@ function renderNowPlaying() {
   document.getElementById('mini-title').textContent = t.name;
   document.getElementById('mini-artist').textContent = t.artist;
   var miniArt = document.getElementById('mini-art');
-  miniArt.className = 'mini-art ' + t.color + (t.artwork ? ' has-img' : '');
-  miniArt.style.backgroundImage = t.artwork ? 'url(' + t.artwork + ')' : '';
-  miniArt.textContent = t.icon;
+  miniArt.className = 'mini-art ' + t.color;
+  var mimg = document.getElementById('mini-img');
+  var mico = document.getElementById('mini-ico');
+  if (t.artwork) {
+    mimg.src = t.artwork; mimg.style.display = 'block';
+    mico.style.display = 'none';
+  } else {
+    mimg.style.display = 'none';
+    mico.style.display = 'block';
+    mico.textContent = t.icon;
+  }
   // NOW ON AIR
   document.getElementById('onair-name').textContent = t.artist;
   document.getElementById('onair-track').textContent = t.name;
@@ -984,10 +1009,21 @@ function renderNowPlaying() {
   document.getElementById('sheet-title').textContent = t.name;
   document.getElementById('sheet-artist').textContent = t.artist;
   document.getElementById('sheet-station').textContent = t.tag.toUpperCase() + ' CHANNEL';
+  var vinyl = document.getElementById('vinyl');
+  var vimg = document.getElementById('vinyl-img');
+  var vhole = document.getElementById('vinyl-hole');
   var label = document.getElementById('vinyl-label');
-  label.textContent = t.artwork ? '' : t.tag.toUpperCase();
-  label.className = 'vinyl-label' + (t.artwork ? ' has-img' : '');
-  label.style.backgroundImage = t.artwork ? 'url(' + t.artwork + ')' : '';
+  if (t.artwork) {
+    vimg.src = t.artwork;
+    vinyl.classList.add('has-img');
+    vhole.style.display = 'block';
+    label.classList.add('hide');
+  } else {
+    vinyl.classList.remove('has-img');
+    vhole.style.display = 'none';
+    label.classList.remove('hide');
+    label.textContent = t.tag.toUpperCase();
+  }
   document.getElementById('preview-tag').textContent = t.preview ? '30秒プレビュー · ' + (t.source || 'Apple Music') + '提供' : '';
   renderFavBtn();
   renderAll();
