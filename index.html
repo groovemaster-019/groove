@@ -165,35 +165,15 @@ html, body {
 .ch-cover-name { font-family:'Anton',sans-serif; font-size:15px; letter-spacing:1px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9); position:relative; z-index:2; }
 .ch-label2 { text-align:center; font-family:'Anton',sans-serif; font-size:16px; letter-spacing:2px; margin-top:8px; color:var(--ice); }
 
-/* ── FEATURED MIX ── */
-.featured { margin:18px 20px 0; background:linear-gradient(135deg, #141A28, #0A0E16); border:1px solid var(--line); border-radius:14px; padding:20px; position:relative; overflow:hidden; }
-.featured-eyebrow { font-size:10px; letter-spacing:3px; color:var(--blue); text-transform:uppercase; font-weight:700; }
-.featured-title { font-family:'Anton',sans-serif; font-size:34px; line-height:.95; letter-spacing:1px; margin-top:8px; }
-.featured-sub { font-size:11px; letter-spacing:2px; color:var(--muted); margin-top:8px; text-transform:uppercase; }
-.featured-btn {
-  margin-top:16px; display:inline-flex; align-items:center; gap:8px;
-  background:var(--blue); color:#fff; border:none;
-  padding:11px 22px; border-radius:6px;
-  font-size:11px; font-weight:700; letter-spacing:1.5px; cursor:pointer;
-  font-family:'Montserrat',sans-serif;
+/* ── FEATURED VIDEO ── */
+.video-wrap {
+  margin:14px 20px 0; border-radius:14px; overflow:hidden;
+  border:1px solid var(--line); background:#000;
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
 }
-.featured-btn:active { transform:scale(.96); }
-
-/* ── UPCOMING SHOWS ── */
-.show-row {
-  display:flex; align-items:center; gap:14px;
-  padding:13px 20px; cursor:pointer; user-select:none;
-  border-bottom:1px solid var(--line);
-}
-.show-row:active { background:var(--card); }
-.show-time { font-size:11px; color:var(--blue); font-weight:600; width:92px; flex-shrink:0; letter-spacing:.5px; }
-.show-info { flex:1; min-width:0; }
-.show-name { font-size:14px; font-weight:600; }
-.show-dj { font-size:11px; color:var(--muted); margin-top:2px; }
-.show-arrow {
-  width:30px; height:30px; border-radius:50%; border:1px solid var(--line);
-  display:flex; align-items:center; justify-content:center; flex-shrink:0;
-  color:var(--muted); font-size:13px;
+.feature-video {
+  width:100%; display:block; aspect-ratio:16/9;
+  object-fit:cover; background:#000;
 }
 
 /* ── GENRE PILLS ── */
@@ -542,19 +522,16 @@ html, body {
       </div>
       <div class="ch-scroll" id="ch-scroll"></div>
 
-      <!-- FEATURED MIX -->
-      <div class="featured" id="featured-mix">
-        <div class="featured-eyebrow">Featured Mix</div>
-        <div class="featured-title">G-FUNK<br>CLASSICS</div>
-        <div class="featured-sub">Chill. Ride. Remember.</div>
-        <button class="featured-btn" id="featured-btn">▶ PLAY MIX</button>
-      </div>
-
-      <!-- UPCOMING SHOWS -->
+      <!-- VIDEO -->
       <div class="sec-head">
-        <div class="eyebrow">Upcoming Shows</div>
+        <div class="eyebrow">Featured Video</div>
       </div>
-      <div id="shows-list" style="margin-top:8px;"></div>
+      <div class="video-wrap">
+        <video id="feature-video" class="feature-video" controls playsinline preload="metadata" poster="">
+          <source src="intro.mp4" type="video/mp4">
+          お使いのブラウザは動画に対応していません。
+        </video>
+      </div>
 
       <div class="notice">🎵 実曲の30秒プレビューが流れます（Deezer / Apple Music提供）。フル再生はSpotifyボタンから。</div>
 
@@ -724,12 +701,6 @@ var CHANNELS = [
   { name:"019 HOOD", g:"hiphop", color:"c-hiphop", art:"Kg za Horchata CRUIZIN'" },
   { name:"G-FUNK",  g:"gfunk",  color:"c-gfunk",  art:"Dr. Dre Let Me Ride" },
   { name:"BOOGIE",  g:"boogie", color:"c-boogie", art:"Mtume Juicy Fruit" }
-];
-
-var SHOWS = [
-  { time:"20:00 – 22:00", name:"The Soul Society",  dj:"DJ Smooth"  },
-  { time:"22:00 – 00:00", name:"Funk Night Grooves", dj:"DJ Mellow"  },
-  { time:"00:00 – 02:00", name:"G-Funk All Night",   dj:"DJ Kensaw"  }
 ];
 
 /* ════════ SAFE STORAGE ════════ */
@@ -949,16 +920,6 @@ function fetchArtworkOnly(term) {
       });
     });
   });
-}
-function renderShows() {
-  var box = document.getElementById('shows-list');
-  box.innerHTML = SHOWS.map(function(s) {
-    return '<div class="show-row">' +
-      '<div class="show-time">' + s.time + '</div>' +
-      '<div class="show-info"><div class="show-name">' + s.name + '</div><div class="show-dj">' + s.dj + '</div></div>' +
-      '<div class="show-arrow">›</div>' +
-    '</div>';
-  }).join('');
 }
 function renderTrackList() {
   var list = document.getElementById('track-list');
@@ -1294,18 +1255,9 @@ document.getElementById('hero-listen').addEventListener('click', function() {
   playTrack(i);
   openSheet();
 });
-// FEATURED MIX：G-Funkの先頭から
-document.getElementById('featured-btn').addEventListener('click', function() {
-  var idx = TRACKS.findIndex(function(t){ return t.genre === 'gfunk'; });
-  if (idx >= 0) { playTrack(idx); openSheet(); }
-});
-document.getElementById('featured-mix').addEventListener('click', function(e) {
-  if (e.target.id === 'featured-btn') return;
-});
 
 /* ════════ INIT ════════ */
 renderChannels();
-renderShows();
 renderTrackList();
 renderStations();
 renderFavList();
