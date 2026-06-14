@@ -131,13 +131,24 @@ html, body {
   position:relative; border:1px solid var(--line);
   display:flex; align-items:flex-end; padding:8px;
   box-shadow:0 6px 18px rgba(0,0,0,.4);
+  background-size:cover; background-position:center;
+}
+.ch-cover .ch-img {
+  position:absolute; inset:0; width:100%; height:100%;
+  object-fit:cover; z-index:0; opacity:0; transition:opacity .3s;
+}
+.ch-cover.loaded .ch-img { opacity:1; }
+/* 文字を読みやすくする下からの影 */
+.ch-cover::before {
+  content:''; position:absolute; inset:0; z-index:1;
+  background:linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.15) 45%, transparent 70%);
 }
 .ch-cover::after {
-  content:''; position:absolute; inset:0;
+  content:''; position:absolute; inset:0; z-index:1;
   background:linear-gradient(155deg, rgba(255,255,255,.16) 0%, transparent 34%);
 }
 .ch-item:active .ch-cover { transform:scale(.96); }
-.ch-cover-name { font-family:'Anton',sans-serif; font-size:15px; letter-spacing:1px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.8); position:relative; z-index:1; }
+.ch-cover-name { font-family:'Anton',sans-serif; font-size:15px; letter-spacing:1px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9); position:relative; z-index:2; }
 .ch-label2 { text-align:center; font-family:'Anton',sans-serif; font-size:16px; letter-spacing:2px; margin-top:8px; color:var(--ice); }
 
 /* ── FEATURED MIX ── */
@@ -694,11 +705,11 @@ var STATIONS = [
 ];
 
 var CHANNELS = [
-  { name:"SOUL",    g:"soul",   color:"c-soul"   },
-  { name:"FUNK",    g:"funk",   color:"c-funk"   },
-  { name:"019 HOOD", g:"hiphop", color:"c-hiphop" },
-  { name:"G-FUNK",  g:"gfunk",  color:"c-gfunk"  },
-  { name:"BOOGIE",  g:"boogie", color:"c-boogie" }
+  { name:"SOUL",    g:"soul",   color:"c-soul",   art:"Marvin Gaye What's Going On" },
+  { name:"FUNK",    g:"funk",   color:"c-funk",   art:"Parliament Flash Light" },
+  { name:"019 HOOD", g:"hiphop", color:"c-hiphop", art:"Kg za Horchata CRUIZIN'" },
+  { name:"G-FUNK",  g:"gfunk",  color:"c-gfunk",  art:"Dr. Dre Let Me Ride" },
+  { name:"BOOGIE",  g:"boogie", color:"c-boogie", art:"Mtume Juicy Fruit" }
 ];
 
 var SHOWS = [
@@ -876,7 +887,7 @@ function renderChannels() {
   var box = document.getElementById('ch-scroll');
   box.innerHTML = CHANNELS.map(function(c, i) {
     return '<div class="ch-item" data-g="' + c.g + '">' +
-      '<div class="ch-cover ' + c.color + '" id="chcover-' + i + '"><span class="ch-cover-name">' + c.name + '</span></div>' +
+      '<div class="ch-cover ' + c.color + '" id="chcover-' + i + '"><img class="ch-img" id="chimg-' + i + '" alt=""><span class="ch-cover-name">' + c.name + '</span></div>' +
       '<div class="ch-label2">' + c.name + '</div>' +
     '</div>';
   }).join('');
@@ -886,6 +897,42 @@ function renderChannels() {
       goToTracks(g);
       var idx = TRACKS.findIndex(function(t){ return t.genre === g; });
       if (idx >= 0) { playTrack(idx); openSheet(); }
+    });
+  });
+  // 各チャンネルのアートワークをDeezerから取得
+  CHANNELS.forEach(function(c, i) {
+    if (!c.art) return;
+    fetchArtworkOnly(c.art).then(function(url) {
+      if (!url) return;
+      var img = document.getElementById('chimg-' + i);
+      var cover = document.getElementById('chcover-' + i);
+      if (img && cover) {
+        img.src = url;
+        img.onload = function(){ cover.classList.add('loaded'); };
+      }
+    });
+  });
+}
+// チャンネル用：アートワークURLだけ取得する軽量版
+function fetchArtworkOnly(term) {
+  return new Promise(function(resolve) {
+    var done = false;
+    var timer = setTimeout(function(){ if(!done){done=true;resolve(null);} }, 8000);
+    fetch('https://api.deezer.com/search?q=' + encodeURIComponent(term)).then(function(r){
+      return r.json();
+    }).then(function(j){
+      if (done) return;
+      done = true; clearTimeout(timer);
+      var hit = j && (j.data || []).find(function(x){ return x.album && (x.album.cover_big || x.album.cover_medium); });
+      resolve(hit ? (hit.album.cover_big || hit.album.cover_medium) : null);
+    }).catch(function(){
+      if (done) return;
+      done = true; clearTimeout(timer);
+      // JSONP fallback
+      searchDeezer(term).then(function(res){
+        var hit = res.data && (res.data.data || []).find(function(x){ return x.album && (x.album.cover_big || x.album.cover_medium); });
+        resolve(hit ? (hit.album.cover_big || hit.album.cover_medium) : null);
+      });
     });
   });
 }
