@@ -195,6 +195,58 @@ html, body {
 .ch-cover-name { font-family:'Anton',sans-serif; font-size:15px; letter-spacing:1px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9); position:relative; z-index:2; }
 .ch-label2 { text-align:center; font-family:'Anton',sans-serif; font-size:16px; letter-spacing:2px; margin-top:8px; color:var(--ice); }
 
+/* ── COLUMNS（記事コーナー）── */
+.col-scroll { display:flex; gap:14px; overflow-x:auto; padding:14px 20px 6px; scrollbar-width:none; }
+.col-scroll::-webkit-scrollbar { display:none; }
+.col-card {
+  flex-shrink:0; width:260px; min-height:150px;
+  background:linear-gradient(150deg, #141A28, #0A0E16);
+  border:1px solid var(--line); border-radius:14px;
+  padding:16px; cursor:pointer; user-select:none;
+  display:flex; flex-direction:column;
+  box-shadow:0 6px 18px rgba(0,0,0,.4);
+}
+.col-card:active { transform:scale(.98); }
+.col-tag { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
+.col-title { font-family:'Anton',sans-serif; font-size:19px; line-height:1.05; letter-spacing:.5px; margin-top:8px; color:var(--ice); }
+.col-body { font-size:11px; line-height:1.65; color:var(--muted); margin-top:9px; flex:1; }
+.col-more { font-size:10px; letter-spacing:1px; color:var(--blue); font-weight:600; margin-top:10px; text-transform:uppercase; }
+
+/* 記事一覧（Notesページ）*/
+.note-row {
+  padding:16px 20px; border-bottom:1px solid var(--line);
+  cursor:pointer; user-select:none;
+}
+.note-row:active { background:var(--card); }
+.note-row-tag { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
+.note-row-title { font-family:'Anton',sans-serif; font-size:18px; line-height:1.1; margin-top:6px; color:var(--ice); }
+.note-row-teaser { font-size:11px; line-height:1.6; color:var(--muted); margin-top:6px; }
+
+/* 記事モーダル */
+.col-modal {
+  position:fixed; inset:0; z-index:120;
+  background:rgba(5,6,8,.6); backdrop-filter:blur(4px);
+  display:none; align-items:flex-end;
+}
+.col-modal.open { display:flex; }
+.col-sheet {
+  width:100%; max-height:82vh; overflow-y:auto;
+  background:linear-gradient(180deg, #0E1422, var(--bg) 40%);
+  border-top-left-radius:20px; border-top-right-radius:20px;
+  border-top:1px solid var(--line);
+  padding:20px 22px max(28px, env(safe-area-inset-bottom));
+}
+.col-sheet-bar { width:36px; height:4px; background:var(--line); border-radius:2px; margin:0 auto 16px; }
+.col-sheet-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
+.col-sheet-title { font-family:'Anton',sans-serif; font-size:26px; line-height:1.05; margin-top:8px; }
+.col-sheet-body { font-size:13px; line-height:1.85; color:var(--ice); margin-top:14px; white-space:pre-line; }
+.col-sheet-close {
+  margin-top:18px; width:100%; padding:13px; background:var(--card);
+  border:1px solid var(--line); border-radius:10px; color:var(--muted);
+  font-size:12px; font-weight:700; letter-spacing:1px; cursor:pointer;
+  font-family:'Montserrat',sans-serif;
+}
+
 /* ── FEATURED VIDEO ── */
 .video-wrap {
   margin:14px 20px 0; border-radius:14px; overflow:hidden;
@@ -551,12 +603,12 @@ html, body {
         </div>
       </div>
 
-      <!-- CHANNELS -->
+      <!-- COLUMNS（記事コーナー）-->
       <div class="sec-head">
-        <div class="eyebrow">Channels</div>
-        <div class="sec-link" data-viewall="stations">View All</div>
+        <div class="eyebrow">Liner Notes</div>
+        <div class="sec-link" style="pointer-events:none; opacity:.6;">Knowledge</div>
       </div>
-      <div class="ch-scroll" id="ch-scroll"></div>
+      <div class="col-scroll" id="col-scroll"></div>
 
       <!-- VIDEO -->
       <div class="sec-head">
@@ -606,8 +658,9 @@ html, body {
 
     <!-- STATIONS -->
     <div class="page" id="page-stations">
-      <div class="section-title-row"><div class="section-title">ON AIR</div></div>
-      <div id="station-list"></div>
+      <div class="section-title-row"><div class="section-title">LINER NOTES</div></div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 6px;">音楽の豆知識コラム</div>
+      <div id="notes-list"></div>
     </div>
 
     <!-- FAVORITES -->
@@ -654,9 +707,20 @@ html, body {
       <span class="nav-icon">♥</span><span class="nav-txt">Favorites</span>
     </button>
     <button class="nav-btn" data-page="stations">
-      <span class="nav-icon">📡</span><span class="nav-txt">Channels</span>
+      <span class="nav-icon">📖</span><span class="nav-txt">Notes</span>
     </button>
   </nav>
+</div>
+
+<!-- COLUMN MODAL -->
+<div class="col-modal" id="col-modal">
+  <div class="col-sheet" id="col-sheet">
+    <div class="col-sheet-bar"></div>
+    <div class="col-sheet-tag" id="col-sheet-tag"></div>
+    <div class="col-sheet-title" id="col-sheet-title"></div>
+    <div class="col-sheet-body" id="col-sheet-body"></div>
+    <button class="col-sheet-close" id="col-sheet-close">CLOSE</button>
+  </div>
 </div>
 
 <!-- PLAYER SHEET -->
@@ -748,6 +812,39 @@ var CHANNELS = [
   { name:"019 HOOD", g:"hiphop", color:"c-hiphop", art:"Kg za Horchata CRUIZIN'" },
   { name:"G-FUNK",  g:"gfunk",  color:"c-gfunk",  art:"Dr. Dre Let Me Ride" },
   { name:"BOOGIE",  g:"boogie", color:"c-boogie", art:"Mtume Juicy Fruit" }
+];
+
+var COLUMNS = [
+  {
+    tag:"G-Funk",
+    title:"THE P-FUNK ROOTS OF G-FUNK",
+    teaser:"That laid-back West Coast sound didn't come from nowhere...",
+    body:"That laid-back West Coast sound didn't come from nowhere.\n\nG-Funk took its DNA straight from Parliament-Funkadelic — the heavy synth bass, the slow rolling grooves, the high-pitched whine that floats over the top. Producers like Dr. Dre and DJ Quik flipped those 70s funk records into something new, but the soul of it is pure George Clinton.\n\nNext time you hear that whistle synth on a Warren G track, you're really hearing Funkadelic echoing through the years."
+  },
+  {
+    tag:"Soul",
+    title:"WHY MARVIN CHANGED EVERYTHING",
+    teaser:"'What's Going On' almost never got released...",
+    body:"'What's Going On' almost never got released.\n\nMotown boss Berry Gordy reportedly hated it — too political, too different from the hit formula. But Marvin Gaye refused to record anything else until they put it out. It became one of the most important albums in soul history.\n\nThe lesson: sometimes the record they don't want is the one that lasts forever."
+  },
+  {
+    tag:"Funk",
+    title:"THE ONE: FUNK'S SECRET RULE",
+    teaser:"James Brown built an entire genre on a single beat...",
+    body:"James Brown built an entire genre on a single beat.\n\nThe magic of funk lives in 'The One' — the heavy emphasis on the first beat of the bar. Instead of chasing the melody, everything locks into that downbeat. Bass, drums, guitar — all hitting The One together.\n\nOnce you feel it, you can't unhear it. That's the engine that drives every funk record."
+  },
+  {
+    tag:"Sampling",
+    title:"ONE SONG, A HUNDRED HITS",
+    teaser:"A short drum break from 1969 changed hip hop forever...",
+    body:"A short drum break from 1969 changed hip hop forever.\n\nProducers dug through old soul and funk records not just for melodies, but for drum breaks — those few seconds where the band drops out and the drummer goes solo. Loop it, and you've got the backbone of a new track.\n\nThe crates never lie. The past is always feeding the future."
+  },
+  {
+    tag:"West Coast",
+    title:"LOWRIDERS & THE OLDIES",
+    teaser:"Why does West Coast rap love slow soul oldies?",
+    body:"Why does West Coast rap love slow soul oldies?\n\nIt comes from lowrider culture. Cruising slow means you need music that rolls slow — sweet 60s and 70s soul ballads, the kind that sound perfect bouncing out of a Chevy on a summer evening.\n\nThat oldies-soul feeling is baked into the whole West Coast sound. Smooth, warm, and built for the cruise."
+  }
 ];
 
 /* ════════ SAFE STORAGE ════════ */
@@ -915,33 +1012,45 @@ function wireRows(container) {
     });
   });
 }
-function renderChannels() {
-  var box = document.getElementById('ch-scroll');
-  box.innerHTML = CHANNELS.map(function(c, i) {
-    return '<div class="ch-item" data-g="' + c.g + '">' +
-      '<div class="ch-cover ' + c.color + '" id="chcover-' + i + '"><img class="ch-img" id="chimg-' + i + '" alt=""><span class="ch-cover-name">' + c.name + '</span></div>' +
-      '<div class="ch-label2">' + c.name + '</div>' +
+function renderColumns() {
+  var box = document.getElementById('col-scroll');
+  box.innerHTML = COLUMNS.map(function(c, i) {
+    return '<div class="col-card" data-i="' + i + '">' +
+      '<div class="col-tag">' + c.tag + '</div>' +
+      '<div class="col-title">' + c.title + '</div>' +
+      '<div class="col-body">' + c.teaser + '</div>' +
+      '<div class="col-more">Read →</div>' +
     '</div>';
   }).join('');
-  box.querySelectorAll('.ch-item').forEach(function(item) {
-    item.addEventListener('click', function() {
-      var g = this.dataset.g;
-      goToTracks(g);
-      var idx = TRACKS.findIndex(function(t){ return t.genre === g; });
-      if (idx >= 0) { playTrack(idx); openSheet(); }
+  box.querySelectorAll('.col-card').forEach(function(card) {
+    card.addEventListener('click', function() {
+      openColumn(parseInt(this.dataset.i, 10));
     });
   });
-  // 各チャンネルのアートワークをDeezerから取得
-  CHANNELS.forEach(function(c, i) {
-    if (!c.art) return;
-    fetchArtworkOnly(c.art).then(function(url) {
-      if (!url) return;
-      var img = document.getElementById('chimg-' + i);
-      var cover = document.getElementById('chcover-' + i);
-      if (img && cover) {
-        img.src = url;
-        img.onload = function(){ cover.classList.add('loaded'); };
-      }
+}
+function openColumn(i) {
+  var c = COLUMNS[i];
+  document.getElementById('col-sheet-tag').textContent = c.tag;
+  document.getElementById('col-sheet-title').textContent = c.title;
+  document.getElementById('col-sheet-body').textContent = c.body;
+  document.getElementById('col-modal').classList.add('open');
+}
+function closeColumn() {
+  document.getElementById('col-modal').classList.remove('open');
+}
+function renderNotes() {
+  var box = document.getElementById('notes-list');
+  if (!box) return;
+  box.innerHTML = COLUMNS.map(function(c, i) {
+    return '<div class="note-row" data-i="' + i + '">' +
+      '<div class="note-row-tag">' + c.tag + '</div>' +
+      '<div class="note-row-title">' + c.title + '</div>' +
+      '<div class="note-row-teaser">' + c.teaser + '</div>' +
+    '</div>';
+  }).join('');
+  box.querySelectorAll('.note-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      openColumn(parseInt(this.dataset.i, 10));
     });
   });
 }
@@ -1303,10 +1412,16 @@ document.getElementById('hero-listen').addEventListener('click', function() {
   openSheet();
 });
 
+// 記事モーダルを閉じる
+document.getElementById('col-sheet-close').addEventListener('click', closeColumn);
+document.getElementById('col-modal').addEventListener('click', function(e) {
+  if (e.target.id === 'col-modal') closeColumn();
+});
+
 /* ════════ INIT ════════ */
-renderChannels();
+renderColumns();
 renderTrackList();
-renderStations();
+renderNotes();
 renderFavList();
 renderSearchList();
 renderQueue();
