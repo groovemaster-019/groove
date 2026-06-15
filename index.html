@@ -175,6 +175,12 @@ html, body {
   width:100%; display:block; aspect-ratio:16/9;
   object-fit:cover; background:#000;
 }
+.sc-wrap {
+  margin:14px 20px 0; border-radius:14px; overflow:hidden;
+  border:1px solid var(--line); background:#000;
+  box-shadow:0 8px 24px rgba(0,0,0,.45);
+}
+.sc-wrap iframe { display:block; }
 
 /* ── GENRE PILLS ── */
 .genre-wrap { padding:16px 20px 0; overflow-x:auto; scrollbar-width:none; }
@@ -531,6 +537,16 @@ html, body {
           <source src="intro.mp4" type="video/mp4">
           お使いのブラウザは動画に対応していません。
         </video>
+      </div>
+
+      <!-- SOUNDCLOUD（フル再生テスト）-->
+      <div class="sec-head">
+        <div class="eyebrow">Full Track · SoundCloud</div>
+      </div>
+      <div class="sc-wrap">
+        <iframe width="100%" height="166" scrolling="no" frameborder="no" allow="autoplay"
+          src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/dj-m-bangz/ice-cube-rollin-with-the-lench&color=%233B82F6&auto_play=false&hide_related=true&show_comments=false&show_user=true&show_reposts=false&show_teaser=false">
+        </iframe>
       </div>
 
       <div class="notice">🎵 実曲の30秒プレビューが流れます（Deezer / Apple Music提供）。フル再生はSpotifyボタンから。</div>
