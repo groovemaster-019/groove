@@ -771,13 +771,6 @@ html, body {
 
 <script>
 'use strict';
-// 一時デバッグ：エラーを画面に表示
-window.addEventListener('error', function(e) {
-  var d = document.createElement('div');
-  d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#c00;color:#fff;font-size:11px;padding:8px;font-family:monospace;white-space:pre-wrap;';
-  d.textContent = 'ERR: ' + (e.message||'') + ' @' + (e.filename||'').split('/').pop() + ':' + (e.lineno||'?') + ':' + (e.colno||'?');
-  document.body.appendChild(d);
-});
 
 /* ════════ DATA ════════ */
 var TRACKS = [
@@ -1051,6 +1044,7 @@ function renderChannels() {
 }
 function renderColumns() {
   var box = document.getElementById('col-scroll');
+  if (!box) return;
   box.innerHTML = COLUMNS.map(function(c, i) {
     return '<div class="col-card" data-i="' + i + '">' +
       '<div class="col-tag">' + c.tag + '</div>' +
