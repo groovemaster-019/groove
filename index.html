@@ -578,12 +578,12 @@ html, body {
 
 /* ── 液晶ディスプレイパネル ── */
 .lcd-panel {
-  width:248px; margin:14px auto 4px;
+  width:248px; margin:34px auto 4px; position:relative; z-index:10;
   background:linear-gradient(160deg, #2c3340 0%, #1a1f29 45%, #11151d 100%);
   border-radius:12px; padding:12px 14px;
   display:flex; align-items:center; gap:12px;
   box-shadow:0 10px 26px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -2px 5px rgba(0,0,0,.6);
-  position:relative; overflow:hidden;
+  overflow:hidden;
 }
 .lcd-panel::before {
   content:''; position:absolute; inset:0;
