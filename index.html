@@ -458,7 +458,7 @@ html, body {
       rgba(160,180,255,.20) 330deg, rgba(255,80,80,.0) 360deg),
     radial-gradient(circle at 32% 26%, rgba(255,255,255,.4), transparent 30%),
     repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.07) 0px, rgba(0,0,0,.07) 1px, rgba(255,255,255,0) 2px, rgba(255,255,255,0) 4px);
-  pointer-events:none; z-index:2; mix-blend-mode:screen; opacity:.55;
+  pointer-events:none; z-index:2; mix-blend-mode:screen; opacity:.38;
 }
 .vinyl.spin { animation:spin 1.1s linear infinite; }
 @keyframes spin { to { transform:rotate(360deg); } }
@@ -487,7 +487,7 @@ html, body {
 }
 /* CD本体（筐体の中で回る）*/
 .vinyl-wrap .vinyl {
-  width:210px; height:210px; position:relative; z-index:2;
+  width:222px; height:222px; position:relative; z-index:2;
   box-shadow:inset 0 0 0 2px rgba(230,238,249,.45), 0 4px 14px rgba(0,0,0,.5);
 }
 /* 中央：爪付きスピンドル */
@@ -528,31 +528,31 @@ html, body {
 .cd-cover {
   position:absolute; inset:0; border-radius:22px;
   pointer-events:none; z-index:5; overflow:hidden;
-  /* 上下のフタ部分 */
+  /* 上下のフタを薄く、窓を広く（CD全体が見える）*/
   background:
     linear-gradient(180deg,
-      #232a36 0%, #1a202b 14%, #161b24 24%,
-      rgba(22,27,36,0) 30%, rgba(22,27,36,0) 70%,
-      #161b24 76%, #1a202b 86%, #232a36 100%);
+      #232a36 0%, #1a202b 9%, rgba(22,27,36,.55) 15%,
+      rgba(22,27,36,0) 20%, rgba(22,27,36,0) 80%,
+      rgba(22,27,36,.55) 85%, #1a202b 91%, #232a36 100%);
 }
-/* ガラス面：厚みのある縁＋全体のうっすら反射 */
+/* ガラス全面のうっすら反射＋窓の上下フチ */
 .cd-cover::before {
-  content:''; position:absolute; left:0; right:0; top:30%; height:40%;
+  content:''; position:absolute; left:0; right:0; top:15%; height:70%;
   background:
-    linear-gradient(180deg, rgba(255,255,255,.10) 0%, rgba(255,255,255,.02) 12%, rgba(255,255,255,0) 30%, rgba(255,255,255,0) 70%, rgba(255,255,255,.04) 92%, rgba(255,255,255,.10) 100%);
+    linear-gradient(180deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.03) 8%, rgba(255,255,255,0) 22%, rgba(255,255,255,0) 78%, rgba(255,255,255,.05) 92%, rgba(255,255,255,.12) 100%);
   box-shadow:
-    inset 0 7px 12px rgba(0,0,0,.6),
-    inset 0 -7px 12px rgba(0,0,0,.6),
-    inset 0 2px 0 rgba(255,255,255,.22),
-    inset 0 -2px 0 rgba(255,255,255,.10);
+    inset 0 6px 10px rgba(0,0,0,.5),
+    inset 0 -6px 10px rgba(0,0,0,.5),
+    inset 0 2px 0 rgba(255,255,255,.25),
+    inset 0 -2px 0 rgba(255,255,255,.12);
 }
-/* ガラスの斜め反射ハイライト（2本）*/
+/* ガラスの斜め反射ハイライト（写真のような大きな光の帯）*/
 .cd-cover::after {
-  content:''; position:absolute; top:30%; left:0; right:0; height:40%;
+  content:''; position:absolute; top:15%; left:0; right:0; height:70%;
   background:
-    linear-gradient(118deg, transparent 18%, rgba(255,255,255,.22) 30%, rgba(255,255,255,.04) 38%, transparent 46%),
-    linear-gradient(118deg, transparent 60%, rgba(255,255,255,.14) 68%, transparent 76%);
-  filter:blur(1px);
+    linear-gradient(116deg, transparent 12%, rgba(255,255,255,.20) 26%, rgba(255,255,255,.05) 34%, transparent 44%),
+    linear-gradient(116deg, transparent 56%, rgba(255,255,255,.12) 66%, transparent 74%);
+  filter:blur(1.5px);
 }
 
 /* テキストラベル（画像が無いとき用）*/
