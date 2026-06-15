@@ -39,7 +39,37 @@ html, body {
 .brand { display:flex; flex-direction:column; align-items:center; flex:1; }
 .brand-logo {
   font-family:'Pirata One', serif; font-weight:400;
-  font-size:30px; line-height:1; color:var(--ice); letter-spacing:1px;
+  font-size:30px; line-height:1; letter-spacing:1px;
+  color:#fff;
+  animation:flicker 4s linear infinite;
+}
+@keyframes flicker {
+  0%, 100% {
+    opacity:1;
+    text-shadow:0 0 4px #fff, 0 0 10px #7FB0FF, 0 0 20px #3B82F6, 0 0 38px #3B82F6, 0 0 60px #1E5AD0;
+  }
+  /* 通常点灯（長め）*/
+  0%, 18%, 25%, 42%, 60%, 78%, 100% {
+    opacity:1;
+    text-shadow:0 0 4px #fff, 0 0 10px #7FB0FF, 0 0 20px #3B82F6, 0 0 38px #3B82F6, 0 0 60px #1E5AD0;
+  }
+  /* バチバチッと切れる瞬間 */
+  19%, 21%, 61%, 63%, 65% {
+    opacity:.25;
+    text-shadow:none;
+  }
+  20%, 62%, 64% {
+    opacity:1;
+    text-shadow:0 0 4px #fff, 0 0 12px #7FB0FF, 0 0 24px #3B82F6;
+  }
+  43%, 45% {
+    opacity:.35;
+    text-shadow:0 0 2px #fff;
+  }
+  44% {
+    opacity:1;
+    text-shadow:0 0 4px #fff, 0 0 10px #3B82F6, 0 0 20px #3B82F6;
+  }
 }
 .brand-rule {
   display:flex; align-items:center; gap:7px; margin-top:3px;
