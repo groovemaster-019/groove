@@ -576,6 +576,55 @@ html, body {
 }
 .vinyl-label.has-img { font-size:0; }
 
+/* ── 液晶ディスプレイパネル ── */
+.lcd-panel {
+  width:248px; margin:14px auto 4px;
+  background:linear-gradient(160deg, #2c3340 0%, #1a1f29 45%, #11151d 100%);
+  border-radius:12px; padding:12px 14px;
+  display:flex; align-items:center; gap:12px;
+  box-shadow:0 10px 26px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -2px 5px rgba(0,0,0,.6);
+  position:relative; overflow:hidden;
+}
+.lcd-panel::before {
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(115deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px);
+  pointer-events:none;
+}
+/* 青く光る液晶画面 */
+.lcd-screen {
+  flex:1;
+  background:linear-gradient(180deg, #0a4f6b, #073a52);
+  border-radius:6px; padding:8px 10px;
+  border:1px solid #0a2c3d;
+  box-shadow:inset 0 0 12px rgba(0,0,0,.6), inset 0 0 18px rgba(0,200,255,.18), 0 0 10px rgba(0,170,255,.25);
+  font-family:'Courier New', monospace;
+  color:#9fe9ff; text-shadow:0 0 6px rgba(120,230,255,.85);
+  position:relative;
+}
+/* 液晶のドット網点 */
+.lcd-screen::after {
+  content:''; position:absolute; inset:0; border-radius:6px;
+  background:repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0px, rgba(0,0,0,.18) 1px, transparent 1px, transparent 2px);
+  pointer-events:none;
+}
+.lcd-row1 { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:700; letter-spacing:1px; }
+.lcd-row2 { display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:700; letter-spacing:2px; margin-top:4px; }
+.lcd-disc { font-size:10px; }
+.lcd-mode { font-size:9px; opacity:.9; border:1px solid rgba(159,233,255,.5); padding:1px 5px; border-radius:2px; }
+/* ボリュームダイヤル */
+.lcd-dial {
+  width:40px; height:40px; border-radius:50%; flex-shrink:0;
+  background:
+    radial-gradient(circle at 38% 32%, #4a5260 0%, #2a3038 55%, #14181f 100%);
+  box-shadow:0 3px 6px rgba(0,0,0,.6), inset 0 1px 2px rgba(255,255,255,.3), inset 0 -2px 3px rgba(0,0,0,.7);
+  position:relative;
+}
+.lcd-dial-mark {
+  position:absolute; top:5px; left:50%; transform:translateX(-50%);
+  width:3px; height:9px; border-radius:2px;
+  background:#9fe9ff; box-shadow:0 0 5px rgba(120,230,255,.8);
+}
+
 .sheet-info { text-align:center; padding:0 24px 16px; flex-shrink:0; }
 .sheet-title { font-family:'Anton',sans-serif; font-size:28px; letter-spacing:2px; }
 .sheet-artist { font-size:12px; color:var(--blue); letter-spacing:2px; font-weight:600; text-transform:uppercase; margin-top:2px; }
@@ -826,6 +875,14 @@ html, body {
     <div class="vinyl-label" id="vinyl-label">GC</div>
     <div class="cd-cover" id="cd-cover"></div>
   </div>
+  <!-- 液晶ディスプレイパネル -->
+  <div class="lcd-panel">
+    <div class="lcd-screen">
+      <div class="lcd-row1"><span class="lcd-disc">▶ DISC</span><span class="lcd-mode" id="lcd-mode">ESP CD</span></div>
+      <div class="lcd-row2"><span id="lcd-track">T-01</span><span id="lcd-time">00:00</span></div>
+    </div>
+    <div class="lcd-dial"><div class="lcd-dial-mark"></div></div>
+  </div>
   <div class="sheet-info" id="sheet-info-wrap">
     <div class="sheet-title" id="sheet-title">—</div>
     <div class="sheet-artist" id="sheet-artist">—</div>
@@ -1073,6 +1130,8 @@ function renderProgress() {
   document.getElementById('mini-fill').style.width = pct + '%';
   document.getElementById('time-cur').textContent = fmtTime(audio.currentTime);
   document.getElementById('time-tot').textContent = fmtTime(audio.duration);
+  var lt = document.getElementById('lcd-time');
+  if (lt) lt.textContent = fmtTime(audio.currentTime);
 }
 
 function rowHTML(i) {
@@ -1315,6 +1374,8 @@ function renderNowPlaying() {
   document.getElementById('sheet-title').textContent = t.name;
   document.getElementById('sheet-artist').textContent = t.artist;
   document.getElementById('sheet-station').textContent = t.tag.toUpperCase() + ' CHANNEL';
+  var lt = document.getElementById('lcd-track');
+  if (lt) lt.textContent = 'T-' + String(state.currentIdx + 1).padStart(2, '0');
   var vinyl = document.getElementById('vinyl');
   var vimg = document.getElementById('vinyl-img');
   var vhole = document.getElementById('vinyl-hole');
