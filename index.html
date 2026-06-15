@@ -603,12 +603,12 @@ html, body {
         </div>
       </div>
 
-      <!-- COLUMNS（記事コーナー）-->
+      <!-- CHANNELS -->
       <div class="sec-head">
-        <div class="eyebrow">Liner Notes</div>
-        <div class="sec-link" style="pointer-events:none; opacity:.6;">Knowledge</div>
+        <div class="eyebrow">Channels</div>
+        <div class="sec-link" data-viewall="tracks">View All</div>
       </div>
-      <div class="col-scroll" id="col-scroll"></div>
+      <div class="ch-scroll" id="ch-scroll"></div>
 
       <!-- VIDEO -->
       <div class="sec-head">
@@ -771,6 +771,13 @@ html, body {
 
 <script>
 'use strict';
+// 一時デバッグ：エラーを画面に表示
+window.addEventListener('error', function(e) {
+  var d = document.createElement('div');
+  d.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:9999;background:#c00;color:#fff;font-size:11px;padding:8px;font-family:monospace;white-space:pre-wrap;';
+  d.textContent = 'ERR: ' + (e.message||'') + ' @' + (e.filename||'').split('/').pop() + ':' + (e.lineno||'?') + ':' + (e.colno||'?');
+  document.body.appendChild(d);
+});
 
 /* ════════ DATA ════════ */
 var TRACKS = [
@@ -1009,6 +1016,36 @@ function wireRows(container) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       toggleFav(parseInt(this.dataset.fav, 10));
+    });
+  });
+}
+function renderChannels() {
+  var box = document.getElementById('ch-scroll');
+  if (!box) return;
+  box.innerHTML = CHANNELS.map(function(c, i) {
+    return '<div class="ch-item" data-g="' + c.g + '">' +
+      '<div class="ch-cover ' + c.color + '" id="chcover-' + i + '"><img class="ch-img" id="chimg-' + i + '" alt=""><span class="ch-cover-name">' + c.name + '</span></div>' +
+      '<div class="ch-label2">' + c.name + '</div>' +
+    '</div>';
+  }).join('');
+  box.querySelectorAll('.ch-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var g = this.dataset.g;
+      goToTracks(g);
+      var idx = TRACKS.findIndex(function(t){ return t.genre === g; });
+      if (idx >= 0) { playTrack(idx); openSheet(); }
+    });
+  });
+  CHANNELS.forEach(function(c, i) {
+    if (!c.art) return;
+    fetchArtworkOnly(c.art).then(function(url) {
+      if (!url) return;
+      var img = document.getElementById('chimg-' + i);
+      var cover = document.getElementById('chcover-' + i);
+      if (img && cover) {
+        img.src = url;
+        img.onload = function(){ cover.classList.add('loaded'); };
+      }
     });
   });
 }
@@ -1420,6 +1457,7 @@ document.getElementById('col-modal').addEventListener('click', function(e) {
 
 /* ════════ INIT ════════ */
 renderColumns();
+renderChannels();
 renderTrackList();
 renderNotes();
 renderFavList();
