@@ -465,6 +465,22 @@ html, body {
 /* 回転中のモーションブラー */
 .vinyl.spin .vinyl-img { filter:blur(.6px); }
 
+/* ディスク投入（上から落ちてセット＆バウンド）*/
+.vinyl.inserting { animation:disc-insert .7s cubic-bezier(.34,1.4,.5,1) both; }
+@keyframes disc-insert {
+  0%   { transform:translateY(-60px) scale(.86); opacity:0; }
+  55%  { transform:translateY(0) scale(1.02); opacity:1; }
+  72%  { transform:translateY(-6px) scale(1); }
+  100% { transform:translateY(0) scale(1); }
+}
+/* スピンアップ（ゆっくり→高速へ加速）*/
+.vinyl.spin-up { animation:spin-up 1.5s cubic-bezier(.5,0,.7,1) forwards; }
+@keyframes spin-up {
+  0%   { transform:rotate(0deg); }
+  100% { transform:rotate(900deg); }
+}
+.vinyl.spin-up .vinyl-img { filter:blur(.4px); }
+
 /* ── ポータブルCDプレイヤー筐体 ── */
 .vinyl-wrap {
   width:248px; height:248px;
@@ -1404,11 +1420,32 @@ function renderFavBtn() {
   btn.textContent = isFav ? '♥' : '♡';
   btn.classList.toggle('on', isFav);
 }
+function updateSpin(playing) {
+  var vinyl = document.getElementById('vinyl');
+  if (!vinyl) return;
+  if (playing) {
+    // すでに回転中なら何もしない（曲送りでの連続再生中など）
+    if (vinyl.classList.contains('spin') || vinyl.classList.contains('spin-up')) return;
+    // 投入→加速→定常回転の流れ
+    vinyl.classList.remove('spin');
+    vinyl.classList.add('inserting');
+    setTimeout(function() {
+      vinyl.classList.remove('inserting');
+      vinyl.classList.add('spin-up');
+      setTimeout(function() {
+        vinyl.classList.remove('spin-up');
+        if (state.playing) vinyl.classList.add('spin');
+      }, 1500);
+    }, 700);
+  } else {
+    vinyl.classList.remove('spin', 'spin-up', 'inserting');
+  }
+}
 function renderPlayState() {
   var icon = state.playing ? '⏸' : '▶';
   document.getElementById('b-play').textContent = icon;
   document.getElementById('mini-play').textContent = icon;
-  document.getElementById('vinyl').classList.toggle('spin', state.playing);
+  updateSpin(state.playing);
   ['sheet-info-wrap','track-list','fav-list','search-list','onair-card'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.toggle('playing-anim', state.playing);
