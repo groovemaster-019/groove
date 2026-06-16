@@ -242,6 +242,39 @@ html, body {
 .pl-artist { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
 .pl-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
 
+/* ── Live Radio ── */
+.radio-genres { display:flex; gap:8px; overflow-x:auto; padding:4px 20px 14px; scrollbar-width:none; }
+.radio-genres::-webkit-scrollbar { display:none; }
+.radio-genre-pill {
+  flex-shrink:0; padding:8px 16px; border-radius:20px; cursor:pointer; user-select:none;
+  background:var(--card); border:1px solid var(--line); color:var(--muted);
+  font-size:12px; font-weight:700; letter-spacing:.5px; white-space:nowrap;
+}
+.radio-genre-pill.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+.radio-row {
+  display:flex; align-items:center; gap:12px;
+  padding:11px 20px; cursor:pointer; user-select:none;
+  border-bottom:1px solid var(--line);
+}
+.radio-row:active { background:var(--card); }
+.radio-row.playing { background:rgba(59,130,246,.12); }
+.radio-ico {
+  width:44px; height:44px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg, #1e2a3f, #0d1420);
+  display:flex; align-items:center; justify-content:center; font-size:20px;
+  overflow:hidden; position:relative;
+}
+.radio-ico img { width:100%; height:100%; object-fit:cover; }
+.radio-meta { flex:1; min-width:0; }
+.radio-name { font-size:13px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.radio-sub { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.radio-live {
+  font-size:9px; font-weight:700; letter-spacing:1px; color:#fff;
+  background:#ef4444; padding:2px 7px; border-radius:4px; flex-shrink:0;
+}
+.radio-row.playing .radio-live { background:var(--blue); }
+.radio-loading, .radio-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
+
 /* ── プレイリスト管理画面 ── */
 .pe-modal {
   position:fixed; inset:0; z-index:130;
@@ -845,6 +878,13 @@ html, body {
       <div class="pl-date" id="pl-date"></div>
       <div id="playlist-list"></div>
 
+      <!-- RADIO -->
+      <div class="sec-head" style="margin-top:8px;">
+        <div class="eyebrow">📡 Live Radio</div>
+      </div>
+      <div class="radio-genres" id="radio-genres"></div>
+      <div id="radio-list"></div>
+
 
       <!-- VIDEO -->
       <div class="sec-head">
@@ -892,6 +932,14 @@ html, body {
       <div id="track-list"></div>
     </div>
 
+    <!-- RADIO PAGE -->
+    <div class="page" id="page-radio">
+      <div class="section-title-row"><div class="section-title">LIVE RADIO</div></div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 10px;">世界中のラジオをライブで。ジャンルを選んで局をタップ。</div>
+      <div class="radio-genres" id="radio-genres-page"></div>
+      <div id="radio-list-page"></div>
+    </div>
+
     <!-- STATIONS -->
     <div class="page" id="page-stations">
       <div class="section-title-row"><div class="section-title">LINER NOTES</div></div>
@@ -933,8 +981,8 @@ html, body {
     <button class="nav-btn active" data-page="discover">
       <span class="nav-icon">⌂</span><span class="nav-txt">Home</span>
     </button>
-    <button class="nav-btn" data-page="tracks">
-      <span class="nav-icon">♫</span><span class="nav-txt">Tracks</span>
+    <button class="nav-btn" data-page="radio">
+      <span class="nav-icon">📡</span><span class="nav-txt">Radio</span>
     </button>
     <button class="nav-btn" data-page="search">
       <span class="nav-icon">🔍</span><span class="nav-txt">Search</span>
@@ -1293,6 +1341,148 @@ function fetchPlaylistMeta(term) {
   });
 }
 
+/* ════════ LIVE RADIO ════════ */
+var RADIO_GENRES = [
+  { key:'hiphop',    label:'Hip Hop',      tag:'hiphop' },
+  { key:'westcoast', label:'West Coast',   tag:'west coast' },
+  { key:'funksoul',  label:'Funk / Soul',  tag:'funk' },
+  { key:'rnb',       label:'R&B',          tag:'rnb' }
+];
+var RADIO_API = 'https://de1.api.radio-browser.info';
+var radioState = { genre:'hiphop', stations:[], cache:{}, currentUuid:null };
+
+function radioFetchStations(tag) {
+  if (radioState.cache[tag]) return Promise.resolve(radioState.cache[tag]);
+  var url = RADIO_API + '/json/stations/bytagexact/' + encodeURIComponent(tag) +
+            '?order=clickcount&reverse=true&hidebroken=true&limit=25';
+  return fetch(url, { headers:{ 'Content-Type':'application/json' } })
+    .then(function(r){ return r.ok ? r.json() : []; })
+    .then(function(list){
+      // 再生可能なstreamがあるものだけ
+      var clean = (list||[]).filter(function(s){ return s.url_resolved || s.url; })
+        .map(function(s){
+          return {
+            uuid:s.stationuuid, name:s.name || 'Unknown',
+            url:s.url_resolved || s.url,
+            country:s.country || '', favicon:s.favicon || '',
+            bitrate:s.bitrate || 0, codec:s.codec || ''
+          };
+        });
+      // 重複名を除去
+      var seen = {}; var uniq = [];
+      clean.forEach(function(s){
+        var k = s.name.toLowerCase().trim();
+        if (!seen[k]) { seen[k] = 1; uniq.push(s); }
+      });
+      radioState.cache[tag] = uniq.slice(0, 20);
+      return radioState.cache[tag];
+    })
+    .catch(function(){ return []; });
+}
+function renderRadioGenres() {
+  ['radio-genres','radio-genres-page'].forEach(function(id){
+    var box = document.getElementById(id);
+    if (!box) return;
+    box.innerHTML = RADIO_GENRES.map(function(g){
+      return '<div class="radio-genre-pill' + (g.key===radioState.genre?' active':'') + '" data-rg="' + g.key + '">' + g.label + '</div>';
+    }).join('');
+    box.querySelectorAll('[data-rg]').forEach(function(p){
+      p.addEventListener('click', function(){
+        radioState.genre = this.dataset.rg;
+        renderRadioGenres();
+        loadRadioGenre();
+      });
+    });
+  });
+}
+function loadRadioGenre() {
+  var g = RADIO_GENRES.find(function(x){ return x.key === radioState.genre; });
+  if (!g) return;
+  ['radio-list','radio-list-page'].forEach(function(id){
+    var box = document.getElementById(id);
+    if (box) box.innerHTML = '<div class="radio-loading">📡 ' + g.label + ' の局を探しています...</div>';
+  });
+  radioFetchStations(g.tag).then(function(stations){
+    radioState.stations = stations;
+    renderRadioList();
+  });
+}
+function renderRadioList() {
+  var html;
+  if (!radioState.stations.length) {
+    html = '<div class="radio-empty">局が見つかりませんでした。<br>別のジャンルを試すか、電波の良い場所で再読み込みしてください。</div>';
+  } else {
+    html = radioState.stations.map(function(s, i){
+      var icoHtml = s.favicon ? '<img src="' + s.favicon + '" alt="" onerror="this.style.display=\'none\';this.parentNode.textContent=\'📻\';">' : '📻';
+      var sub = [s.country, s.bitrate ? s.bitrate + 'kbps' : ''].filter(Boolean).join(' · ');
+      var playing = s.uuid === radioState.currentUuid ? ' playing' : '';
+      return '<div class="radio-row' + playing + '" data-ri="' + i + '">' +
+        '<div class="radio-ico">' + icoHtml + '</div>' +
+        '<div class="radio-meta">' +
+          '<div class="radio-name">' + esc(s.name) + '</div>' +
+          '<div class="radio-sub">' + esc(sub || 'Live Radio') + '</div>' +
+        '</div>' +
+        '<div class="radio-live">LIVE</div>' +
+      '</div>';
+    }).join('');
+  }
+  ['radio-list','radio-list-page'].forEach(function(id){
+    var box = document.getElementById(id);
+    if (!box) return;
+    box.innerHTML = html;
+    box.querySelectorAll('[data-ri]').forEach(function(row){
+      row.addEventListener('click', function(){
+        playRadio(parseInt(this.dataset.ri, 10));
+      });
+    });
+  });
+}
+function playRadio(i) {
+  var s = radioState.stations[i];
+  if (!s) return;
+  radioState.currentUuid = s.uuid;
+  state.currentIdx = -1; // トラック再生ではない
+  state.isRadio = true;
+  state.radioName = s.name;
+  // audioでストリーム再生
+  audio.src = s.url;
+  audio.play().then(function(){
+    state.playing = true;
+    renderPlayState();
+  }).catch(function(){
+    state.playing = false;
+    renderPlayState();
+  });
+  // 画面表示を更新
+  updateRadioNowPlaying(s);
+  renderRadioList();
+  openSheet();
+}
+function updateRadioNowPlaying(s) {
+  var setTxt = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
+  setTxt('sheet-title', s.name);
+  setTxt('sheet-artist', (s.country || 'Live Radio'));
+  setTxt('sheet-station', 'LIVE RADIO');
+  setTxt('mini-title', s.name);
+  setTxt('mini-artist', 'Live Radio');
+  var lt = document.getElementById('lcd-track'); if (lt) lt.textContent = 'TUNER';
+  var lm = document.getElementById('lcd-mode'); if (lm) lm.textContent = 'RADIO';
+  // ジャケット：局アイコン or デフォルト
+  var vinyl = document.getElementById('vinyl');
+  var vimg = document.getElementById('vinyl-img');
+  var label = document.getElementById('vinyl-label');
+  if (s.favicon && vimg) {
+    vimg.src = s.favicon;
+    vinyl.classList.add('has-img');
+    if (label) label.classList.add('hide');
+  } else if (vinyl) {
+    vinyl.classList.remove('has-img');
+    if (label) { label.classList.remove('hide'); label.textContent = '📻'; }
+  }
+  var ptag = document.getElementById('preview-tag');
+  if (ptag) ptag.textContent = 'ライブ配信中 · Radio Browser';
+}
+
 /* ════════ STATE ════════ */
 var state = {
   currentIdx: -1, playing: false, shuffle: false,
@@ -1411,6 +1601,15 @@ function fmtTime(sec) {
   return m + ':' + String(s).padStart(2, '0');
 }
 function renderProgress() {
+  if (state.isRadio) {
+    document.getElementById('prog-fill').style.width = '100%';
+    document.getElementById('mini-fill').style.width = '100%';
+    document.getElementById('time-cur').textContent = 'LIVE';
+    document.getElementById('time-tot').textContent = '●';
+    var ltr = document.getElementById('lcd-time');
+    if (ltr) ltr.textContent = 'LIVE';
+    return;
+  }
   var pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
   document.getElementById('prog-fill').style.width = pct + '%';
   document.getElementById('mini-fill').style.width = pct + '%';
@@ -1719,6 +1918,8 @@ function renderPlayState() {
 
 /* ════════ PLAYBACK ════════ */
 function playTrack(idx) {
+  state.isRadio = false;
+  radioState.currentUuid = null;
   state.currentIdx = idx;
   state.loading = true;
   renderNowPlaying(); renderPlayState();
@@ -1919,6 +2120,8 @@ document.getElementById('pe-modal').addEventListener('click', function(e){
 /* ════════ INIT ════════ */
 syncPlaylistToTracks();
 renderPlaylist();
+renderRadioGenres();
+loadRadioGenre();
 renderColumns();
 renderTrackList();
 renderNotes();
