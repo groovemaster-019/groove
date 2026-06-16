@@ -222,6 +222,79 @@ html, body {
 .note-row-title { font-family:'Anton',sans-serif; font-size:18px; line-height:1.1; margin-top:6px; color:var(--ice); }
 .note-row-teaser { font-size:11px; line-height:1.6; color:var(--muted); margin-top:6px; }
 
+/* ── Today's Playlist ── */
+.pl-date { font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 10px; }
+.pl-row {
+  display:flex; align-items:center; gap:12px;
+  padding:9px 20px; cursor:pointer; user-select:none;
+}
+.pl-row:active { background:var(--card); }
+.pl-row.playing { background:rgba(59,130,246,.12); }
+.pl-num { width:20px; text-align:center; font-size:12px; color:var(--muted); font-weight:700; flex-shrink:0; }
+.pl-art {
+  width:46px; height:46px; border-radius:8px; flex-shrink:0;
+  background:var(--card); overflow:hidden; position:relative;
+  display:flex; align-items:center; justify-content:center; font-size:18px;
+}
+.pl-art img { width:100%; height:100%; object-fit:cover; }
+.pl-meta { flex:1; min-width:0; }
+.pl-name { font-size:13px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pl-artist { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
+.pl-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
+
+/* ── プレイリスト管理画面 ── */
+.pe-modal {
+  position:fixed; inset:0; z-index:130;
+  background:rgba(5,6,8,.6); backdrop-filter:blur(4px);
+  display:none; align-items:flex-end;
+}
+.pe-modal.open { display:flex; }
+.pe-sheet {
+  width:100%; max-height:88vh; overflow-y:auto;
+  background:linear-gradient(180deg, #0E1422, var(--bg) 40%);
+  border-top-left-radius:20px; border-top-right-radius:20px;
+  border-top:1px solid var(--line);
+  padding:18px 18px max(28px, env(safe-area-inset-bottom));
+}
+.pe-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+.pe-title { font-family:'Anton',sans-serif; font-size:20px; letter-spacing:1px; }
+.pe-close {
+  width:32px; height:32px; border-radius:50%; border:1px solid var(--line);
+  background:var(--card); color:var(--ice); font-size:14px; cursor:pointer;
+}
+.pe-add { display:flex; gap:8px; }
+.pe-add input {
+  flex:1; background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:11px 12px; color:var(--ice); font-size:13px; font-family:'Montserrat',sans-serif;
+}
+.pe-add input::placeholder { color:var(--muted); font-size:11px; }
+.pe-add button {
+  background:var(--blue); color:#fff; border:none; border-radius:10px;
+  padding:0 16px; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0;
+  font-family:'Montserrat',sans-serif;
+}
+.pe-hint { font-size:10px; color:var(--muted); margin:8px 2px 14px; line-height:1.5; }
+.pe-list { display:flex; flex-direction:column; gap:6px; }
+.pe-item {
+  display:flex; align-items:center; gap:10px;
+  background:var(--card); border:1px solid var(--line); border-radius:10px;
+  padding:8px 10px;
+}
+.pe-item-art { width:40px; height:40px; border-radius:6px; overflow:hidden; flex-shrink:0; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:16px; }
+.pe-item-art img { width:100%; height:100%; object-fit:cover; }
+.pe-item-meta { flex:1; min-width:0; }
+.pe-item-name { font-size:12px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pe-item-artist { font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.pe-item-status { font-size:9px; color:var(--muted); margin-top:1px; }
+.pe-item-del {
+  width:28px; height:28px; border-radius:6px; flex-shrink:0;
+  background:rgba(239,68,68,.15); color:#ff6b6b; border:none; cursor:pointer; font-size:15px;
+}
+.pe-up, .pe-down {
+  width:24px; height:24px; border-radius:5px; flex-shrink:0;
+  background:var(--bg); color:var(--ice); border:1px solid var(--line); cursor:pointer; font-size:11px;
+}
+
 /* 記事モーダル */
 .col-modal {
   position:fixed; inset:0; z-index:120;
@@ -481,6 +554,26 @@ html, body {
 }
 .vinyl.spin-up .vinyl-img { filter:blur(.4px); }
 
+/* 再生中：ジャケット静止＋ゆっくり呼吸する発光＋光沢が走る */
+.vinyl.playing-disc { animation:disc-breathe 4s ease-in-out infinite; }
+@keyframes disc-breathe {
+  0%, 100% { box-shadow:inset 0 0 0 2px rgba(230,238,249,.45), 0 4px 18px rgba(0,0,0,.5), 0 0 22px rgba(59,130,246,.25); }
+  50%      { box-shadow:inset 0 0 0 2px rgba(230,238,249,.55), 0 4px 22px rgba(0,0,0,.5), 0 0 40px rgba(59,130,246,.5); }
+}
+/* 光沢の帯が斜めに走る */
+.vinyl.playing-disc::before {
+  content:''; position:absolute; inset:0; border-radius:50%; z-index:3;
+  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.28) 46%, rgba(255,255,255,.05) 54%, transparent 64%);
+  pointer-events:none;
+  animation:disc-shine 4.5s ease-in-out infinite;
+}
+@keyframes disc-shine {
+  0%   { transform:translateX(-30%) rotate(0deg); opacity:0; }
+  18%  { opacity:1; }
+  40%  { transform:translateX(30%) rotate(0deg); opacity:0; }
+  100% { transform:translateX(30%) rotate(0deg); opacity:0; }
+}
+
 /* ── ポータブルCDプレイヤー筐体 ── */
 .vinyl-wrap {
   width:248px; height:248px;
@@ -736,38 +829,22 @@ html, body {
       <div class="hero">
         <div class="hero-lines">
           <span class="silver">SOUL.</span>
-          <span class="blue">FUNK.</span>
+          <span class="blue">BOOGIE.</span>
           <span class="silver">G-FUNK.</span>
           <span class="blue wide">019 HOOD MUSIC.</span>
         </div>
         <div class="hero-tag">Good Music. Real Vibes.</div>
-        <button class="listen-live" id="hero-listen">▶ LISTEN LIVE</button>
+        <button class="listen-live" id="hero-listen">▶ NEW RELEASE</button>
       </div>
 
-      <!-- NOW ON AIR -->
-      <div class="onair-sec">
-        <div class="eyebrow">Now On Air</div>
-        <div class="onair-card" id="onair-card">
-          <div class="onair-art c-hiphop" id="onair-art"><span id="onair-ico">🎤</span><img id="onair-img" alt="" style="display:none;"></div>
-          <div class="onair-info">
-            <div class="onair-badge">ON AIR</div>
-            <div class="onair-name" id="onair-name">トラックを選択</div>
-            <div class="onair-track" id="onair-track">GROOVE COLLECTIVE</div>
-            <div class="onair-eq" id="onair-eq">
-              <span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span>
-              <span></span><span></span><span></span><span></span><span></span><span></span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CHANNELS -->
+      <!-- TODAY'S PLAYLIST -->
       <div class="sec-head">
-        <div class="eyebrow">Channels</div>
-        <div class="sec-link" data-viewall="tracks">View All</div>
+        <div class="eyebrow">Today's Playlist</div>
+        <div class="sec-link" id="edit-playlist-btn">Edit</div>
       </div>
-      <div class="ch-scroll" id="ch-scroll"></div>
+      <div class="pl-date" id="pl-date"></div>
+      <div id="playlist-list"></div>
+
 
       <!-- VIDEO -->
       <div class="sec-head">
@@ -869,6 +946,22 @@ html, body {
       <span class="nav-icon">📖</span><span class="nav-txt">Notes</span>
     </button>
   </nav>
+</div>
+
+<!-- PLAYLIST EDITOR MODAL -->
+<div class="pe-modal" id="pe-modal">
+  <div class="pe-sheet">
+    <div class="pe-head">
+      <div class="pe-title">Today's Playlist を編集</div>
+      <button class="pe-close" id="pe-close">✕</button>
+    </div>
+    <div class="pe-add">
+      <input type="text" id="pe-input" placeholder="曲名 アーティスト名（例: BLOWSURUSOUL Kg za Horchata）">
+      <button id="pe-add-btn">追加</button>
+    </div>
+    <div class="pe-hint">曲名とアーティスト名を入れて「追加」。アートワークとプレビューは自動取得します。</div>
+    <div id="pe-list" class="pe-list"></div>
+  </div>
 </div>
 
 <!-- COLUMN MODAL -->
@@ -1026,6 +1119,178 @@ function storeGet(k) {
 function storeSet(k, v) {
   memStore[k] = v;
   try { localStorage.setItem(k, v); } catch (e) {}
+}
+
+/* ════════ TODAY'S PLAYLIST ════════ */
+// プレイリストの曲を保持。各曲: {name, artist, genre:'playlist', tag:'Playlist', preview, artwork, source}
+var PLAYLIST = [];
+(function() {
+  var saved = storeGet('groove-playlist');
+  if (saved) { try { PLAYLIST = JSON.parse(saved) || []; } catch (e) { PLAYLIST = []; } }
+})();
+function savePlaylist() {
+  storeSet('groove-playlist', JSON.stringify(PLAYLIST.map(function(t){
+    return { name:t.name, artist:t.artist, preview:t.preview||'', artwork:t.artwork||'', source:t.source||'' };
+  })));
+}
+// プレイリストの曲をTRACKSの先頭に統合（再生エンジンはTRACKSのindexで動くため）
+function syncPlaylistToTracks() {
+  // 既存のplaylist曲をTRACKSから除去
+  TRACKS = TRACKS.filter(function(t){ return t.genre !== 'playlist'; });
+  // プレイリスト曲をTRACKSの先頭に追加
+  var plTracks = PLAYLIST.map(function(t){
+    return { name:t.name, artist:t.artist, genre:'playlist', tag:'Playlist',
+             color:'c-hiphop', icon:'🎵',
+             preview:t.preview||'', artwork:t.artwork||'', source:t.source||'' };
+  });
+  TRACKS = plTracks.concat(TRACKS);
+}
+function fmtToday() {
+  var d = new Date();
+  var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+  return days[d.getDay()] + ' · ' + (d.getMonth()+1) + '/' + d.getDate();
+}
+function renderPlaylist() {
+  var box = document.getElementById('playlist-list');
+  var dateEl = document.getElementById('pl-date');
+  if (dateEl) dateEl.textContent = fmtToday() + ' — ' + PLAYLIST.length + ' tracks';
+  if (!box) return;
+  if (PLAYLIST.length === 0) {
+    box.innerHTML = '<div class="pl-empty">まだ曲がありません。<br>右上の「Edit」から今日の曲を追加しよう。</div>';
+    return;
+  }
+  box.innerHTML = PLAYLIST.map(function(t, i) {
+    var artHtml = t.artwork ? '<img src="' + t.artwork + '" alt="">' : '🎵';
+    return '<div class="pl-row" data-i="' + i + '">' +
+      '<div class="pl-num">' + (i+1) + '</div>' +
+      '<div class="pl-art">' + artHtml + '</div>' +
+      '<div class="pl-meta">' +
+        '<div class="pl-name">' + esc(t.name) + '</div>' +
+        '<div class="pl-artist">' + esc(t.artist) + '</div>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  box.querySelectorAll('.pl-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      var i = parseInt(this.dataset.i, 10);
+      syncPlaylistToTracks();
+      playTrack(i); // プレイリストはTRACKSの先頭なので同じindex
+      openSheet();
+    });
+  });
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+// 管理画面
+function openPlaylistEditor() {
+  document.getElementById('pe-modal').classList.add('open');
+  renderPlaylistEditor();
+}
+function closePlaylistEditor() {
+  document.getElementById('pe-modal').classList.remove('open');
+  syncPlaylistToTracks();
+  renderPlaylist();
+}
+function renderPlaylistEditor() {
+  var box = document.getElementById('pe-list');
+  if (!box) return;
+  if (PLAYLIST.length === 0) {
+    box.innerHTML = '<div class="pl-empty">曲を追加してください。</div>';
+    return;
+  }
+  box.innerHTML = PLAYLIST.map(function(t, i) {
+    var artHtml = t.artwork ? '<img src="' + t.artwork + '" alt="">' : '🎵';
+    var status = t.preview ? '✓ 再生OK' : '⚠ プレビュー未取得';
+    return '<div class="pe-item">' +
+      '<button class="pe-up" data-up="' + i + '">▲</button>' +
+      '<button class="pe-down" data-down="' + i + '">▼</button>' +
+      '<div class="pe-item-art">' + artHtml + '</div>' +
+      '<div class="pe-item-meta">' +
+        '<div class="pe-item-name">' + esc(t.name) + '</div>' +
+        '<div class="pe-item-artist">' + esc(t.artist) + '</div>' +
+        '<div class="pe-item-status">' + status + '</div>' +
+      '</div>' +
+      '<button class="pe-item-del" data-del="' + i + '">🗑</button>' +
+    '</div>';
+  }).join('');
+  box.querySelectorAll('[data-del]').forEach(function(b){
+    b.addEventListener('click', function(){
+      PLAYLIST.splice(parseInt(this.dataset.del,10), 1);
+      savePlaylist(); renderPlaylistEditor();
+    });
+  });
+  box.querySelectorAll('[data-up]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var i = parseInt(this.dataset.up,10);
+      if (i>0) { var tmp=PLAYLIST[i]; PLAYLIST[i]=PLAYLIST[i-1]; PLAYLIST[i-1]=tmp; savePlaylist(); renderPlaylistEditor(); }
+    });
+  });
+  box.querySelectorAll('[data-down]').forEach(function(b){
+    b.addEventListener('click', function(){
+      var i = parseInt(this.dataset.down,10);
+      if (i<PLAYLIST.length-1) { var tmp=PLAYLIST[i]; PLAYLIST[i]=PLAYLIST[i+1]; PLAYLIST[i+1]=tmp; savePlaylist(); renderPlaylistEditor(); }
+    });
+  });
+}
+// 曲を追加（アートワーク＆プレビュー自動取得）
+function addPlaylistTrack() {
+  var input = document.getElementById('pe-input');
+  var raw = (input.value || '').trim();
+  if (!raw) return;
+  // 「曲名 アーティスト」を分割（最後の語以降をアーティスト推定は難しいので、全体を曲名＋検索語に）
+  var entry = { name: raw, artist: '', preview:'', artwork:'', source:'' };
+  PLAYLIST.push(entry);
+  savePlaylist();
+  input.value = '';
+  renderPlaylistEditor();
+  // 自動取得
+  var idx = PLAYLIST.length - 1;
+  fetchPlaylistMeta(raw).then(function(meta){
+    if (meta) {
+      if (meta.name) PLAYLIST[idx].name = meta.name;
+      if (meta.artist) PLAYLIST[idx].artist = meta.artist;
+      PLAYLIST[idx].preview = meta.preview || '';
+      PLAYLIST[idx].artwork = meta.artwork || '';
+      PLAYLIST[idx].source = meta.source || '';
+      savePlaylist();
+      renderPlaylistEditor();
+    }
+  });
+}
+// 検索語からメタデータ取得
+function fetchPlaylistMeta(term) {
+  function fetchJson(url, ms) {
+    return new Promise(function(resolve) {
+      var done=false;
+      var timer=setTimeout(function(){if(!done){done=true;resolve(null);}}, ms||8000);
+      fetch(url).then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){ if(!done){done=true;clearTimeout(timer);resolve(j);} })
+        .catch(function(){ if(!done){done=true;clearTimeout(timer);resolve(null);} });
+    });
+  }
+  return fetchJson('https://api.deezer.com/search?q=' + encodeURIComponent(term)).then(function(j){
+    var hit = j && (j.data||[]).find(function(x){ return x.preview; });
+    if (hit) {
+      return { name:hit.title, artist:(hit.artist&&hit.artist.name)||'',
+               preview:hit.preview, artwork:(hit.album&&(hit.album.cover_big||hit.album.cover_medium))||'', source:'Deezer' };
+    }
+    return searchDeezer(term).then(function(j2){
+      var h2 = j2 && (j2.data||[]).find(function(x){ return x.preview; });
+      if (h2) {
+        return { name:h2.title, artist:(h2.artist&&h2.artist.name)||'',
+                 preview:h2.preview, artwork:(h2.album&&(h2.album.cover_big||h2.album.cover_medium))||'', source:'Deezer' };
+      }
+      return fetchJson('https://itunes.apple.com/search?term=' + encodeURIComponent(term) + '&media=music&entity=song&limit=5&country=JP').then(function(j3){
+        var h3 = j3 && (j3.results||[]).find(function(x){ return x.previewUrl; });
+        if (h3) {
+          return { name:h3.trackName, artist:h3.artistName||'',
+                   preview:h3.previewUrl, artwork:(h3.artworkUrl100||'').replace('100x100','400x400'), source:'Apple Music' };
+        }
+        return null;
+      });
+    });
+  });
 }
 
 /* ════════ STATE ════════ */
@@ -1376,20 +1641,23 @@ function renderNowPlaying() {
     mico.style.display = 'block';
     mico.textContent = t.icon;
   }
-  // NOW ON AIR
-  document.getElementById('onair-name').textContent = t.artist;
-  document.getElementById('onair-track').textContent = t.name;
-  var oart = document.getElementById('onair-art');
-  oart.className = 'onair-art ' + t.color;
-  var oimg = document.getElementById('onair-img');
-  var oico = document.getElementById('onair-ico');
-  if (t.artwork) {
-    oimg.src = t.artwork; oimg.style.display = 'block';
-    oico.style.display = 'none';
-  } else {
-    oimg.style.display = 'none';
-    oico.style.display = 'block';
-    oico.textContent = t.icon;
+  // NOW ON AIR（削除済みのため要素があるときだけ）
+  var onName = document.getElementById('onair-name');
+  if (onName) {
+    onName.textContent = t.artist;
+    document.getElementById('onair-track').textContent = t.name;
+    var oart = document.getElementById('onair-art');
+    oart.className = 'onair-art ' + t.color;
+    var oimg = document.getElementById('onair-img');
+    var oico = document.getElementById('onair-ico');
+    if (t.artwork) {
+      oimg.src = t.artwork; oimg.style.display = 'block';
+      oico.style.display = 'none';
+    } else {
+      oimg.style.display = 'none';
+      oico.style.display = 'block';
+      oico.textContent = t.icon;
+    }
   }
   // SHEET
   document.getElementById('sheet-title').textContent = t.name;
@@ -1424,21 +1692,16 @@ function updateSpin(playing) {
   var vinyl = document.getElementById('vinyl');
   if (!vinyl) return;
   if (playing) {
-    // すでに回転中なら何もしない（曲送りでの連続再生中など）
-    if (vinyl.classList.contains('spin') || vinyl.classList.contains('spin-up')) return;
-    // 投入→加速→定常回転の流れ
-    vinyl.classList.remove('spin');
+    if (vinyl.classList.contains('playing-disc')) return;
+    // ディスク投入（ドロップイン）→ 静止して発光
+    vinyl.classList.remove('spin', 'spin-up');
     vinyl.classList.add('inserting');
     setTimeout(function() {
       vinyl.classList.remove('inserting');
-      vinyl.classList.add('spin-up');
-      setTimeout(function() {
-        vinyl.classList.remove('spin-up');
-        if (state.playing) vinyl.classList.add('spin');
-      }, 1500);
+      if (state.playing) vinyl.classList.add('playing-disc');
     }, 700);
   } else {
-    vinyl.classList.remove('spin', 'spin-up', 'inserting');
+    vinyl.classList.remove('spin', 'spin-up', 'inserting', 'playing-disc');
   }
 }
 function renderPlayState() {
@@ -1642,9 +1905,21 @@ document.getElementById('col-modal').addEventListener('click', function(e) {
   if (e.target.id === 'col-modal') closeColumn();
 });
 
+/* ════════ PLAYLIST EVENTS ════════ */
+document.getElementById('edit-playlist-btn').addEventListener('click', openPlaylistEditor);
+document.getElementById('pe-close').addEventListener('click', closePlaylistEditor);
+document.getElementById('pe-add-btn').addEventListener('click', addPlaylistTrack);
+document.getElementById('pe-input').addEventListener('keydown', function(e){
+  if (e.key === 'Enter') addPlaylistTrack();
+});
+document.getElementById('pe-modal').addEventListener('click', function(e){
+  if (e.target.id === 'pe-modal') closePlaylistEditor();
+});
+
 /* ════════ INIT ════════ */
+syncPlaylistToTracks();
+renderPlaylist();
 renderColumns();
-renderChannels();
 renderTrackList();
 renderNotes();
 renderFavList();
