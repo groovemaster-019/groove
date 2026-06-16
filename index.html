@@ -1343,41 +1343,59 @@ function fetchPlaylistMeta(term) {
 
 /* ════════ LIVE RADIO ════════ */
 var RADIO_GENRES = [
-  { key:'hiphop',    label:'Hip Hop',      tag:'hiphop' },
-  { key:'westcoast', label:'West Coast',   tag:'west coast' },
-  { key:'funksoul',  label:'Funk / Soul',  tag:'funk' },
-  { key:'rnb',       label:'R&B',          tag:'rnb' }
+  { key:'hiphop',    label:'Hip Hop',    terms:['hip hop','rap'] },
+  { key:'westcoast', label:'West Coast', terms:['g-funk','west coast rap','gangsta rap','west coast'] },
+  { key:'funksoul',  label:'Funk / Soul',terms:['funk','soul'] },
+  { key:'rnb',       label:'R&B',        terms:['rnb','rhythm and blues','classic r&b'] }
 ];
 var RADIO_API = 'https://de1.api.radio-browser.info';
 var radioState = { genre:'hiphop', stations:[], cache:{}, currentUuid:null };
 
-function radioFetchStations(tag) {
-  if (radioState.cache[tag]) return Promise.resolve(radioState.cache[tag]);
-  var url = RADIO_API + '/json/stations/bytagexact/' + encodeURIComponent(tag) +
-            '?order=clickcount&reverse=true&hidebroken=true&limit=25';
-  return fetch(url, { headers:{ 'Content-Type':'application/json' } })
-    .then(function(r){ return r.ok ? r.json() : []; })
-    .then(function(list){
-      // 再生可能なstreamがあるものだけ
-      var clean = (list||[]).filter(function(s){ return s.url_resolved || s.url; })
-        .map(function(s){
-          return {
-            uuid:s.stationuuid, name:s.name || 'Unknown',
-            url:s.url_resolved || s.url,
-            country:s.country || '', favicon:s.favicon || '',
-            bitrate:s.bitrate || 0, codec:s.codec || ''
-          };
-        });
-      // 重複名を除去
-      var seen = {}; var uniq = [];
-      clean.forEach(function(s){
-        var k = s.name.toLowerCase().trim();
-        if (!seen[k]) { seen[k] = 1; uniq.push(s); }
-      });
-      radioState.cache[tag] = uniq.slice(0, 20);
-      return radioState.cache[tag];
-    })
-    .catch(function(){ return []; });
+// iPhoneで再生しやすい局だけに絞る（HTTPS + MP3/AAC）
+function radioStreamOk(s) {
+  var url = s.url_resolved || s.url || '';
+  if (url.indexOf('https://') !== 0) return false; // GitHub PagesはHTTPS、混在コンテンツは不可
+  var codec = (s.codec || '').toUpperCase();
+  if (codec && codec !== 'MP3' && codec !== 'AAC' && codec !== 'AAC+') return false;
+  if (/\.m3u8($|\?)/i.test(url)) return false; // HLSは扱いが別なので除外
+  if (/\.pls($|\?)|\.m3u($|\?)/i.test(url)) return false; // プレイリストファイルは除外
+  return true;
+}
+function radioFetchStations(genreKey) {
+  if (radioState.cache[genreKey]) return Promise.resolve(radioState.cache[genreKey]);
+  var g = RADIO_GENRES.find(function(x){ return x.key === genreKey; });
+  if (!g) return Promise.resolve([]);
+  // 複数タームを順に検索して集約
+  var all = [];
+  function searchTerm(term) {
+    var url = RADIO_API + '/json/stations/search?tag=' + encodeURIComponent(term) +
+              '&order=clickcount&reverse=true&hidebroken=true&limit=40';
+    return fetch(url, { headers:{ 'Content-Type':'application/json' } })
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(list){ all = all.concat(list||[]); })
+      .catch(function(){});
+  }
+  return g.terms.reduce(function(p, term){
+    return p.then(function(){ return searchTerm(term); });
+  }, Promise.resolve()).then(function(){
+    var clean = all.filter(radioStreamOk).map(function(s){
+      return {
+        uuid:s.stationuuid, name:s.name || 'Unknown',
+        url:s.url_resolved || s.url,
+        country:s.country || '', favicon:s.favicon || '',
+        bitrate:s.bitrate || 0, codec:s.codec || '', votes:s.votes || 0
+      };
+    });
+    // 重複名を除去 + 人気順
+    var seen = {}; var uniq = [];
+    clean.sort(function(a,b){ return (b.votes||0) - (a.votes||0); });
+    clean.forEach(function(s){
+      var k = s.name.toLowerCase().trim();
+      if (!seen[k]) { seen[k] = 1; uniq.push(s); }
+    });
+    radioState.cache[genreKey] = uniq.slice(0, 20);
+    return radioState.cache[genreKey];
+  });
 }
 function renderRadioGenres() {
   ['radio-genres','radio-genres-page'].forEach(function(id){
@@ -1402,7 +1420,7 @@ function loadRadioGenre() {
     var box = document.getElementById(id);
     if (box) box.innerHTML = '<div class="radio-loading">📡 ' + g.label + ' の局を探しています...</div>';
   });
-  radioFetchStations(g.tag).then(function(stations){
+  radioFetchStations(radioState.genre).then(function(stations){
     radioState.stations = stations;
     renderRadioList();
   });
