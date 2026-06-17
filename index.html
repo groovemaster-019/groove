@@ -90,7 +90,7 @@ html, body {
 
 /* ── HERO ── */
 .hero {
-  padding:30px 20px 24px; position:relative; overflow:hidden;
+  padding:max(54px, calc(env(safe-area-inset-top) + 40px)) 20px 24px; position:relative; overflow:hidden;
 }
 .hero::before {
   content:''; position:absolute; inset:0; z-index:0;
@@ -121,6 +121,17 @@ html, body {
   filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));
 }
 .hero-tag { font-size:11px; letter-spacing:3px; color:var(--muted); margin-top:14px; text-transform:uppercase; font-weight:600; }
+/* ヒーローの特大ネオンロゴ（横長1行・斜め）*/
+.hero-neon {
+  font-size:46px !important;
+  line-height:1.1 !important;
+  white-space:nowrap;
+  text-align:center;
+  margin:24px 0 18px;
+  display:block;
+  transform:rotate(-5deg);
+  transform-origin:center;
+}
 .listen-live {
   margin-top:18px; display:inline-flex; align-items:center; gap:9px;
   background:var(--blue); color:#fff; border:none;
@@ -847,25 +858,11 @@ html, body {
 <body>
 
 <div class="app">
-  <header class="header">
-    <button class="header-ico">☰</button>
-    <div class="brand">
-      <div class="brand-logo">Groove Collective</div>
-      <div class="brand-rule"><span class="brand-sub">Radio</span></div>
-    </div>
-    <button class="header-ico" id="sound-ico">▮▮▮</button>
-  </header>
-
   <div class="content">
     <!-- DISCOVER -->
     <div class="page active" id="page-discover">
       <div class="hero">
-        <div class="hero-lines">
-          <span class="silver">SOUL.</span>
-          <span class="blue">BOOGIE.</span>
-          <span class="silver">G-FUNK.</span>
-          <span class="blue wide">019 HOOD MUSIC.</span>
-        </div>
+        <div class="hero-neon brand-logo">Groove Collective</div>
         <div class="hero-tag">Good Music. Real Vibes.</div>
         <button class="listen-live" id="hero-listen">▶ NEW RELEASE</button>
       </div>
