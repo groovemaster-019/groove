@@ -870,45 +870,20 @@ html, body {
         <button class="listen-live" id="hero-listen">▶ NEW RELEASE</button>
       </div>
 
-      <!-- TODAY'S PLAYLIST -->
+      <!-- 019 HOOD MUSIC -->
       <div class="sec-head">
-        <div class="eyebrow">Today's Playlist</div>
-        <div class="sec-link" id="edit-playlist-btn">Edit</div>
+        <div class="eyebrow">019 Hood Music</div>
+        <div class="sec-link" style="pointer-events:none; opacity:.6;">Morioka</div>
       </div>
-      <div class="pl-date" id="pl-date"></div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 4px;">Kg za Horchata · 盛岡のヒップホップ</div>
       <div id="playlist-list"></div>
 
-      <!-- RADIO -->
-      <div class="sec-head" style="margin-top:8px;">
+      <!-- LIVE RADIO -->
+      <div class="sec-head" style="margin-top:14px;">
         <div class="eyebrow">📡 Live Radio</div>
       </div>
       <div class="radio-genres" id="radio-genres"></div>
       <div id="radio-list"></div>
-
-
-      <!-- VIDEO -->
-      <div class="sec-head">
-        <div class="eyebrow">Featured Video</div>
-      </div>
-      <div class="video-wrap">
-        <video id="feature-video" class="feature-video" controls playsinline preload="metadata" poster="">
-          <source src="intro.mp4" type="video/mp4">
-          お使いのブラウザは動画に対応していません。
-        </video>
-      </div>
-
-      <!-- SOUNDCLOUD（フル再生）-->
-      <div class="sec-head" style="flex-direction:column; align-items:flex-start; gap:3px;">
-        <div class="eyebrow">Straight from the Cloud</div>
-        <div style="font-size:10px; color:var(--muted); letter-spacing:1px;">お気に入りのサウンドクラウドトラックス</div>
-      </div>
-      <div class="sc-wrap">
-        <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay"
-          src="https://w.soundcloud.com/player/?url=https%3A//soundcloud.com/dj-m-bangz/ice-cube-rollin-with-the-lench&color=%233B82F6&auto_play=false&hide_related=true&show_comments=false&show_user=false&show_reposts=false&show_teaser=false&visual=true">
-        </iframe>
-      </div>
-
-      <div class="notice">🎵 実曲の30秒プレビューが流れます（Deezer / Apple Music提供）。フル再生はSpotifyボタンから。</div>
 
       <div class="footer-tag">Real music lives here.</div>
     </div>
@@ -989,9 +964,6 @@ html, body {
     </button>
     <button class="nav-btn" data-page="favs">
       <span class="nav-icon">♥</span><span class="nav-txt">Favorites</span>
-    </button>
-    <button class="nav-btn" data-page="stations">
-      <span class="nav-icon">📖</span><span class="nav-txt">Notes</span>
     </button>
   </nav>
 </div>
@@ -1085,28 +1057,12 @@ html, body {
 
 /* ════════ DATA ════════ */
 var TRACKS = [
-  { name:"What's Going On",        artist:"Marvin Gaye",          genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
-  { name:"Respect",                artist:"Aretha Franklin",      genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
-  { name:"Let's Stay Together",    artist:"Al Green",             genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
-  { name:"I Want You Back",        artist:"The Jackson 5",        genre:"soul",   tag:"Soul",        icon:"🎵", color:"c-soul"   },
-  { name:"Super Freak",            artist:"Rick James",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
-  { name:"Give Up the Funk",       artist:"Parliament",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
-  { name:"Brick House",            artist:"Commodores",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
-  { name:"Flash Light",            artist:"Parliament",           genre:"funk",   tag:"Funk",        icon:"🎸", color:"c-funk"   },
   { name:"BLOWSURUSOUL (feat. CHUCKIE)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🔥", color:"c-hiphop" },
   { name:"CRUIZIN' (feat. CHUCKIE, TORQUE & DUB-K)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🚗", color:"c-hiphop" },
   { name:"BAKAYAROU2025 (feat. ABSU a.k.a TOMIHIRO & KATASUKASHIT)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🎤", color:"c-hiphop" },
   { name:"CALIFORNIA DREAMIN' (feat. DJ KNOWYYA)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🌴", color:"c-hiphop" },
   { name:"KAIKOU (feat. EVERGROW)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🎧", color:"c-hiphop" },
-  { name:"A SEED GROWS (feat. Mr.TIKINI & DJ KNOWYYA)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🌱", color:"c-hiphop" },
-  { name:"Regulate",               artist:"Warren G",             genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
-  { name:"It Was a Good Day",      artist:"Ice Cube",             genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
-  { name:"Gin and Juice",          artist:"Snoop Dogg",           genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
-  { name:"Let Me Ride",            artist:"Dr. Dre",              genre:"gfunk",  tag:"G-Funk",      icon:"🎧", color:"c-gfunk"  },
-  { name:"Got to Be Real",         artist:"Cheryl Lynn",          genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" },
-  { name:"Bounce, Rock, Skate, Roll", artist:"Vaughan Mason & Crew", genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" },
-  { name:"Forget Me Nots",         artist:"Patrice Rushen",       genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" },
-  { name:"Juicy Fruit",            artist:"Mtume",                genre:"boogie", tag:"Boogie Funk", icon:"🕺", color:"c-boogie" }
+  { name:"A SEED GROWS (feat. Mr.TIKINI & DJ KNOWYYA)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🌱", color:"c-hiphop" }
 ];
 
 var STATIONS = [
@@ -1200,18 +1156,13 @@ function fmtToday() {
 }
 function renderPlaylist() {
   var box = document.getElementById('playlist-list');
-  var dateEl = document.getElementById('pl-date');
-  if (dateEl) dateEl.textContent = fmtToday() + ' — ' + PLAYLIST.length + ' tracks';
   if (!box) return;
-  if (PLAYLIST.length === 0) {
-    box.innerHTML = '<div class="pl-empty">まだ曲がありません。<br>右上の「Edit」から今日の曲を追加しよう。</div>';
-    return;
-  }
-  box.innerHTML = PLAYLIST.map(function(t, i) {
-    var artHtml = t.artwork ? '<img src="' + t.artwork + '" alt="">' : '🎵';
-    return '<div class="pl-row" data-i="' + i + '">' +
+  // 019 Hood Music の曲（TRACKS）を表示
+  box.innerHTML = TRACKS.map(function(t, i) {
+    var artHtml = t.artwork ? '<img src="' + t.artwork + '" alt="">' : '🔥';
+    return '<div class="pl-row" data-i="' + i + '" id="pl-row-' + i + '">' +
       '<div class="pl-num">' + (i+1) + '</div>' +
-      '<div class="pl-art">' + artHtml + '</div>' +
+      '<div class="pl-art" id="pl-art-' + i + '">' + artHtml + '</div>' +
       '<div class="pl-meta">' +
         '<div class="pl-name">' + esc(t.name) + '</div>' +
         '<div class="pl-artist">' + esc(t.artist) + '</div>' +
@@ -1221,9 +1172,18 @@ function renderPlaylist() {
   box.querySelectorAll('.pl-row').forEach(function(row) {
     row.addEventListener('click', function() {
       var i = parseInt(this.dataset.i, 10);
-      syncPlaylistToTracks();
-      playTrack(i); // プレイリストはTRACKSの先頭なので同じindex
+      playTrack(i);
       openSheet();
+    });
+  });
+  // 各曲のアートワークを取得して反映
+  TRACKS.forEach(function(t, i) {
+    if (t.artwork) return;
+    fetchArtworkOnly(t.name + ' ' + t.artist).then(function(url) {
+      if (!url) return;
+      t.artwork = url;
+      var artBox = document.getElementById('pl-art-' + i);
+      if (artBox) artBox.innerHTML = '<img src="' + url + '" alt="">';
     });
   });
 }
@@ -2159,31 +2119,19 @@ document.getElementById('hero-listen').addEventListener('click', function() {
   openSheet();
 });
 
-// 記事モーダルを閉じる
-document.getElementById('col-sheet-close').addEventListener('click', closeColumn);
-document.getElementById('col-modal').addEventListener('click', function(e) {
+// 記事モーダルを閉じる（要素があれば）
+var colClose = document.getElementById('col-sheet-close');
+if (colClose) colClose.addEventListener('click', closeColumn);
+var colModal = document.getElementById('col-modal');
+if (colModal) colModal.addEventListener('click', function(e) {
   if (e.target.id === 'col-modal') closeColumn();
 });
 
-/* ════════ PLAYLIST EVENTS ════════ */
-document.getElementById('edit-playlist-btn').addEventListener('click', openPlaylistEditor);
-document.getElementById('pe-close').addEventListener('click', closePlaylistEditor);
-document.getElementById('pe-add-btn').addEventListener('click', addPlaylistTrack);
-document.getElementById('pe-input').addEventListener('keydown', function(e){
-  if (e.key === 'Enter') addPlaylistTrack();
-});
-document.getElementById('pe-modal').addEventListener('click', function(e){
-  if (e.target.id === 'pe-modal') closePlaylistEditor();
-});
-
 /* ════════ INIT ════════ */
-syncPlaylistToTracks();
 renderPlaylist();
 renderRadioGenres();
 loadRadioGenre();
-renderColumns();
 renderTrackList();
-renderNotes();
 renderFavList();
 renderSearchList();
 renderQueue();
