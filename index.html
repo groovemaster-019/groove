@@ -1343,10 +1343,30 @@ function fetchPlaylistMeta(term) {
 
 /* ════════ LIVE RADIO ════════ */
 var RADIO_GENRES = [
-  { key:'hiphop',    label:'Hip Hop',    terms:['hip hop','rap'] },
-  { key:'westcoast', label:'West Coast', terms:['g-funk','west coast rap','gangsta rap','west coast'] },
-  { key:'funksoul',  label:'Funk / Soul',terms:['funk','soul'] },
-  { key:'rnb',       label:'R&B',        terms:['rnb','rhythm and blues','classic r&b'] }
+  { key:'hiphop',    label:'Hip Hop',    terms:['hip hop','rap'],
+    fixed:[
+      { uuid:'fix-181power', name:'181.FM Power (Hot Hip Hop)', url:'https://listen.181fm.com/181-power_128k.mp3', country:'United States', bitrate:128, codec:'MP3' },
+      { uuid:'fix-181oldschool', name:'181.FM Old School HipHop/RnB', url:'https://listen.181fm.com/181-oldschool_128k.mp3', country:'United States', bitrate:128, codec:'MP3' },
+      { uuid:'fix-181beat', name:'181.FM The Beat (HipHop/R&B)', url:'https://listen.181fm.com/181-beat_128k.mp3', country:'United States', bitrate:128, codec:'MP3' }
+    ] },
+  { key:'westcoast', label:'West Coast', terms:['g-funk','west coast rap','gangsta rap','west coast','chillhop'],
+    names:['Radio ACID - Everything Chill'],
+    fixed:[
+      { uuid:'fix-181oldschool2', name:'181.FM Old School HipHop/RnB', url:'https://listen.181fm.com/181-oldschool_128k.mp3', country:'United States', bitrate:128, codec:'MP3' },
+      { uuid:'fix-acidjazz', name:'Acid Jazz Radio', url:'https://stream.laut.fm/acidjazz', country:'Germany', bitrate:128, codec:'MP3' }
+    ] },
+  { key:'funksoul',  label:'Funk / Soul',terms:['funk','soul'],
+    fixed:[
+      { uuid:'fix-funkyradio', name:'FUNKY RADIO (Classic Funk)', url:'https://funkyradio.streamingmedia.it/play.mp3', country:'Italy', bitrate:320, codec:'MP3' },
+      { uuid:'fix-groovefm', name:'Groove FM (Jazz/Funk)', url:'https://stream.laut.fm/groovefm', country:'Germany', bitrate:128, codec:'MP3' },
+      { uuid:'fix-acidjazz2', name:'Acid Jazz Radio', url:'https://stream.laut.fm/acidjazz', country:'Germany', bitrate:128, codec:'MP3' },
+      { uuid:'fix-181soul', name:'181.FM Soul', url:'https://listen.181fm.com/181-soul_128k.mp3', country:'United States', bitrate:128, codec:'MP3' }
+    ] },
+  { key:'rnb',       label:'R&B',        terms:['rnb','rhythm and blues','classic r&b'],
+    fixed:[
+      { uuid:'fix-181rnb', name:'181.FM True R&B', url:'https://listen.181fm.com/181-rnb_128k.mp3', country:'United States', bitrate:128, codec:'MP3' },
+      { uuid:'fix-181oldschool3', name:'181.FM Old School HipHop/RnB', url:'https://listen.181fm.com/181-oldschool_128k.mp3', country:'United States', bitrate:128, codec:'MP3' }
+    ] }
 ];
 var RADIO_API = 'https://de1.api.radio-browser.info';
 var radioState = { genre:'hiphop', stations:[], cache:{}, currentUuid:null };
@@ -1365,7 +1385,10 @@ function radioFetchStations(genreKey) {
   if (radioState.cache[genreKey]) return Promise.resolve(radioState.cache[genreKey]);
   var g = RADIO_GENRES.find(function(x){ return x.key === genreKey; });
   if (!g) return Promise.resolve([]);
-  // 複数タームを順に検索して集約
+  // 固定局（確実に聴ける）を先頭に
+  var fixed = (g.fixed || []).map(function(s){
+    return { uuid:s.uuid, name:s.name, url:s.url, country:s.country||'', favicon:s.favicon||'', bitrate:s.bitrate||0, codec:s.codec||'', votes:999999 };
+  });
   var all = [];
   function searchTerm(term) {
     var url = RADIO_API + '/json/stations/search?tag=' + encodeURIComponent(term) +
@@ -1375,9 +1398,26 @@ function radioFetchStations(genreKey) {
       .then(function(list){ all = all.concat(list||[]); })
       .catch(function(){});
   }
-  return g.terms.reduce(function(p, term){
-    return p.then(function(){ return searchTerm(term); });
+  // 局名で確実に探す（Radio ACID等）
+  var byName = [];
+  function searchByName(name) {
+    var url = RADIO_API + '/json/stations/byname/' + encodeURIComponent(name) +
+              '?order=clickcount&reverse=true&hidebroken=true&limit=5';
+    return fetch(url, { headers:{ 'Content-Type':'application/json' } })
+      .then(function(r){ return r.ok ? r.json() : []; })
+      .then(function(list){ byName = byName.concat(list||[]); })
+      .catch(function(){});
+  }
+  var nameSearches = (g.names || []).map(function(n){ return function(){ return searchByName(n); }; });
+  var termSearches = g.terms.map(function(t){ return function(){ return searchTerm(t); }; });
+  return nameSearches.concat(termSearches).reduce(function(p, fn){
+    return p.then(fn);
   }, Promise.resolve()).then(function(){
+    // 名前検索の結果（確実な局）を固定の次に優先表示
+    var named = byName.filter(radioStreamOk).map(function(s){
+      return { uuid:s.stationuuid, name:s.name||'Unknown', url:s.url_resolved||s.url,
+               country:s.country||'', favicon:s.favicon||'', bitrate:s.bitrate||0, codec:s.codec||'', votes:888888 };
+    });
     var clean = all.filter(radioStreamOk).map(function(s){
       return {
         uuid:s.stationuuid, name:s.name || 'Unknown',
@@ -1386,10 +1426,11 @@ function radioFetchStations(genreKey) {
         bitrate:s.bitrate || 0, codec:s.codec || '', votes:s.votes || 0
       };
     });
-    // 重複名を除去 + 人気順
-    var seen = {}; var uniq = [];
     clean.sort(function(a,b){ return (b.votes||0) - (a.votes||0); });
-    clean.forEach(function(s){
+    // 固定局 + 名前検索 + タグ検索、重複名を除去
+    var merged = fixed.concat(named).concat(clean);
+    var seen = {}; var uniq = [];
+    merged.forEach(function(s){
       var k = s.name.toLowerCase().trim();
       if (!seen[k]) { seen[k] = 1; uniq.push(s); }
     });
