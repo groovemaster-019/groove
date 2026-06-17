@@ -97,11 +97,11 @@ html, body {
   background-image:url('https://images.unsplash.com/photo-1625806638987-35c560d4ca6e?fm=jpg&q=70&w=1200&auto=format&fit=crop');
   background-size:cover; background-position:center;
 }
-/* 文字を読みやすくする暗いフィルター（左から濃く）*/
+/* 文字を読みやすくする暗いフィルター（上端と下端を背景になじませる）*/
 .hero::after {
   content:''; position:absolute; inset:0; z-index:1;
-  background:linear-gradient(90deg, rgba(5,6,8,.92) 0%, rgba(5,6,8,.78) 45%, rgba(5,6,8,.5) 100%),
-             linear-gradient(180deg, rgba(5,6,8,.4) 0%, transparent 30%, transparent 70%, rgba(5,6,8,.85) 100%);
+  background:linear-gradient(90deg, rgba(5,6,8,.92) 0%, rgba(5,6,8,.72) 45%, rgba(5,6,8,.45) 100%),
+             linear-gradient(180deg, #050608 0%, rgba(5,6,8,.55) 14%, transparent 38%, transparent 62%, rgba(5,6,8,.92) 100%);
 }
 .hero > * { position:relative; z-index:2; }
 .hero-lines { font-family:'Anton', sans-serif; font-size:54px; line-height:1.02; letter-spacing:1px; }
@@ -863,8 +863,6 @@ html, body {
     <div class="page active" id="page-discover">
       <div class="hero">
         <div class="hero-neon brand-logo">Groove Collective</div>
-        <div class="hero-tag">Good Music. Real Vibes.</div>
-        <button class="listen-live" id="hero-listen">▶ NEW RELEASE</button>
       </div>
 
       <!-- 019 HOOD MUSIC -->
@@ -2107,13 +2105,6 @@ document.getElementById('search-input').addEventListener('input', renderSearchLi
 
 document.querySelectorAll('.sec-link[data-viewall]').forEach(function(el) {
   el.addEventListener('click', function(){ switchPage(this.dataset.viewall); });
-});
-
-// HERO LISTEN LIVE：ランダム再生
-document.getElementById('hero-listen').addEventListener('click', function() {
-  var i = Math.floor(Math.random() * TRACKS.length);
-  playTrack(i);
-  openSheet();
 });
 
 // 記事モーダルを閉じる（要素があれば）
