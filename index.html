@@ -1083,13 +1083,6 @@ html, body {
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
     </button>
   </div>
-  <div class="vol-row">
-    <span style="color:var(--dim);font-size:15px">🔈</span>
-    <div class="vol-bar" id="vol-bar">
-      <div class="vol-track"><div class="vol-fill" id="vol-fill"></div></div>
-    </div>
-    <span style="color:var(--dim);font-size:15px">🔊</span>
-  </div>
   <div style="padding:0 24px 16px; flex-shrink:0;">
     <button id="b-spotify" style="width:100%; padding:14px; background:#1DB954; border:none; border-radius:8px; color:#fff; font-size:13px; font-weight:700; font-family:'Montserrat',sans-serif; letter-spacing:1px; cursor:pointer;">♫ SPOTIFYでフル再生</button>
   </div>
@@ -2092,7 +2085,7 @@ function playTrack(idx) {
     state.loading = false;
     if (t.preview) {
       audio.src = t.preview;
-      audio.volume = state.volume;
+      audio.volume = 1.0;
       audio.play().then(function() {
         state.playing = true;
         renderNowPlaying(); renderPlayState();
@@ -2213,17 +2206,14 @@ document.getElementById('b-fav').addEventListener('click', function() {
 });
 
 document.getElementById('b-spotify').addEventListener('click', function() {
-  if (state.currentIdx < 0) return;
-  var t = TRACKS[state.currentIdx];
-  // 直接URLがあればそれを開く（1発でその曲へ）
-  if (t.spotify) {
+  var t = (state.currentIdx >= 0) ? TRACKS[state.currentIdx] : null;
+  // 曲に個別URLがあればそれを優先（1発でその曲へ）
+  if (t && t.spotify) {
     window.open(t.spotify, '_blank');
     return;
   }
-  // なければ feat.以降を除いたクリーンな曲名で検索（精度UP）
-  var cleanName = t.name.replace(/\s*\(feat\.[^)]*\)/i, '').replace(/\s*feat\..*$/i, '').trim();
-  var q = encodeURIComponent(t.artist + ' ' + cleanName);
-  window.open('https://open.spotify.com/search/' + q, '_blank');
+  // なければ Kg za Horchata のアーティストページへ直行
+  window.open('https://open.spotify.com/artist/5PEuv4EXwaXy1tMB84lefP', '_blank');
 });
 
 function seekFromEvent(e) {
@@ -2237,29 +2227,8 @@ function seekFromEvent(e) {
 document.getElementById('prog-bar').addEventListener('click', seekFromEvent);
 document.getElementById('prog-bar').addEventListener('touchstart', seekFromEvent, { passive: true });
 
-function volFromEvent(e) {
-  var bar = document.getElementById('vol-bar');
-  var rect = bar.getBoundingClientRect();
-  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
-  var x = clientX - rect.left;
-  state.volume = Math.max(0, Math.min(1, x / rect.width));
-  document.getElementById('vol-fill').style.width = (state.volume * 100) + '%';
-  audio.volume = state.volume;
-}
-var volDragging = false;
-document.getElementById('vol-bar').addEventListener('click', volFromEvent);
-document.getElementById('vol-bar').addEventListener('touchstart', function(e){ volDragging = true; volFromEvent(e); }, { passive: true });
-document.getElementById('vol-bar').addEventListener('touchmove', function(e){ if (volDragging) volFromEvent(e); }, { passive: true });
-document.getElementById('vol-bar').addEventListener('touchend', function(){ volDragging = false; });
-document.getElementById('vol-bar').addEventListener('mousedown', function(e){ volDragging = true; volFromEvent(e); });
-document.addEventListener('mousemove', function(e){ if (volDragging) volFromEvent(e); });
-document.addEventListener('mouseup', function(){ volDragging = false; });
-// 初期同期
-(function(){
-  audio.volume = state.volume;
-  var vf = document.getElementById('vol-fill');
-  if (vf) vf.style.width = (state.volume * 100) + '%';
-})();
+// 音量バーは撤去（iPhoneは端末の物理ボタンで音量調整）
+audio.volume = 1.0;
 
 document.querySelectorAll('.nav-btn[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { switchPage(this.dataset.page); });
