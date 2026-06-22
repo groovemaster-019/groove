@@ -358,6 +358,24 @@ html, body {
 .col-sheet-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
 .col-sheet-title { font-family:'Anton',sans-serif; font-size:26px; line-height:1.05; margin-top:8px; }
 .col-sheet-body { font-size:13px; line-height:1.85; color:var(--ice); margin-top:14px; white-space:pre-line; }
+
+/* ── Deep Dive 記事ブロック ── */
+.dd-text { white-space:pre-line; margin-bottom:14px; font-size:13px; line-height:1.85; color:var(--ice); }
+.dd-head { font-family:'Anton',sans-serif; font-size:17px; letter-spacing:1px; color:var(--blue); margin:20px 0 10px; }
+.dd-image { margin:16px 0; }
+.dd-image img { width:100%; border-radius:12px; display:block; }
+.dd-caption { font-size:10px; color:var(--muted); margin-top:6px; text-align:center; letter-spacing:.5px; }
+.dd-video { margin:16px 0; }
+.dd-video iframe, .dd-video video { width:100%; aspect-ratio:16/9; border-radius:12px; display:block; background:#000; border:none; }
+.dd-video video { aspect-ratio:auto; max-height:70vh; }
+.dd-lyric {
+  margin:14px 0; padding:14px 16px; border-radius:12px;
+  background:linear-gradient(150deg, #141A28, #0A0E16);
+  border:1px solid var(--line); border-left:3px solid var(--blue);
+}
+.dd-lyric-orig { font-size:14px; font-weight:600; color:var(--ice); line-height:1.5; font-style:italic; }
+.dd-lyric-tran { font-size:13px; color:#9fbfff; line-height:1.7; margin-top:8px; white-space:pre-line; }
+.dd-lyric-note { font-size:11px; color:var(--muted); line-height:1.6; margin-top:10px; padding-top:10px; border-top:1px dashed var(--line); }
 .col-sheet-close {
   margin-top:18px; width:100%; padding:13px; background:var(--card);
   border:1px solid var(--line); border-radius:10px; color:var(--muted);
@@ -881,6 +899,14 @@ html, body {
       <div class="radio-genres" id="radio-genres"></div>
       <div id="radio-list"></div>
 
+      <!-- DEEP DIVE（解説・考察）-->
+      <div class="sec-head" style="margin-top:14px;">
+        <div class="eyebrow">🎧 Deep Dive</div>
+        <div class="sec-link" style="pointer-events:none; opacity:.6;">Liner Notes</div>
+      </div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 4px;">名曲を読み解く・解説コラム</div>
+      <div id="deepdive-list"></div>
+
       <div class="footer-tag">Real music lives here.</div>
     </div>
 
@@ -1059,6 +1085,13 @@ var TRACKS = [
   { name:"CALIFORNIA DREAMIN' (feat. DJ KNOWYYA)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🌴", color:"c-hiphop" },
   { name:"KAIKOU (feat. EVERGROW)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🎧", color:"c-hiphop" },
   { name:"A SEED GROWS (feat. Mr.TIKINI & DJ KNOWYYA)", artist:"Kg za Horchata", genre:"hiphop", tag:"019 Hood Music", icon:"🌱", color:"c-hiphop" }
+];
+
+var DEEPDIVE = [
+  { tag:'West Coast Classic', title:"SOMETHIN' TO RIDE TO", artist:'The Conscious Daughters',
+    teaser:'ベイエリアが生んだ最強のライド・ミュージック。Parisが手がけた1993年の名曲を読み解く。',
+    genius:'https://genius.com/The-conscious-daughters-somethin-to-ride-to-fonky-expedition-lyrics',
+    body:'Somethin\' To Ride To (Fonky Expedition)\nThe Conscious Daughters / 1993 / Ear To The Street (Scarface Records)\nProduced by Paris\n\nベイエリアが生んだ、最もタフな"ライド・ミュージック"の一つ。\n\nThe Conscious Daughters — CMG（Carla Green）とSpecial One（Karryl Smith）の女性デュオ。彼女たちをプロデュースし、世に送り出したのはParis。あの政治的ラッパーにしてプロデューサーのParisが、自身のScarface Recordsから1993年にデビュー作『Ear To The Street』をリリースした。その看板曲がこれだ。\n\n■ なぜ"Ride To"なのか\nタイトルの通り、この曲は「車を転がしながら聴く曲」として作られている。ベイエリア〜西海岸の車文化（ローライダー、ドンク、ただのドライブ）と、低く沈むベースライン。スピーカーから鳴らしたときに一番映えるように設計された、トランクを揺らすための一曲。Parisのプロダクションは派手さよりも"重さ"で勝負していて、それがこの曲を時代を超えて聴けるものにしている。\n\n■ 女性ラッパーとしての立ち位置\n90年代前半のウェッサイは、男性のギャングスタ・ラップが支配的だった。その中でTCDは、媚びるでもなく、男のマネをするでもなく、ただ純粋にスキルとタフネスで殴り込んだ。声質もフロウも硬派。「女だから」という but を一切感じさせないラインの組み立ては、今聴いても新鮮だ。\n\n■ サンプリングと後世への影響\nビートにはS.O.S. Bandの"No One\'s Gonna Love You"（Jimmy Jam & Terry Lewisプロデュースの名バラード）のエッセンスが流れ込んでいる。70〜80年代ソウル/ファンクを西海岸のローライダー・ファンクに変換する——まさにG-Funkと同じ精神だ。\n\nそして重要なのが後年への影響。2016年、YGがNipsey Hussleを迎えた"FDT (Fuck Donald Trump)"で、この"Fonky Expedition"のビートが下敷きに使われた。つまりTCDが93年に鳴らしたグルーヴは、20年以上を経てトランプ時代の抵抗のアンセムへと受け継がれた。ベイエリアのDNAが、世代を超えて脈打っている証拠だ。\n\n■ 一行だけ\n彼女たちが繰り返す "something to ride to" という一節。これは単なる曲名じゃなく、宣言だ。「あんたらに必要なのはコレだろ?」と。車で流すための、人生を転がしていくための、骨太なグルーヴ。\n\n盛岡から西海岸まで、車を持つ者なら誰でも分かる。良いビートと、信じられるリリック。Ride Musicに国境はない。\n\n— 原曲・歌詞はGeniusやYouTubeの公式アップロードで。クラシックは敬意を持って、正規ルートで聴こう。' }
 ];
 
 var STATIONS = [
@@ -1711,14 +1744,104 @@ function renderColumns() {
   });
 }
 function openColumn(i) {
-  var c = COLUMNS[i];
+  var c = DEEPDIVE[i];
   document.getElementById('col-sheet-tag').textContent = c.tag;
-  document.getElementById('col-sheet-title').textContent = c.title;
-  document.getElementById('col-sheet-body').textContent = c.body;
+  document.getElementById('col-sheet-title').textContent = (c.title || '') + (c.artist ? '  —  ' + c.artist : '');
+  var bodyEl = document.getElementById('col-sheet-body');
+  bodyEl.innerHTML = '';
+  // blocks配列があればそれを描画、なければbodyテキスト
+  if (c.blocks && c.blocks.length) {
+    c.blocks.forEach(function(b) {
+      bodyEl.appendChild(buildBlock(b));
+    });
+  } else if (c.body) {
+    var p = document.createElement('div');
+    p.style.cssText = 'white-space:pre-line;';
+    p.textContent = c.body;
+    bodyEl.appendChild(p);
+  }
+  // Geniusリンク
+  if (c.genius) {
+    var link = document.createElement('a');
+    link.href = c.genius; link.target = '_blank'; link.rel = 'noopener';
+    link.textContent = '🔗 原曲の歌詞を見る（Genius）';
+    link.style.cssText = 'display:inline-block;margin-top:18px;color:var(--blue);font-size:13px;font-weight:700;text-decoration:none;';
+    bodyEl.appendChild(link);
+  }
   document.getElementById('col-modal').classList.add('open');
+  document.querySelector('.col-sheet').scrollTop = 0;
+}
+// 記事ブロックを組み立て
+function buildBlock(b) {
+  var el = document.createElement('div');
+  if (b.type === 'text') {
+    el.className = 'dd-text';
+    el.textContent = b.text;
+  } else if (b.type === 'head') {
+    el.className = 'dd-head';
+    el.textContent = b.text;
+  } else if (b.type === 'image') {
+    el.className = 'dd-image';
+    var img = document.createElement('img');
+    img.src = b.src; img.alt = b.alt || ''; img.loading = 'lazy';
+    el.appendChild(img);
+    if (b.caption) {
+      var cap = document.createElement('div');
+      cap.className = 'dd-caption'; cap.textContent = b.caption;
+      el.appendChild(cap);
+    }
+  } else if (b.type === 'video') {
+    el.className = 'dd-video';
+    if (b.youtube) {
+      var ifr = document.createElement('iframe');
+      ifr.src = 'https://www.youtube.com/embed/' + b.youtube;
+      ifr.allow = 'accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+      ifr.allowFullscreen = true;
+      ifr.frameBorder = '0';
+      el.appendChild(ifr);
+    } else if (b.mp4) {
+      var vid = document.createElement('video');
+      vid.src = b.mp4; vid.controls = true; vid.playsInline = true; vid.preload = 'metadata';
+      el.appendChild(vid);
+    }
+    if (b.caption) {
+      var vcap = document.createElement('div');
+      vcap.className = 'dd-caption'; vcap.textContent = b.caption;
+      el.appendChild(vcap);
+    }
+  } else if (b.type === 'lyric') {
+    el.className = 'dd-lyric';
+    var orig = document.createElement('div');
+    orig.className = 'dd-lyric-orig'; orig.textContent = b.orig;
+    var tran = document.createElement('div');
+    tran.className = 'dd-lyric-tran'; tran.textContent = b.tran;
+    el.appendChild(orig); el.appendChild(tran);
+    if (b.note) {
+      var note = document.createElement('div');
+      note.className = 'dd-lyric-note'; note.textContent = b.note;
+      el.appendChild(note);
+    }
+  }
+  return el;
 }
 function closeColumn() {
   document.getElementById('col-modal').classList.remove('open');
+}
+function renderDeepDive() {
+  var box = document.getElementById('deepdive-list');
+  if (!box) return;
+  box.innerHTML = DEEPDIVE.map(function(c, i) {
+    return '<div class="note-row" data-i="' + i + '">' +
+      '<div class="note-row-tag">' + c.tag + '</div>' +
+      '<div class="note-row-title">' + c.title + '</div>' +
+      '<div class="note-row-teaser">' + c.artist + ' — ' + c.teaser + '</div>' +
+    '</div>';
+  }).join('');
+  box.querySelectorAll('.note-row').forEach(function(row) {
+    row.addEventListener('click', function() {
+      openColumn(parseInt(this.dataset.i, 10));
+    });
+  });
 }
 function renderNotes() {
   var box = document.getElementById('notes-list');
@@ -2120,6 +2243,7 @@ if (colModal) colModal.addEventListener('click', function(e) {
 renderPlaylist();
 renderRadioGenres();
 loadRadioGenre();
+renderDeepDive();
 renderTrackList();
 renderFavList();
 renderSearchList();
