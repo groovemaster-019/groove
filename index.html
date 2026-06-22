@@ -568,6 +568,21 @@ html, body {
   font-size:16px; cursor:pointer;
 }
 
+/* ── ALBUM COVER (大ジャケット) ── */
+.cover-wrap {
+  width:min(78vw, 320px); aspect-ratio:1/1; margin:0 auto;
+  border-radius:18px; overflow:hidden; position:relative; flex-shrink:0;
+  background:linear-gradient(145deg, #1a2030, #0a0d14);
+  box-shadow:0 24px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06) inset;
+}
+.cover-img { width:100%; height:100%; object-fit:cover; display:none; }
+.cover-wrap.has-img .cover-img { display:block; }
+.cover-fallback {
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Anton',sans-serif; font-size:64px; color:rgba(255,255,255,.14); letter-spacing:2px;
+}
+.cover-wrap.has-img .cover-fallback { display:none; }
+
 /* ── HOLOGRAPHIC CD ── */
 .vinyl-wrap { width:240px; height:240px; margin:0 auto 0; position:relative; flex-shrink:0; }
 .vinyl {
@@ -960,6 +975,15 @@ html, body {
       </div>
       <div id="search-list"></div>
     </div>
+
+    <!-- DEEP DIVE PAGE -->
+    <div class="page" id="page-deepdive">
+      <div class="section-title-row">
+        <div class="section-title">DEEP DIVE</div>
+      </div>
+      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 10px;">名曲を読み解く・解説コラム</div>
+      <div id="deepdive-list-page"></div>
+    </div>
   </div>
 
   <!-- MINI PLAYER -->
@@ -976,16 +1000,16 @@ html, body {
   <!-- NAV -->
   <nav class="nav">
     <button class="nav-btn active" data-page="discover">
-      <span class="nav-icon">⌂</span><span class="nav-txt">Home</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg></span><span class="nav-txt">Home</span>
     </button>
     <button class="nav-btn" data-page="radio">
-      <span class="nav-icon">📡</span><span class="nav-txt">Radio</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="14" r="2.5"/><path d="M4.9 9.1a10 10 0 0 1 14.2 0"/><path d="M7.8 12a6 6 0 0 1 8.4 0"/><path d="M12 16.5V21"/></svg></span><span class="nav-txt">Radio</span>
     </button>
     <button class="nav-btn" data-page="search">
-      <span class="nav-icon">🔍</span><span class="nav-txt">Search</span>
+      <span class="nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.5-4.5"/></svg></span><span class="nav-txt">Search</span>
     </button>
-    <button class="nav-btn" data-page="favs">
-      <span class="nav-icon">♥</span><span class="nav-txt">Favorites</span>
+    <button class="nav-btn" data-page="deepdive">
+      <span class="nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H11v15.5H5.5A2.5 2.5 0 0 0 3 21V5.5z"/><path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H13v15.5h5.5A2.5 2.5 0 0 1 21 21V5.5z"/></svg></span><span class="nav-txt">Deep Dive</span>
     </button>
   </nav>
 </div>
@@ -1025,18 +1049,9 @@ html, body {
     <button class="sheet-close" id="sheet-close">✕</button>
   </div>
   <div class="player-body">
-    <div class="vinyl-wrap" id="vinyl-wrap">
-      <div class="vinyl" id="vinyl"><img class="vinyl-img" id="vinyl-img" alt=""><div class="vinyl-hole" id="vinyl-hole"></div></div>
-      <div class="vinyl-label" id="vinyl-label">GC</div>
-      <div class="cd-cover" id="cd-cover"></div>
-    </div>
-    <!-- 液晶ディスプレイパネル -->
-    <div class="lcd-panel">
-      <div class="lcd-screen">
-        <div class="lcd-row1"><span class="lcd-disc">▶ DISC</span><span class="lcd-mode" id="lcd-mode">ESP CD</span></div>
-        <div class="lcd-row2"><span id="lcd-track">T-01</span><span id="lcd-time">00:00</span></div>
-      </div>
-      <div class="lcd-dial"><div class="lcd-dial-mark"></div></div>
+    <div class="cover-wrap" id="cover-wrap">
+      <img class="cover-img" id="vinyl-img" alt="">
+      <div class="cover-fallback" id="vinyl-label">GC</div>
     </div>
   </div>
   <div class="sheet-info" id="sheet-info-wrap">
@@ -1052,11 +1067,21 @@ html, body {
     <div class="prog-times"><span id="time-cur">0:00</span><span id="time-tot">0:00</span></div>
   </div>
   <div class="ctrls">
-    <button class="c-btn" id="b-shuffle">⇄</button>
-    <button class="c-btn" id="b-prev">⏮</button>
-    <button class="c-main" id="b-play">▶</button>
-    <button class="c-btn" id="b-next">⏭</button>
-    <button class="c-btn" id="b-fav">♡</button>
+    <button class="c-btn" id="b-shuffle" aria-label="shuffle">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20L21 3"/><path d="M21 16v5h-5"/><path d="M15 15l6 6"/><path d="M4 4l5 5"/></svg>
+    </button>
+    <button class="c-btn" id="b-prev" aria-label="previous">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M6 5h2v14H6V5zm3.5 7l8.5 6V6l-8.5 6z"/></svg>
+    </button>
+    <button class="c-main" id="b-play" aria-label="play">
+      <svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button class="c-btn" id="b-next" aria-label="next">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M16 5h2v14h-2V5zM6 6l8.5 6L6 18V6z"/></svg>
+    </button>
+    <button class="c-btn" id="b-fav" aria-label="favorite">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
+    </button>
   </div>
   <div class="vol-row">
     <span style="color:var(--dim);font-size:15px">🔈</span>
@@ -1516,16 +1541,15 @@ function updateRadioNowPlaying(s) {
   var lt = document.getElementById('lcd-track'); if (lt) lt.textContent = 'TUNER';
   var lm = document.getElementById('lcd-mode'); if (lm) lm.textContent = 'RADIO';
   // ジャケット：局アイコン or デフォルト
-  var vinyl = document.getElementById('vinyl');
+  var coverWrap = document.getElementById('cover-wrap');
   var vimg = document.getElementById('vinyl-img');
   var label = document.getElementById('vinyl-label');
-  if (s.favicon && vimg) {
+  if (s.favicon && vimg && coverWrap) {
     vimg.src = s.favicon;
-    vinyl.classList.add('has-img');
-    if (label) label.classList.add('hide');
-  } else if (vinyl) {
-    vinyl.classList.remove('has-img');
-    if (label) { label.classList.remove('hide'); label.textContent = '📻'; }
+    coverWrap.classList.add('has-img');
+  } else if (coverWrap) {
+    coverWrap.classList.remove('has-img');
+    if (label) label.textContent = '📻';
   }
   var ptag = document.getElementById('preview-tag');
   if (ptag) ptag.textContent = 'ライブ配信中 · Radio Browser';
@@ -1837,18 +1861,21 @@ function closeColumn() {
   document.getElementById('col-modal').classList.remove('open');
 }
 function renderDeepDive() {
-  var box = document.getElementById('deepdive-list');
-  if (!box) return;
-  box.innerHTML = DEEPDIVE.map(function(c, i) {
+  var html = DEEPDIVE.map(function(c, i) {
     return '<div class="note-row" data-i="' + i + '">' +
       '<div class="note-row-tag">' + c.tag + '</div>' +
       '<div class="note-row-title">' + c.title + '</div>' +
       '<div class="note-row-teaser">' + c.artist + ' — ' + c.teaser + '</div>' +
     '</div>';
   }).join('');
-  box.querySelectorAll('.note-row').forEach(function(row) {
-    row.addEventListener('click', function() {
-      openColumn(parseInt(this.dataset.i, 10));
+  ['deepdive-list','deepdive-list-page'].forEach(function(id){
+    var box = document.getElementById(id);
+    if (!box) return;
+    box.innerHTML = html;
+    box.querySelectorAll('.note-row').forEach(function(row) {
+      row.addEventListener('click', function() {
+        openColumn(parseInt(this.dataset.i, 10));
+      });
     });
   });
 }
@@ -2011,17 +2038,14 @@ function renderNowPlaying() {
   document.getElementById('sheet-station').textContent = t.tag.toUpperCase() + ' CHANNEL';
   var lt = document.getElementById('lcd-track');
   if (lt) lt.textContent = 'T-' + String(state.currentIdx + 1).padStart(2, '0');
-  var vinyl = document.getElementById('vinyl');
+  var coverWrap = document.getElementById('cover-wrap');
   var vimg = document.getElementById('vinyl-img');
-  var vhole = document.getElementById('vinyl-hole');
   var label = document.getElementById('vinyl-label');
   if (t.artwork) {
     vimg.src = t.artwork;
-    vinyl.classList.add('has-img');
-    label.classList.add('hide');
+    coverWrap.classList.add('has-img');
   } else {
-    vinyl.classList.remove('has-img');
-    label.classList.remove('hide');
+    coverWrap.classList.remove('has-img');
     label.textContent = t.tag.toUpperCase();
   }
   document.getElementById('preview-tag').textContent = t.preview ? '30秒プレビュー · ' + (t.source || 'Apple Music') + '提供' : '';
@@ -2031,29 +2055,22 @@ function renderNowPlaying() {
 function renderFavBtn() {
   var btn = document.getElementById('b-fav');
   var isFav = state.currentIdx >= 0 && state.favs.has(state.currentIdx);
-  btn.textContent = isFav ? '♥' : '♡';
+  var fill = isFav ? 'currentColor' : 'none';
+  btn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="' + fill + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
   btn.classList.toggle('on', isFav);
 }
 function updateSpin(playing) {
-  var vinyl = document.getElementById('vinyl');
-  if (!vinyl) return;
-  if (playing) {
-    if (vinyl.classList.contains('playing-disc')) return;
-    // ディスク投入（ドロップイン）→ 静止して発光
-    vinyl.classList.remove('spin', 'spin-up');
-    vinyl.classList.add('inserting');
-    setTimeout(function() {
-      vinyl.classList.remove('inserting');
-      if (state.playing) vinyl.classList.add('playing-disc');
-    }, 700);
-  } else {
-    vinyl.classList.remove('spin', 'spin-up', 'inserting', 'playing-disc');
-  }
+  // ジャケット静止表示のため何もしない
+  return;
 }
+var SVG_PLAY = '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+var SVG_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>';
+var SVG_PLAY_MINI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+var SVG_PAUSE_MINI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>';
 function renderPlayState() {
-  var icon = state.playing ? '⏸' : '▶';
-  document.getElementById('b-play').textContent = icon;
-  document.getElementById('mini-play').textContent = icon;
+  document.getElementById('b-play').innerHTML = state.playing ? SVG_PAUSE : SVG_PLAY;
+  var mini = document.getElementById('mini-play');
+  if (mini) mini.innerHTML = state.playing ? SVG_PAUSE_MINI : SVG_PLAY_MINI;
   updateSpin(state.playing);
   ['sheet-info-wrap','track-list','fav-list','search-list','onair-card'].forEach(function(id) {
     var el = document.getElementById(id);
@@ -2142,6 +2159,7 @@ function switchPage(page) {
   document.querySelector('.content').scrollTop = 0;
   if (pg) pg.scrollTop = 0;
   if (page === 'favs') renderFavList();
+  if (page === 'deepdive') renderDeepDive();
 }
 function goToTracks(g) {
   state.filter = g || 'all';
@@ -2197,7 +2215,14 @@ document.getElementById('b-fav').addEventListener('click', function() {
 document.getElementById('b-spotify').addEventListener('click', function() {
   if (state.currentIdx < 0) return;
   var t = TRACKS[state.currentIdx];
-  var q = encodeURIComponent(t.artist + ' ' + t.name);
+  // 直接URLがあればそれを開く（1発でその曲へ）
+  if (t.spotify) {
+    window.open(t.spotify, '_blank');
+    return;
+  }
+  // なければ feat.以降を除いたクリーンな曲名で検索（精度UP）
+  var cleanName = t.name.replace(/\s*\(feat\.[^)]*\)/i, '').replace(/\s*feat\..*$/i, '').trim();
+  var q = encodeURIComponent(t.artist + ' ' + cleanName);
   window.open('https://open.spotify.com/search/' + q, '_blank');
 });
 
@@ -2215,13 +2240,26 @@ document.getElementById('prog-bar').addEventListener('touchstart', seekFromEvent
 function volFromEvent(e) {
   var bar = document.getElementById('vol-bar');
   var rect = bar.getBoundingClientRect();
-  var x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+  var clientX = e.touches ? e.touches[0].clientX : e.clientX;
+  var x = clientX - rect.left;
   state.volume = Math.max(0, Math.min(1, x / rect.width));
   document.getElementById('vol-fill').style.width = (state.volume * 100) + '%';
   audio.volume = state.volume;
 }
+var volDragging = false;
 document.getElementById('vol-bar').addEventListener('click', volFromEvent);
-document.getElementById('vol-bar').addEventListener('touchstart', volFromEvent, { passive: true });
+document.getElementById('vol-bar').addEventListener('touchstart', function(e){ volDragging = true; volFromEvent(e); }, { passive: true });
+document.getElementById('vol-bar').addEventListener('touchmove', function(e){ if (volDragging) volFromEvent(e); }, { passive: true });
+document.getElementById('vol-bar').addEventListener('touchend', function(){ volDragging = false; });
+document.getElementById('vol-bar').addEventListener('mousedown', function(e){ volDragging = true; volFromEvent(e); });
+document.addEventListener('mousemove', function(e){ if (volDragging) volFromEvent(e); });
+document.addEventListener('mouseup', function(){ volDragging = false; });
+// 初期同期
+(function(){
+  audio.volume = state.volume;
+  var vf = document.getElementById('vol-fill');
+  if (vf) vf.style.width = (state.volume * 100) + '%';
+})();
 
 document.querySelectorAll('.nav-btn[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { switchPage(this.dataset.page); });
