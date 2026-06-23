@@ -1548,6 +1548,49 @@ function updateRadioNowPlaying(s) {
   }
   var ptag = document.getElementById('preview-tag');
   if (ptag) ptag.textContent = 'ライブ配信中 · Radio Browser';
+  // laut.fm系なら「今流れてる曲」を取得して表示
+  startNowPlaying(s);
+}
+
+/* ── laut.fm 現在再生中（Now Playing）── */
+var nowPlayingTimer = null;
+function lautfmStationName(url) {
+  // https://stream.laut.fm/局名 → 局名 を抜き出す
+  var m = (url || '').match(/stream\.laut\.fm\/([a-z0-9_-]+)/i);
+  return m ? m[1] : null;
+}
+function stopNowPlaying() {
+  if (nowPlayingTimer) { clearInterval(nowPlayingTimer); nowPlayingTimer = null; }
+}
+function startNowPlaying(s) {
+  stopNowPlaying();
+  var station = lautfmStationName(s.url);
+  if (!station) return; // laut.fm以外は対応なし（局名のまま表示）
+  var fetchNow = function() {
+    // 再生中の局が変わっていたら止める
+    if (!state.isRadio || radioState.currentUuid !== s.uuid) { stopNowPlaying(); return; }
+    fetch('https://api.laut.fm/station/' + encodeURIComponent(station) + '/current_song')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(song){
+        if (!song) return;
+        if (!state.isRadio || radioState.currentUuid !== s.uuid) return;
+        var title = song.title || '';
+        var artist = (song.artist && song.artist.name) ? song.artist.name : '';
+        if (!title && !artist) return;
+        var nowText = artist ? (artist + ' — ' + title) : title;
+        // プレイヤー画面：曲名を主役に、局名をサブに
+        var setTxt = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
+        setTxt('sheet-title', nowText);
+        setTxt('sheet-artist', s.name);
+        setTxt('mini-title', nowText);
+        setTxt('mini-artist', s.name);
+        var pt = document.getElementById('preview-tag');
+        if (pt) pt.textContent = '♪ NOW PLAYING · ' + s.name;
+      })
+      .catch(function(){});
+  };
+  fetchNow();
+  nowPlayingTimer = setInterval(fetchNow, 30000); // 30秒ごとに更新
 }
 
 /* ════════ STATE ════════ */
@@ -2071,6 +2114,7 @@ function renderPlayState() {
 function playTrack(idx) {
   state.isRadio = false;
   radioState.currentUuid = null;
+  stopNowPlaying();
   state.currentIdx = idx;
   state.loading = true;
   renderNowPlaying(); renderPlayState();
