@@ -40,35 +40,36 @@ html, body {
 .brand-logo {
   font-family:'Mr Dafoe', cursive; font-weight:400;
   font-size:34px; line-height:1; letter-spacing:.5px;
-  color:#fff;
-  animation:flicker 4s linear infinite;
+  color:#fff5fb;
+  animation:flicker 5s ease-in-out infinite;
 }
 @keyframes flicker {
-  0%, 100% {
+  /* 通常点灯：白い芯 → ピンク → マゼンタ → 紫 の多層グロー */
+  0%, 17%, 23%, 44%, 62%, 80%, 100% {
     opacity:1;
-    text-shadow:0 0 4px #fff, 0 0 10px #FF8FD4, 0 0 20px #EC4899, 0 0 38px #EC4899, 0 0 60px #BE185D;
+    text-shadow:
+      0 0 2px #fff,
+      0 0 6px #fff,
+      0 0 12px #FF9ED8,
+      0 0 22px #EC4899,
+      0 0 40px #D6409A,
+      0 0 66px #A855F7,
+      0 0 96px #7C3AED;
   }
-  /* 通常点灯（長め）*/
-  0%, 18%, 25%, 42%, 60%, 78%, 100% {
-    opacity:1;
-    text-shadow:0 0 4px #fff, 0 0 10px #FF8FD4, 0 0 20px #EC4899, 0 0 38px #EC4899, 0 0 60px #BE185D;
+  /* バチッと一瞬だけ沈む（上品に控えめ）*/
+  19%, 20%, 63%, 64% {
+    opacity:.55;
+    text-shadow:
+      0 0 2px #fff,
+      0 0 8px #FF9ED8,
+      0 0 18px #EC4899;
   }
-  /* バチバチッと切れる瞬間 */
-  19%, 21%, 61%, 63%, 65% {
-    opacity:.25;
-    text-shadow:none;
-  }
-  20%, 62%, 64% {
-    opacity:1;
-    text-shadow:0 0 4px #fff, 0 0 12px #FF8FD4, 0 0 24px #EC4899;
-  }
-  43%, 45% {
-    opacity:.35;
-    text-shadow:0 0 2px #fff;
-  }
-  44% {
-    opacity:1;
-    text-shadow:0 0 4px #fff, 0 0 10px #EC4899, 0 0 20px #EC4899;
+  43% {
+    opacity:.7;
+    text-shadow:
+      0 0 2px #fff,
+      0 0 10px #EC4899,
+      0 0 26px #A855F7;
   }
 }
 .brand-rule {
@@ -888,6 +889,7 @@ html, body {
   font-family:'Playfair Display',serif; font-style:italic; font-size:13px;
 }
 </style>
+<script src="https://cdn.jsdelivr.net/gh/lautde/lautfm_js_tools/laut.fm.js"></script>
 </head>
 <body>
 
@@ -1566,26 +1568,38 @@ function startNowPlaying(s) {
   stopNowPlaying();
   var station = lautfmStationName(s.url);
   if (!station) return; // laut.fm以外は対応なし（局名のまま表示）
+  var applySong = function(title, artist) {
+    if (!state.isRadio || radioState.currentUuid !== s.uuid) return;
+    if (!title && !artist) return;
+    var nowText = artist ? (artist + ' — ' + title) : title;
+    var setTxt = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
+    setTxt('sheet-title', nowText);
+    setTxt('sheet-artist', s.name);
+    setTxt('mini-title', nowText);
+    setTxt('mini-artist', s.name);
+    var pt = document.getElementById('preview-tag');
+    if (pt) pt.textContent = '♪ NOW PLAYING · ' + s.name;
+  };
+  // 1) 公式ライブラリがあればそれを使う（CORS対応）
+  if (window.laut && window.laut.fm && typeof window.laut.fm.station === 'function') {
+    try {
+      window.laut.fm.station(station).current_song(function(song){
+        if (!song) return;
+        var artist = (song.artist && song.artist.name) ? song.artist.name : '';
+        applySong(song.title || '', artist);
+      }, true); // true = 自動更新
+      return;
+    } catch (e) {}
+  }
+  // 2) フォールバック：素のfetch（CORSが通れば動く）
   var fetchNow = function() {
-    // 再生中の局が変わっていたら止める
     if (!state.isRadio || radioState.currentUuid !== s.uuid) { stopNowPlaying(); return; }
     fetch('https://api.laut.fm/station/' + encodeURIComponent(station) + '/current_song')
       .then(function(r){ return r.ok ? r.json() : null; })
       .then(function(song){
         if (!song) return;
-        if (!state.isRadio || radioState.currentUuid !== s.uuid) return;
-        var title = song.title || '';
         var artist = (song.artist && song.artist.name) ? song.artist.name : '';
-        if (!title && !artist) return;
-        var nowText = artist ? (artist + ' — ' + title) : title;
-        // プレイヤー画面：曲名を主役に、局名をサブに
-        var setTxt = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
-        setTxt('sheet-title', nowText);
-        setTxt('sheet-artist', s.name);
-        setTxt('mini-title', nowText);
-        setTxt('mini-artist', s.name);
-        var pt = document.getElementById('preview-tag');
-        if (pt) pt.textContent = '♪ NOW PLAYING · ' + s.name;
+        applySong(song.title || '', artist);
       })
       .catch(function(){});
   };
@@ -2161,6 +2175,8 @@ function getPool() {
     .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
 }
 function nextTrack() {
+  // ラジオ再生中は「次の局」へ（019に切り替わらない）
+  if (state.isRadio) { radioSkip(1); return; }
   var pool = getPool();
   if (!pool.length) return;
   var next;
@@ -2172,11 +2188,25 @@ function nextTrack() {
   playTrack(next);
 }
 function prevTrack() {
+  // ラジオ再生中は「前の局」へ
+  if (state.isRadio) { radioSkip(-1); return; }
   var pool = getPool();
   if (!pool.length) return;
   if (audio.currentTime > 4) { audio.currentTime = 0; return; }
   var pos = pool.indexOf(state.currentIdx);
   playTrack(pool[(pos - 1 + pool.length) % pool.length]);
+}
+// ラジオ局スキップ（現在のジャンルのリスト内で移動）
+function radioSkip(dir) {
+  var list = radioState.stations || [];
+  if (!list.length) return;
+  var cur = -1;
+  for (var i = 0; i < list.length; i++) {
+    if (list[i].uuid === radioState.currentUuid) { cur = i; break; }
+  }
+  if (cur < 0) cur = 0;
+  var nextIdx = (cur + dir + list.length) % list.length;
+  playRadio(nextIdx);
 }
 
 /* ════════ NAV / PAGE ════════ */
