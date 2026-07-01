@@ -1085,10 +1085,10 @@ html, body {
       <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>
     </button>
   </div>
-  <div style="padding:0 24px 16px; flex-shrink:0;">
+  <div style="padding:0 24px 16px; flex-shrink:0;" id="spotify-wrap">
     <button id="b-spotify" style="width:100%; padding:14px; background:#1DB954; border:none; border-radius:8px; color:#fff; font-size:13px; font-weight:700; font-family:'Montserrat',sans-serif; letter-spacing:1px; cursor:pointer;">♫ SPOTIFYでフル再生</button>
   </div>
-  <div class="q-section">
+  <div class="q-section" id="q-section">
     <div class="q-title">Up Next</div>
     <div id="queue-list"></div>
   </div>
@@ -1526,6 +1526,7 @@ function playRadio(i) {
   // 画面表示を更新
   updateRadioNowPlaying(s);
   renderRadioList();
+  renderQueue();
   openSheet();
 }
 function updateRadioNowPlaying(s) {
@@ -2021,6 +2022,16 @@ function renderStations() {
   });
 }
 function renderQueue() {
+  // ラジオ再生中は019のUp Nextを隠す
+  var qSection = document.getElementById('q-section');
+  var spotifyWrap = document.getElementById('spotify-wrap');
+  if (state.isRadio) {
+    if (qSection) qSection.style.display = 'none';
+    if (spotifyWrap) spotifyWrap.style.display = 'none';
+    return;
+  }
+  if (qSection) qSection.style.display = '';
+  if (spotifyWrap) spotifyWrap.style.display = '';
   var list = document.getElementById('queue-list');
   var idx = TRACKS.map(function(t,i){ return i; })
     .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
@@ -2131,7 +2142,7 @@ function playTrack(idx) {
   stopNowPlaying();
   state.currentIdx = idx;
   state.loading = true;
-  renderNowPlaying(); renderPlayState();
+  renderNowPlaying(); renderPlayState(); renderQueue();
   fetchTrackInfo(idx).then(function(t) {
     if (state.currentIdx !== idx) return;
     state.loading = false;
@@ -2154,6 +2165,17 @@ function playTrack(idx) {
   });
 }
 function togglePlay() {
+  // ラジオ再生中はストリームを一時停止/再開するだけ（019に切り替えない）
+  if (state.isRadio) {
+    if (audio.paused) {
+      audio.play().then(function(){ state.playing = true; renderPlayState(); }).catch(function(){});
+    } else {
+      audio.pause();
+      state.playing = false;
+      renderPlayState();
+    }
+    return;
+  }
   if (state.currentIdx < 0) { playTrack(0); return; }
   var t = TRACKS[state.currentIdx];
   if (!t.preview) { playTrack(state.currentIdx); return; }
