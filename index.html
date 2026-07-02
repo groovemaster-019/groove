@@ -15,6 +15,7 @@
   --line:#1C2230; --line2:#1E3A6A; --blue:#3B82F6; --deep:#1E3A8A;
   --ice:#E6EEF9; --muted:#A3B1C6; --dim:#5B6B85;
   --gold:#C9A24B;
+  --neon:#EC4899; --neon2:#A855F7;
 }
 
 html, body {
@@ -28,15 +29,6 @@ html, body {
 .app { display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
 
 /* ── HEADER ── */
-.header {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:14px 20px 12px;
-  padding-top:max(14px, env(safe-area-inset-top));
-  flex-shrink:0;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg, #0A0C12, #050608);
-}
-.brand { display:flex; flex-direction:column; align-items:center; flex:1; }
 .brand-logo {
   font-family:'Mr Dafoe', cursive; font-weight:400;
   font-size:34px; line-height:1; letter-spacing:.5px;
@@ -72,17 +64,7 @@ html, body {
       0 0 26px #A855F7;
   }
 }
-.brand-rule {
-  display:flex; align-items:center; gap:7px; margin-top:3px;
-}
-.brand-rule::before, .brand-rule::after {
-  content:''; height:1px; width:22px; background:var(--blue); opacity:.7;
-}
-.brand-sub { font-size:8px; letter-spacing:4px; color:var(--muted); text-transform:uppercase; }
-.header-ico {
-  width:38px; flex-shrink:0; display:flex; align-items:center; justify-content:center;
-  color:var(--muted); font-size:18px; background:none; border:none; cursor:pointer;
-}
+.brand-rule::before,
 
 /* ── PAGES ── */
 .content { flex:1; overflow:hidden; position:relative; }
@@ -106,23 +88,7 @@ html, body {
              linear-gradient(180deg, #050608 0%, rgba(5,6,8,.55) 14%, transparent 38%, transparent 62%, rgba(5,6,8,.92) 100%);
 }
 .hero > * { position:relative; z-index:2; }
-.hero-lines { font-family:'Anton', sans-serif; font-size:54px; line-height:1.02; letter-spacing:1px; }
-.hero-lines span { display:block; text-transform:uppercase; }
-.hero-lines span.wide {
-  font-size:30px; letter-spacing:0; white-space:nowrap; margin-top:4px;
-}
 /* シルバーのメタリック調 */
-.hero-lines span.silver {
-  background:linear-gradient(180deg, #ffffff 0%, #d8e2f0 28%, #8fa3bd 50%, #c5d2e4 62%, #ffffff 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 1px 1px rgba(0,0,0,.45));
-}
-.hero-lines span.blue {
-  background:linear-gradient(180deg, #7FB0FF 0%, #3B82F6 50%, #1E5AD0 100%);
-  -webkit-background-clip:text; background-clip:text; color:transparent;
-  filter:drop-shadow(0 1px 1px rgba(0,0,0,.4));
-}
-.hero-tag { font-size:11px; letter-spacing:3px; color:var(--muted); margin-top:14px; text-transform:uppercase; font-weight:600; }
 /* ヒーローの特大ネオンロゴ（横長1行・斜め）*/
 .hero-neon {
   font-size:40px !important;
@@ -134,96 +100,24 @@ html, body {
   transform:rotate(-5deg);
   transform-origin:center;
 }
-.listen-live {
-  margin-top:18px; display:inline-flex; align-items:center; gap:9px;
-  background:var(--blue); color:#fff; border:none;
-  padding:14px 30px; border-radius:6px;
-  font-family:'Montserrat',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px;
-  cursor:pointer; box-shadow:0 6px 22px rgba(59,130,246,.4);
-}
-.listen-live:active { transform:scale(.96); }
 
 /* ── NOW ON AIR ── */
-.eyebrow { font-size:11px; letter-spacing:3px; color:var(--blue); text-transform:uppercase; font-weight:700; }
-.onair-sec { padding:8px 20px 4px; }
-.onair-card {
-  display:flex; gap:16px; align-items:center;
-  margin-top:14px;
+.eyebrow {
+  font-size:11px; letter-spacing:3px; color:var(--ice); text-transform:uppercase; font-weight:700;
+  display:flex; align-items:center; gap:9px;
 }
-.onair-art {
-  width:118px; height:118px; border-radius:10px; flex-shrink:0;
-  background-color:var(--card);
-  border:1px solid var(--line); position:relative; overflow:hidden;
-  display:flex; align-items:center; justify-content:center; font-size:34px;
+.eyebrow::before {
+  content:''; width:18px; height:2px; border-radius:2px; flex-shrink:0;
+  background:linear-gradient(90deg, var(--neon), var(--neon2));
+  box-shadow:0 0 8px rgba(236,72,153,.55);
 }
-.onair-art img { width:100%; height:100%; object-fit:contain; display:block; }
-.onair-info { flex:1; min-width:0; }
-.onair-badge {
-  display:inline-flex; align-items:center; gap:5px;
-  font-size:9px; font-weight:700; letter-spacing:1.5px;
-  border:1px solid var(--blue); color:var(--blue);
-  padding:4px 9px; border-radius:4px; margin-bottom:9px;
-}
-.onair-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:var(--blue); box-shadow:0 0 7px var(--blue); }
-.onair-name { font-size:20px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.onair-track { font-size:13px; color:var(--muted); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.onair-eq { display:flex; align-items:flex-end; gap:2px; height:26px; margin-top:12px; }
-.onair-eq span { width:3px; border-radius:1px; background:var(--blue); height:5px; opacity:.85; }
-.playing-anim .onair-eq span { animation:eqbar .8s ease-in-out infinite alternate; }
-.onair-eq span:nth-child(odd){ animation-delay:.1s; }
-.onair-eq span:nth-child(3n){ animation-delay:.22s; }
-.onair-eq span:nth-child(4n){ animation-delay:.05s; }
 @keyframes eqbar { from{height:4px;opacity:.5} to{height:24px;opacity:1} }
 
 /* ── SECTION HEADERS ── */
 .sec-head { display:flex; justify-content:space-between; align-items:center; padding:24px 20px 0; }
 .sec-link { font-size:10px; letter-spacing:2px; color:var(--muted); text-transform:uppercase; font-weight:600; cursor:pointer; }
 
-/* ── CHANNELS（CDジャケット風）── */
-.ch-scroll { display:flex; gap:13px; overflow-x:auto; padding:14px 20px 6px; scrollbar-width:none; }
-.ch-scroll::-webkit-scrollbar { display:none; }
-.ch-item { flex-shrink:0; width:96px; cursor:pointer; user-select:none; }
-.ch-cover {
-  width:96px; height:96px; border-radius:8px; overflow:hidden;
-  position:relative; border:1px solid var(--line);
-  display:flex; align-items:flex-end; padding:8px;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
-  background-size:cover; background-position:center;
-}
-.ch-cover .ch-img {
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; z-index:0; opacity:0; transition:opacity .3s;
-}
-.ch-cover.loaded .ch-img { opacity:1; }
 /* 文字を読みやすくする下からの影 */
-.ch-cover::before {
-  content:''; position:absolute; inset:0; z-index:1;
-  background:linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.15) 45%, transparent 70%);
-}
-.ch-cover::after {
-  content:''; position:absolute; inset:0; z-index:1;
-  background:linear-gradient(155deg, rgba(255,255,255,.16) 0%, transparent 34%);
-}
-.ch-item:active .ch-cover { transform:scale(.96); }
-.ch-cover-name { font-family:'Anton',sans-serif; font-size:15px; letter-spacing:1px; color:#fff; text-shadow:0 1px 6px rgba(0,0,0,.9); position:relative; z-index:2; }
-.ch-label2 { text-align:center; font-family:'Anton',sans-serif; font-size:16px; letter-spacing:2px; margin-top:8px; color:var(--ice); }
-
-/* ── COLUMNS（記事コーナー）── */
-.col-scroll { display:flex; gap:14px; overflow-x:auto; padding:14px 20px 6px; scrollbar-width:none; }
-.col-scroll::-webkit-scrollbar { display:none; }
-.col-card {
-  flex-shrink:0; width:260px; min-height:150px;
-  background:linear-gradient(150deg, #141A28, #0A0E16);
-  border:1px solid var(--line); border-radius:14px;
-  padding:16px; cursor:pointer; user-select:none;
-  display:flex; flex-direction:column;
-  box-shadow:0 6px 18px rgba(0,0,0,.4);
-}
-.col-card:active { transform:scale(.98); }
-.col-tag { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
-.col-title { font-family:'Anton',sans-serif; font-size:19px; line-height:1.05; letter-spacing:.5px; margin-top:8px; color:var(--ice); }
-.col-body { font-size:11px; line-height:1.65; color:var(--muted); margin-top:9px; flex:1; }
-.col-more { font-size:10px; letter-spacing:1px; color:var(--blue); font-weight:600; margin-top:10px; text-transform:uppercase; }
 
 /* 記事一覧（Notesページ）*/
 .note-row {
@@ -231,12 +125,20 @@ html, body {
   cursor:pointer; user-select:none;
 }
 .note-row:active { background:var(--card); }
-.note-row-tag { font-size:9px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
+.note-row { position:relative; }
+.note-row::before {
+  content:''; position:absolute; left:8px; top:18px; bottom:18px; width:2px; border-radius:2px;
+  background:linear-gradient(180deg, var(--neon), var(--neon2));
+  opacity:.85;
+}
+.note-row-tag { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; font-weight:700;
+  background:linear-gradient(90deg, var(--neon), var(--neon2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
 .note-row-title { font-family:'Anton',sans-serif; font-size:18px; line-height:1.1; margin-top:6px; color:var(--ice); }
 .note-row-teaser { font-size:11px; line-height:1.6; color:var(--muted); margin-top:6px; }
 
 /* ── Today's Playlist ── */
-.pl-date { font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 10px; }
 .pl-row {
   display:flex; align-items:center; gap:12px;
   padding:9px 20px; cursor:pointer; user-select:none;
@@ -253,7 +155,6 @@ html, body {
 .pl-meta { flex:1; min-width:0; }
 .pl-name { font-size:13px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .pl-artist { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
-.pl-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
 
 /* ── Live Radio ── */
 .radio-genres { display:flex; gap:8px; overflow-x:auto; padding:4px 20px 14px; scrollbar-width:none; }
@@ -283,63 +184,14 @@ html, body {
 .radio-sub { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
 .radio-live {
   font-size:9px; font-weight:700; letter-spacing:1px; color:#fff;
-  background:#ef4444; padding:2px 7px; border-radius:4px; flex-shrink:0;
+  background:linear-gradient(135deg, #ef4444, #dc2626); padding:2px 7px; border-radius:4px; flex-shrink:0;
+  box-shadow:0 0 10px rgba(239,68,68,.45);
 }
 .radio-row.playing .radio-live { background:var(--blue); }
 .radio-loading, .radio-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
 
 /* ── プレイリスト管理画面 ── */
-.pe-modal {
-  position:fixed; inset:0; z-index:130;
-  background:rgba(5,6,8,.6); backdrop-filter:blur(4px);
-  display:none; align-items:flex-end;
-}
-.pe-modal.open { display:flex; }
-.pe-sheet {
-  width:100%; max-height:88vh; overflow-y:auto;
-  background:linear-gradient(180deg, #0E1422, var(--bg) 40%);
-  border-top-left-radius:20px; border-top-right-radius:20px;
-  border-top:1px solid var(--line);
-  padding:18px 18px max(28px, env(safe-area-inset-bottom));
-}
-.pe-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-.pe-title { font-family:'Anton',sans-serif; font-size:20px; letter-spacing:1px; }
-.pe-close {
-  width:32px; height:32px; border-radius:50%; border:1px solid var(--line);
-  background:var(--card); color:var(--ice); font-size:14px; cursor:pointer;
-}
-.pe-add { display:flex; gap:8px; }
-.pe-add input {
-  flex:1; background:var(--card); border:1px solid var(--line); border-radius:10px;
-  padding:11px 12px; color:var(--ice); font-size:13px; font-family:'Montserrat',sans-serif;
-}
-.pe-add input::placeholder { color:var(--muted); font-size:11px; }
-.pe-add button {
-  background:var(--blue); color:#fff; border:none; border-radius:10px;
-  padding:0 16px; font-size:13px; font-weight:700; cursor:pointer; flex-shrink:0;
-  font-family:'Montserrat',sans-serif;
-}
-.pe-hint { font-size:10px; color:var(--muted); margin:8px 2px 14px; line-height:1.5; }
-.pe-list { display:flex; flex-direction:column; gap:6px; }
-.pe-item {
-  display:flex; align-items:center; gap:10px;
-  background:var(--card); border:1px solid var(--line); border-radius:10px;
-  padding:8px 10px;
-}
-.pe-item-art { width:40px; height:40px; border-radius:6px; overflow:hidden; flex-shrink:0; background:var(--bg); display:flex; align-items:center; justify-content:center; font-size:16px; }
-.pe-item-art img { width:100%; height:100%; object-fit:cover; }
-.pe-item-meta { flex:1; min-width:0; }
-.pe-item-name { font-size:12px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pe-item-artist { font-size:10px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-.pe-item-status { font-size:9px; color:var(--muted); margin-top:1px; }
-.pe-item-del {
-  width:28px; height:28px; border-radius:6px; flex-shrink:0;
-  background:rgba(239,68,68,.15); color:#ff6b6b; border:none; cursor:pointer; font-size:15px;
-}
-.pe-up, .pe-down {
-  width:24px; height:24px; border-radius:5px; flex-shrink:0;
-  background:var(--bg); color:var(--ice); border:1px solid var(--line); cursor:pointer; font-size:11px;
-}
+.pe-up,
 
 /* 記事モーダル */
 .col-modal {
@@ -356,7 +208,10 @@ html, body {
   padding:20px 22px max(28px, env(safe-area-inset-bottom));
 }
 .col-sheet-bar { width:36px; height:4px; background:var(--line); border-radius:2px; margin:0 auto 16px; }
-.col-sheet-tag { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--blue); font-weight:700; }
+.col-sheet-tag { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; font-weight:700;
+  background:linear-gradient(90deg, var(--neon), var(--neon2));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
 .col-sheet-title { font-family:'Anton',sans-serif; font-size:26px; line-height:1.05; margin-top:8px; }
 .col-sheet-body { font-size:13px; line-height:1.85; color:var(--ice); margin-top:14px; white-space:pre-line; }
 
@@ -385,40 +240,20 @@ html, body {
 }
 
 /* ── FEATURED VIDEO ── */
-.video-wrap {
-  margin:14px 20px 0; border-radius:14px; overflow:hidden;
-  border:1px solid var(--line); background:#000;
-  box-shadow:0 8px 24px rgba(0,0,0,.45);
-}
-.feature-video {
-  width:100%; display:block; aspect-ratio:16/9;
-  object-fit:cover; background:#000;
-}
-.sc-wrap {
-  margin:14px 20px 0; border-radius:14px; overflow:hidden;
-  border:1px solid var(--line); background:#000;
-  box-shadow:0 8px 24px rgba(0,0,0,.45);
-}
-.sc-wrap iframe { display:block; }
 
 /* ── GENRE PILLS ── */
-.genre-wrap { padding:16px 20px 0; overflow-x:auto; scrollbar-width:none; }
-.genre-wrap::-webkit-scrollbar { display:none; }
-.pills { display:flex; gap:8px; width:max-content; padding-bottom:4px; }
-.pill {
-  padding:9px 18px; border-radius:5px; font-size:11px; font-weight:600; letter-spacing:1px;
-  border:1px solid var(--line); color:var(--muted);
-  white-space:nowrap; cursor:pointer; min-height:38px;
-  display:flex; align-items:center; user-select:none;
-  transition:all .15s; text-transform:uppercase;
-  background:var(--panel);
-}
-.pill.active { background:var(--blue); color:#fff; border-color:var(--blue); }
 
 /* ── SECTION ── */
 .section-title-row { display:flex; justify-content:space-between; align-items:baseline; padding:18px 20px 10px; }
-.section-title { font-family:'Anton',sans-serif; font-size:22px; letter-spacing:2px; }
-.track-count { font-size:10px; color:var(--muted); letter-spacing:1px; }
+.section-title {
+  font-family:'Anton',sans-serif; font-size:22px; letter-spacing:2px;
+  display:flex; align-items:center; gap:11px;
+}
+.section-title::before {
+  content:''; width:22px; height:3px; border-radius:2px; flex-shrink:0;
+  background:linear-gradient(90deg, var(--neon), var(--neon2));
+  box-shadow:0 0 10px rgba(236,72,153,.5);
+}
 
 /* ── TRACK ROWS ── */
 .track-row {
@@ -477,27 +312,6 @@ html, body {
 }
 .search-input:focus { border-color:var(--blue); }
 .search-input::placeholder { color:var(--dim); }
-
-/* ── STATIONS ── */
-.station-row {
-  display:flex; align-items:center; gap:14px;
-  padding:14px 20px; cursor:pointer; user-select:none;
-  transition:background .15s;
-}
-.station-row:active { background:var(--card); }
-.station-row.now { background:rgba(59,130,246,.10); }
-.s-art { width:54px; height:54px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:24px; flex-shrink:0; border:1px solid var(--line); }
-.s-info { flex:1; min-width:0; }
-.s-name { font-size:14px; font-weight:600; }
-.station-row.now .s-name { color:var(--blue); }
-.s-genre { font-size:11px; color:var(--muted); margin-top:2px; }
-.s-listeners { font-size:10px; color:var(--dim); margin-top:3px; }
-.live-badge {
-  font-size:8px; font-weight:700; letter-spacing:1.5px;
-  background:var(--blue); color:#fff;
-  padding:4px 8px; border-radius:4px;
-  box-shadow:0 0 10px rgba(59,130,246,.5);
-}
 
 /* ── MINI PLAYER ── */
 .mini {
@@ -574,7 +388,11 @@ html, body {
   width:min(78vw, 320px); aspect-ratio:1/1; margin:0 auto;
   border-radius:18px; overflow:hidden; position:relative; flex-shrink:0;
   background:linear-gradient(145deg, #1a2030, #0a0d14);
-  box-shadow:0 24px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.06) inset;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,.6),
+    0 6px 70px rgba(236,72,153,.10),
+    0 -4px 60px rgba(168,85,247,.08),
+    0 0 0 1px rgba(255,255,255,.06) inset;
 }
 .cover-img { width:100%; height:100%; object-fit:cover; display:none; }
 .cover-wrap.has-img .cover-img { display:block; }
@@ -584,68 +402,15 @@ html, body {
 }
 .cover-wrap.has-img .cover-fallback { display:none; }
 
-/* ── HOLOGRAPHIC CD ── */
-.vinyl-wrap { width:240px; height:240px; margin:0 auto 0; position:relative; flex-shrink:0; }
-.vinyl {
-  width:100%; height:100%; border-radius:50%;
-  background:conic-gradient(from 210deg,
-    #9db8ff, #e3c4ff, #9ff0e0, #ffe9a8, #ffb3b3, #b3c1ff, #9db8ff);
-  box-shadow:inset 0 0 0 2px rgba(230,238,249,.5);
-  position:relative; overflow:hidden;
-}
 /* ジャケット画像を円盤全面に */
-.vinyl-img {
-  position:absolute; inset:0; width:100%; height:100%;
-  object-fit:cover; border-radius:50%; display:none;
-}
-.vinyl.has-img .vinyl-img { display:block; }
 /* ディスクの虹色レインボー反射＋細い溝 */
-.vinyl::after {
-  content:''; position:absolute; inset:0; border-radius:50%;
-  background:
-    conic-gradient(from 0deg,
-      rgba(255,80,80,.0) 0deg, rgba(120,200,255,.22) 30deg, rgba(180,120,255,.0) 60deg,
-      rgba(120,255,200,.20) 95deg, rgba(255,230,120,.0) 130deg, rgba(255,150,200,.20) 170deg,
-      rgba(120,200,255,.0) 210deg, rgba(180,255,180,.18) 250deg, rgba(255,255,255,.0) 290deg,
-      rgba(160,180,255,.20) 330deg, rgba(255,80,80,.0) 360deg),
-    radial-gradient(circle at 32% 26%, rgba(255,255,255,.4), transparent 30%),
-    repeating-radial-gradient(circle at 50% 50%, rgba(0,0,0,.07) 0px, rgba(0,0,0,.07) 1px, rgba(255,255,255,0) 2px, rgba(255,255,255,0) 4px);
-  pointer-events:none; z-index:2; mix-blend-mode:screen; opacity:.38;
-}
-.vinyl.spin { animation:spin 1.1s linear infinite; }
-@keyframes spin { to { transform:rotate(360deg); } }
 /* 回転中のモーションブラー */
-.vinyl.spin .vinyl-img { filter:blur(.6px); }
 
 /* ディスク投入（上から落ちてセット＆バウンド）*/
-.vinyl.inserting { animation:disc-insert .7s cubic-bezier(.34,1.4,.5,1) both; }
-@keyframes disc-insert {
-  0%   { transform:translateY(-60px) scale(.86); opacity:0; }
-  55%  { transform:translateY(0) scale(1.02); opacity:1; }
-  72%  { transform:translateY(-6px) scale(1); }
-  100% { transform:translateY(0) scale(1); }
-}
 /* スピンアップ（ゆっくり→高速へ加速）*/
-.vinyl.spin-up { animation:spin-up 1.5s cubic-bezier(.5,0,.7,1) forwards; }
-@keyframes spin-up {
-  0%   { transform:rotate(0deg); }
-  100% { transform:rotate(900deg); }
-}
-.vinyl.spin-up .vinyl-img { filter:blur(.4px); }
 
 /* 再生中：ジャケット静止＋ゆっくり呼吸する発光＋光沢が走る */
-.vinyl.playing-disc { animation:disc-breathe 4s ease-in-out infinite; }
-@keyframes disc-breathe {
-  0%, 100% { box-shadow:inset 0 0 0 2px rgba(230,238,249,.45), 0 4px 18px rgba(0,0,0,.5), 0 0 22px rgba(59,130,246,.25); }
-  50%      { box-shadow:inset 0 0 0 2px rgba(230,238,249,.55), 0 4px 22px rgba(0,0,0,.5), 0 0 40px rgba(59,130,246,.5); }
-}
 /* 光沢の帯が斜めに走る */
-.vinyl.playing-disc::before {
-  content:''; position:absolute; inset:0; border-radius:50%; z-index:3;
-  background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.28) 46%, rgba(255,255,255,.05) 54%, transparent 64%);
-  pointer-events:none;
-  animation:disc-shine 4.5s ease-in-out infinite;
-}
 @keyframes disc-shine {
   0%   { transform:translateX(-30%) rotate(0deg); opacity:0; }
   18%  { opacity:1; }
@@ -654,167 +419,28 @@ html, body {
 }
 
 /* ── ポータブルCDプレイヤー筐体 ── */
-.vinyl-wrap {
-  width:248px; height:248px;
-  border-radius:22px;
-  background:
-    linear-gradient(160deg, #2c3340 0%, #1a1f29 40%, #11151d 100%);
-  box-shadow:
-    0 22px 55px rgba(0,0,0,.65),
-    inset 0 1px 1px rgba(255,255,255,.18),
-    inset 0 -2px 6px rgba(0,0,0,.7);
-  padding:0;
-  display:flex; align-items:center; justify-content:center;
-  position:relative; overflow:hidden;
-}
 /* 筐体のヘアライン質感 */
-.vinyl-wrap::before {
-  content:''; position:absolute; inset:0; border-radius:22px;
-  background:repeating-linear-gradient(115deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 3px);
-  pointer-events:none; z-index:1;
-}
 /* CD本体（筐体の中で回る）*/
-.vinyl-wrap .vinyl {
-  width:222px; height:222px; position:relative; z-index:2;
-  box-shadow:inset 0 0 0 2px rgba(230,238,249,.45), 0 4px 14px rgba(0,0,0,.5);
-}
 /* 中央：爪付きスピンドル */
 /* 中央：爪でCDを掴むハブ */
-.vinyl-hole {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:40px; height:40px; border-radius:50%;
-  background:
-    radial-gradient(circle at 50% 38%, #525b6a 0%, #2c333d 52%, #14181f 100%);
-  z-index:8;
-  box-shadow:
-    0 2px 5px rgba(0,0,0,.6),
-    inset 0 1px 2px rgba(255,255,255,.35),
-    inset 0 -2px 4px rgba(0,0,0,.8);
-  display:block;
-}
 /* 3つの爪（CDを外周方向に押さえる）*/
-.vinyl-hole::before {
-  content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:40px; height:40px; border-radius:50%;
-  background:
-    conic-gradient(from -30deg,
-      transparent 0deg 8deg, #6b7686 8deg 18deg, #444c59 18deg 24deg, transparent 24deg 120deg,
-      transparent 120deg 128deg, #6b7686 128deg 138deg, #444c59 138deg 144deg, transparent 144deg 240deg,
-      transparent 240deg 248deg, #6b7686 248deg 258deg, #444c59 258deg 264deg, transparent 264deg 360deg);
-  -webkit-mask:radial-gradient(circle, transparent 9px, #000 10px, #000 18px, transparent 19px);
-  mask:radial-gradient(circle, transparent 9px, #000 10px, #000 18px, transparent 19px);
-}
 /* 中央の軸ピン */
-.vinyl-hole::after {
-  content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:11px; height:11px; border-radius:50%;
-  background:radial-gradient(circle at 45% 35%, #6a7383, #2a3038 60%, #0e1218);
-  box-shadow:inset 0 1px 1px rgba(255,255,255,.4), inset 0 -1px 2px rgba(0,0,0,.9), 0 0 0 2px rgba(20,24,31,.7);
-}
 
 /* ── リアルなガラスカバー（覗き窓）── */
-.cd-cover {
-  position:absolute; inset:0; border-radius:22px;
-  pointer-events:none; z-index:5; overflow:hidden;
-  /* 上下のフタを薄く、窓を広く（CD全体が見える）*/
-  background:
-    linear-gradient(180deg,
-      #232a36 0%, #1a202b 9%, rgba(22,27,36,.55) 15%,
-      rgba(22,27,36,0) 20%, rgba(22,27,36,0) 80%,
-      rgba(22,27,36,.55) 85%, #1a202b 91%, #232a36 100%);
-}
 /* ガラス全面のうっすら反射＋窓の上下フチ */
-.cd-cover::before {
-  content:''; position:absolute; left:0; right:0; top:15%; height:70%;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,.12) 0%, rgba(255,255,255,.03) 8%, rgba(255,255,255,0) 22%, rgba(255,255,255,0) 78%, rgba(255,255,255,.05) 92%, rgba(255,255,255,.12) 100%);
-  box-shadow:
-    inset 0 6px 10px rgba(0,0,0,.5),
-    inset 0 -6px 10px rgba(0,0,0,.5),
-    inset 0 2px 0 rgba(255,255,255,.25),
-    inset 0 -2px 0 rgba(255,255,255,.12);
-}
 /* ガラスの斜め反射ハイライト（写真のような大きな光の帯）*/
-.cd-cover::after {
-  content:''; position:absolute; top:15%; left:0; right:0; height:70%;
-  background:
-    linear-gradient(116deg, transparent 12%, rgba(255,255,255,.20) 26%, rgba(255,255,255,.05) 34%, transparent 44%),
-    linear-gradient(116deg, transparent 56%, rgba(255,255,255,.12) 66%, transparent 74%);
-  filter:blur(1.5px);
-}
 
 /* テキストラベル（画像が無いとき用）*/
-.vinyl-label {
-  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:110px; height:110px; border-radius:50%;
-  background:#E6EEF9;
-  display:flex; align-items:center; justify-content:center;
-  font-family:'Anton',sans-serif; font-size:16px; letter-spacing:2px;
-  color:var(--bg); z-index:3;
-  border:3px solid rgba(230,238,249,.9);
-  overflow:hidden;
-  box-shadow:0 0 20px rgba(11,19,35,.5);
-}
-.vinyl.has-img + .vinyl-label, .vinyl-label.hide { display:none; }
-.vinyl-label::after {
-  content:''; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
-  width:20px; height:20px; border-radius:50%;
-  background:var(--bg);
-  box-shadow:0 0 0 4px rgba(255,255,255,.75);
-}
-.vinyl-label.has-img { font-size:0; }
+.vinyl.has-img + .vinyl-label,
 
 /* ── 液晶ディスプレイパネル ── */
 .player-body {
   width:248px; margin:0 auto 22px;
   display:flex; flex-direction:column; align-items:center;
 }
-.lcd-panel {
-  width:248px; margin:0 auto; position:relative; z-index:10;
-  background:linear-gradient(160deg, #2c3340 0%, #1a1f29 45%, #11151d 100%);
-  border-radius:12px; padding:13px 14px;
-  display:flex; align-items:center; gap:12px;
-  box-shadow:0 10px 26px rgba(0,0,0,.5), inset 0 1px 1px rgba(255,255,255,.15), inset 0 -2px 5px rgba(0,0,0,.6);
-}
-.lcd-panel::before {
-  content:''; position:absolute; inset:0;
-  background:repeating-linear-gradient(115deg, rgba(255,255,255,.025) 0px, rgba(255,255,255,.025) 1px, transparent 1px, transparent 3px);
-  pointer-events:none;
-}
 /* 青く光る液晶画面 */
-.lcd-screen {
-  flex:1;
-  background:linear-gradient(180deg, #0a4f6b, #073a52);
-  border-radius:6px; padding:11px 12px;
-  border:1px solid #0a2c3d;
-  box-shadow:inset 0 0 12px rgba(0,0,0,.6), inset 0 0 18px rgba(0,200,255,.18), 0 0 10px rgba(0,170,255,.25);
-  font-family:'Courier New', monospace;
-  color:#9fe9ff; text-shadow:0 0 6px rgba(120,230,255,.85);
-  position:relative; line-height:1.3;
-}
 /* 液晶のドット網点 */
-.lcd-screen::after {
-  content:''; position:absolute; inset:0; border-radius:6px;
-  background:repeating-linear-gradient(0deg, rgba(0,0,0,.18) 0px, rgba(0,0,0,.18) 1px, transparent 1px, transparent 2px);
-  pointer-events:none;
-}
-.lcd-row1 { display:flex; justify-content:space-between; align-items:center; font-size:11px; font-weight:700; letter-spacing:1px; }
-.lcd-row2 { display:flex; justify-content:space-between; align-items:center; font-size:15px; font-weight:700; letter-spacing:2px; margin-top:4px; }
-.lcd-disc { font-size:10px; }
-.lcd-mode { font-size:9px; opacity:.9; border:1px solid rgba(159,233,255,.5); padding:1px 5px; border-radius:2px; }
 /* ボリュームダイヤル */
-.lcd-dial {
-  width:40px; height:40px; border-radius:50%; flex-shrink:0;
-  background:
-    radial-gradient(circle at 38% 32%, #4a5260 0%, #2a3038 55%, #14181f 100%);
-  box-shadow:0 3px 6px rgba(0,0,0,.6), inset 0 1px 2px rgba(255,255,255,.3), inset 0 -2px 3px rgba(0,0,0,.7);
-  position:relative;
-}
-.lcd-dial-mark {
-  position:absolute; top:5px; left:50%; transform:translateX(-50%);
-  width:3px; height:9px; border-radius:2px;
-  background:#9fe9ff; box-shadow:0 0 5px rgba(120,230,255,.8);
-}
 
 .sheet-info { text-align:center; padding:0 24px 16px; flex-shrink:0; }
 .sheet-title { font-family:'Anton',sans-serif; font-size:28px; letter-spacing:2px; }
@@ -847,18 +473,14 @@ html, body {
 .c-btn.on { color:var(--blue); }
 .c-btn:active { transform:scale(.9); }
 .c-main {
-  width:68px; height:68px; background:var(--blue); border-radius:50%;
+  width:68px; height:68px; background:linear-gradient(145deg, #4C8DF8, #2563EB); border-radius:50%;
   border:none; color:#fff; font-size:24px;
   display:flex; align-items:center; justify-content:center;
-  cursor:pointer; box-shadow:0 0 32px rgba(59,130,246,.6);
+  cursor:pointer;
+  box-shadow:0 8px 26px rgba(37,99,235,.45), 0 0 44px rgba(59,130,246,.28), inset 0 1px 0 rgba(255,255,255,.22);
   transition:transform .12s;
 }
 .c-main:active { transform:scale(.92); }
-
-.vol-row { display:flex; align-items:center; gap:12px; padding:0 24px 16px; flex-shrink:0; }
-.vol-bar { flex:1; height:24px; display:flex; align-items:center; cursor:pointer; }
-.vol-track { width:100%; height:4px; background:var(--line); border-radius:2px; }
-.vol-fill { height:100%; background:var(--deep); border-radius:2px; width:70%; }
 
 .q-section { padding:0 20px 20px; }
 .q-title { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--blue); font-weight:700; margin-bottom:8px; }
@@ -873,20 +495,12 @@ html, body {
 
 /* ── GENRE COLORS（CDジュエルケース風）── */
 .c-soul   { background:linear-gradient(150deg,#2A1B2E,#5B2C4F); }
-.c-funk   { background:linear-gradient(150deg,#232050,#4A3F8F); }
 .c-hiphop { background:linear-gradient(150deg,#0F2A4A,#1E5AA8); }
-.c-gfunk  { background:linear-gradient(150deg,#143229,#1F6B4F); }
-.c-boogie { background:linear-gradient(150deg,#3A2A14,#8A5A1F); }
-
-.notice {
-  margin:14px 20px 0; padding:9px 14px;
-  background:rgba(59,130,246,.08); border:1px solid var(--deep);
-  border-radius:8px; font-size:10px; color:var(--muted);
-  line-height:1.6;
-}
 .footer-tag {
-  text-align:center; padding:22px 20px 8px; color:var(--dim);
-  font-family:'Playfair Display',serif; font-style:italic; font-size:13px;
+  text-align:center; padding:26px 20px 10px;
+  font-family:'Mr Dafoe',cursive; font-size:17px; letter-spacing:.5px;
+  color:rgba(236,72,153,.55);
+  text-shadow:0 0 10px rgba(236,72,153,.3), 0 0 22px rgba(168,85,247,.2);
 }
 </style>
 <script src="https://cdn.jsdelivr.net/gh/lautde/lautfm_js_tools/laut.fm.js"></script>
@@ -927,47 +541,12 @@ html, body {
       <div class="footer-tag">Real music lives here.</div>
     </div>
 
-    <!-- TRACKS（一覧ページ）-->
-    <div class="page" id="page-tracks">
-      <div class="genre-wrap">
-        <div class="pills" id="genre-pills">
-          <div class="pill active" data-g="all">すべて</div>
-          <div class="pill" data-g="soul">Soul</div>
-          <div class="pill" data-g="funk">Funk</div>
-          <div class="pill" data-g="hiphop">019 Hood Music</div>
-          <div class="pill" data-g="gfunk">G-Funk</div>
-          <div class="pill" data-g="boogie">Boogie Funk</div>
-        </div>
-      </div>
-      <div class="section-title-row">
-        <div class="section-title">TRACKS</div>
-        <div class="track-count" id="track-count"></div>
-      </div>
-      <div id="track-list"></div>
-    </div>
-
     <!-- RADIO PAGE -->
     <div class="page" id="page-radio">
       <div class="section-title-row"><div class="section-title">LIVE RADIO</div></div>
       <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 10px;">世界中のラジオをライブで。ジャンルを選んで局をタップ。</div>
       <div class="radio-genres" id="radio-genres-page"></div>
       <div id="radio-list-page"></div>
-    </div>
-
-    <!-- STATIONS -->
-    <div class="page" id="page-stations">
-      <div class="section-title-row"><div class="section-title">LINER NOTES</div></div>
-      <div style="font-size:11px; color:var(--muted); letter-spacing:1px; padding:0 20px 6px;">音楽の豆知識コラム</div>
-      <div id="notes-list"></div>
-    </div>
-
-    <!-- FAVORITES -->
-    <div class="page" id="page-favs">
-      <div class="section-title-row">
-        <div class="section-title">FAVORITES</div>
-        <div class="track-count" id="fav-count"></div>
-      </div>
-      <div id="fav-list"></div>
     </div>
 
     <!-- SEARCH -->
@@ -1014,22 +593,6 @@ html, body {
       <span class="nav-icon"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5.5A2.5 2.5 0 0 1 5.5 3H11v15.5H5.5A2.5 2.5 0 0 0 3 21V5.5z"/><path d="M21 5.5A2.5 2.5 0 0 0 18.5 3H13v15.5h5.5A2.5 2.5 0 0 1 21 21V5.5z"/></svg></span><span class="nav-txt">Deep Dive</span>
     </button>
   </nav>
-</div>
-
-<!-- PLAYLIST EDITOR MODAL -->
-<div class="pe-modal" id="pe-modal">
-  <div class="pe-sheet">
-    <div class="pe-head">
-      <div class="pe-title">Today's Playlist を編集</div>
-      <button class="pe-close" id="pe-close">✕</button>
-    </div>
-    <div class="pe-add">
-      <input type="text" id="pe-input" placeholder="曲名 アーティスト名（例: BLOWSURUSOUL Kg za Horchata）">
-      <button id="pe-add-btn">追加</button>
-    </div>
-    <div class="pe-hint">曲名とアーティスト名を入れて「追加」。アートワークとプレビューは自動取得します。</div>
-    <div id="pe-list" class="pe-list"></div>
-  </div>
 </div>
 
 <!-- COLUMN MODAL -->
@@ -1116,55 +679,6 @@ var DEEPDIVE = [
     blocks:[{"type": "text", "text": "1995年2月14日リリース、South Central Cartel率いる西海岸オールスター・コンピ『S.C.C. Presents Murder Squad Nationwide』(G.W.K./Def Jam)収録。プロデュースはS.C.C.のProdeje、フックを歌うのは“Gangsta's Paradise”のあのL.V.。この曲のバースを蹴るのが、Sh'killaとGripstaという二人の女性ギャングスタMCだ。"}, {"type": "head", "text": "GRIPSTAという存在"}, {"type": "text", "text": "Gripsta（本名Brandi Younger）はオークランド出身。なんと13歳でIce-Tに見出され、14歳でIce-Tの1993年作『Home Invasion』の\"Funky Gripsta\"でデビューした、最年少クラスの女性ギャングスタラッパーだ。媚びず、女を売りにせず、Ice-T仕込みの\"政治的な本気さ\"とオークランドの路上のリアルだけで勝負した。男社会のウェッサイに、スキルだけでねじ込んだ存在だ。"}, {"type": "head", "text": "SH'KILLAという存在"},{"type": "text", "text": "一方のSh'killaはベイエリアの女性ギャングスタMC。Suga TやLady of Rageと並び、90年代ウェッサイの男社会で数少ない女の論客の一人だった。1996年、G.W.K. Recordsからソロ『Gangstrez From da Bay』をリリース。プロデュースはこの\"Knock on Wood\"と同じくS.C.C.のHavoc & Prodejeで、配給は当時ウェッサイ・ギャングスタの総本山だったPriority Records。大ヒットはしなかったが、ベイの硬派な空気を真空パックした一枚として今も評価される。\n\nつまりこの曲は、オークランド/Ice-T人脈のGripstaと、ベイ/G.W.K.人脈のSh'killa——出自の違う二人の女Gが、同じビートの上でタフネスを競い合った瞬間だ。その緊張感こそが\"Knock on Wood\"を特別にしている。"},{"type": "head", "text": "対訳で読む（抜粋）"}, {"type": "text", "text": "全部は載せないが、ヤマ場を抜き出して訳す。スラングの密度がとにかく濃い。"}, {"type": "lyric", "orig": "Female G's that sit, they all say we nuts", "tran": "座して構えるFemale Gたち、周りはみんな私たちを「イカれてる」と言う", "note": "\"nuts\"=イカれてる/狂ってる。女のくせに、ではなく\"女のG\"として一目置かれ恐れられている、という宣言から入る。"}, {"type": "lyric", "orig": "And if you run up to us G's for sure we'll peel your cap back", "tran": "もし私たちGに突っかかってくるなら、確実にその頭をぶち抜いてやる", "note": "\"peel your cap back\"=頭(cap)を撃ち抜く、の超定番スラング。\"run up\"=突っかかる/詰めてくる。"}, {"type": "lyric", "orig": "We on a mission (187 with your mates)", "tran": "私たちは任務中だ（お前らの連れを殺(187)るためにな）", "note": "\"187\"=カリフォルニア州刑法187条＝殺人。西海岸ラップの最重要コードの一つ。\"mates\"=仲間/連れ。"}, {"type": "lyric", "orig": "Knock on wood y'all cuz its all about us g's", "tran": "幸運を祈りな、今は私たちGが全てを握ってるんだから", "note": "\"knock on wood\"=厄除けに木を叩く慣習(縁起担ぎ)。曲名の由来。お前らはせいぜい無事を祈ってろ、という挑発に転化している。"}, {"type": "head", "text": "スラング早見"}, {"type": "text", "text": "40d / 40 = .40口径の拳銃\nthe Nine / 9mm = 9ミリ拳銃（\"when the Nine goes pop\"＝9ミリが火を噴く時）\nbust / blast = 撃つ\ncreep = 気配を消して忍び寄る\nbuster = 腰抜け/ニセモノ\nfade = 消す/やられる（\"can't fade this\"＝誰も俺たちを潰せない）\nballin' = 派手に稼ぐ/羽振りがいい\nslipping = 油断する"}, {"type": "video", "mp4": "FullSizeRender-compressed.MOV", "caption": "字幕付きクリップ"}, {"type": "text", "text": "90年代半ば、女性が銃とブロックを語ること自体が挑戦だった。Sh'killaとGripstaはそれを\"演technique\"ではなく自分の言葉でやってのけた。盛岡から聴いても、この芯の強さは時代も国境も超えて刺さる。"}] },
 ];
 
-var STATIONS = [
-  { name:"Soul Central FM",    genre:"Soul / Classic R&B",   icon:"🎵", color:"c-soul",   listeners:"12,430", g:"soul"   },
-  { name:"P-Funk Universe",    genre:"Funk / Parliament",    icon:"🎸", color:"c-funk",   listeners:"5,670",  g:"funk"   },
-  { name:"019 Hood Radio",     genre:"019 Hood Music / Morioka",  icon:"🎤", color:"c-hiphop", listeners:"1,019",  g:"hiphop" },
-  { name:"West Coast Rollin'", genre:"G-Funk / West Coast",  icon:"🎧", color:"c-gfunk",  listeners:"9,210",  g:"gfunk"  },
-  { name:"Boogie Nights FM",   genre:"Boogie Funk / Electro",icon:"🕺", color:"c-boogie", listeners:"4,330",  g:"boogie" }
-];
-
-var CHANNELS = [
-  { name:"SOUL",    g:"soul",   color:"c-soul",   art:"Marvin Gaye What's Going On" },
-  { name:"FUNK",    g:"funk",   color:"c-funk",   art:"Parliament Flash Light" },
-  { name:"019 HOOD", g:"hiphop", color:"c-hiphop", art:"Kg za Horchata CRUIZIN'" },
-  { name:"G-FUNK",  g:"gfunk",  color:"c-gfunk",  art:"Dr. Dre Let Me Ride" },
-  { name:"BOOGIE",  g:"boogie", color:"c-boogie", art:"Mtume Juicy Fruit" }
-];
-
-var COLUMNS = [
-  {
-    tag:"G-Funk",
-    title:"THE P-FUNK ROOTS OF G-FUNK",
-    teaser:"That laid-back West Coast sound didn't come from nowhere...",
-    body:"That laid-back West Coast sound didn't come from nowhere.\n\nG-Funk took its DNA straight from Parliament-Funkadelic — the heavy synth bass, the slow rolling grooves, the high-pitched whine that floats over the top. Producers like Dr. Dre and DJ Quik flipped those 70s funk records into something new, but the soul of it is pure George Clinton.\n\nNext time you hear that whistle synth on a Warren G track, you're really hearing Funkadelic echoing through the years."
-  },
-  {
-    tag:"Soul",
-    title:"WHY MARVIN CHANGED EVERYTHING",
-    teaser:"'What's Going On' almost never got released...",
-    body:"'What's Going On' almost never got released.\n\nMotown boss Berry Gordy reportedly hated it — too political, too different from the hit formula. But Marvin Gaye refused to record anything else until they put it out. It became one of the most important albums in soul history.\n\nThe lesson: sometimes the record they don't want is the one that lasts forever."
-  },
-  {
-    tag:"Funk",
-    title:"THE ONE: FUNK'S SECRET RULE",
-    teaser:"James Brown built an entire genre on a single beat...",
-    body:"James Brown built an entire genre on a single beat.\n\nThe magic of funk lives in 'The One' — the heavy emphasis on the first beat of the bar. Instead of chasing the melody, everything locks into that downbeat. Bass, drums, guitar — all hitting The One together.\n\nOnce you feel it, you can't unhear it. That's the engine that drives every funk record."
-  },
-  {
-    tag:"Sampling",
-    title:"ONE SONG, A HUNDRED HITS",
-    teaser:"A short drum break from 1969 changed hip hop forever...",
-    body:"A short drum break from 1969 changed hip hop forever.\n\nProducers dug through old soul and funk records not just for melodies, but for drum breaks — those few seconds where the band drops out and the drummer goes solo. Loop it, and you've got the backbone of a new track.\n\nThe crates never lie. The past is always feeding the future."
-  },
-  {
-    tag:"West Coast",
-    title:"LOWRIDERS & THE OLDIES",
-    teaser:"Why does West Coast rap love slow soul oldies?",
-    body:"Why does West Coast rap love slow soul oldies?\n\nIt comes from lowrider culture. Cruising slow means you need music that rolls slow — sweet 60s and 70s soul ballads, the kind that sound perfect bouncing out of a Chevy on a summer evening.\n\nThat oldies-soul feeling is baked into the whole West Coast sound. Smooth, warm, and built for the cruise."
-  }
-];
-
 /* ════════ SAFE STORAGE ════════ */
 var memStore = {};
 function storeGet(k) {
@@ -1178,33 +692,7 @@ function storeSet(k, v) {
 
 /* ════════ TODAY'S PLAYLIST ════════ */
 // プレイリストの曲を保持。各曲: {name, artist, genre:'playlist', tag:'Playlist', preview, artwork, source}
-var PLAYLIST = [];
-(function() {
-  var saved = storeGet('groove-playlist');
-  if (saved) { try { PLAYLIST = JSON.parse(saved) || []; } catch (e) { PLAYLIST = []; } }
-})();
-function savePlaylist() {
-  storeSet('groove-playlist', JSON.stringify(PLAYLIST.map(function(t){
-    return { name:t.name, artist:t.artist, preview:t.preview||'', artwork:t.artwork||'', source:t.source||'' };
-  })));
-}
 // プレイリストの曲をTRACKSの先頭に統合（再生エンジンはTRACKSのindexで動くため）
-function syncPlaylistToTracks() {
-  // 既存のplaylist曲をTRACKSから除去
-  TRACKS = TRACKS.filter(function(t){ return t.genre !== 'playlist'; });
-  // プレイリスト曲をTRACKSの先頭に追加
-  var plTracks = PLAYLIST.map(function(t){
-    return { name:t.name, artist:t.artist, genre:'playlist', tag:'Playlist',
-             color:'c-hiphop', icon:'🎵',
-             preview:t.preview||'', artwork:t.artwork||'', source:t.source||'' };
-  });
-  TRACKS = plTracks.concat(TRACKS);
-}
-function fmtToday() {
-  var d = new Date();
-  var days = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-  return days[d.getDay()] + ' · ' + (d.getMonth()+1) + '/' + d.getDate();
-}
 function renderPlaylist() {
   var box = document.getElementById('playlist-list');
   if (!box) return;
@@ -1242,81 +730,7 @@ function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 // 管理画面
-function openPlaylistEditor() {
-  document.getElementById('pe-modal').classList.add('open');
-  renderPlaylistEditor();
-}
-function closePlaylistEditor() {
-  document.getElementById('pe-modal').classList.remove('open');
-  syncPlaylistToTracks();
-  renderPlaylist();
-}
-function renderPlaylistEditor() {
-  var box = document.getElementById('pe-list');
-  if (!box) return;
-  if (PLAYLIST.length === 0) {
-    box.innerHTML = '<div class="pl-empty">曲を追加してください。</div>';
-    return;
-  }
-  box.innerHTML = PLAYLIST.map(function(t, i) {
-    var artHtml = t.artwork ? '<img src="' + t.artwork + '" alt="">' : '🎵';
-    var status = t.preview ? '✓ 再生OK' : '⚠ プレビュー未取得';
-    return '<div class="pe-item">' +
-      '<button class="pe-up" data-up="' + i + '">▲</button>' +
-      '<button class="pe-down" data-down="' + i + '">▼</button>' +
-      '<div class="pe-item-art">' + artHtml + '</div>' +
-      '<div class="pe-item-meta">' +
-        '<div class="pe-item-name">' + esc(t.name) + '</div>' +
-        '<div class="pe-item-artist">' + esc(t.artist) + '</div>' +
-        '<div class="pe-item-status">' + status + '</div>' +
-      '</div>' +
-      '<button class="pe-item-del" data-del="' + i + '">🗑</button>' +
-    '</div>';
-  }).join('');
-  box.querySelectorAll('[data-del]').forEach(function(b){
-    b.addEventListener('click', function(){
-      PLAYLIST.splice(parseInt(this.dataset.del,10), 1);
-      savePlaylist(); renderPlaylistEditor();
-    });
-  });
-  box.querySelectorAll('[data-up]').forEach(function(b){
-    b.addEventListener('click', function(){
-      var i = parseInt(this.dataset.up,10);
-      if (i>0) { var tmp=PLAYLIST[i]; PLAYLIST[i]=PLAYLIST[i-1]; PLAYLIST[i-1]=tmp; savePlaylist(); renderPlaylistEditor(); }
-    });
-  });
-  box.querySelectorAll('[data-down]').forEach(function(b){
-    b.addEventListener('click', function(){
-      var i = parseInt(this.dataset.down,10);
-      if (i<PLAYLIST.length-1) { var tmp=PLAYLIST[i]; PLAYLIST[i]=PLAYLIST[i+1]; PLAYLIST[i+1]=tmp; savePlaylist(); renderPlaylistEditor(); }
-    });
-  });
-}
 // 曲を追加（アートワーク＆プレビュー自動取得）
-function addPlaylistTrack() {
-  var input = document.getElementById('pe-input');
-  var raw = (input.value || '').trim();
-  if (!raw) return;
-  // 「曲名 アーティスト」を分割（最後の語以降をアーティスト推定は難しいので、全体を曲名＋検索語に）
-  var entry = { name: raw, artist: '', preview:'', artwork:'', source:'' };
-  PLAYLIST.push(entry);
-  savePlaylist();
-  input.value = '';
-  renderPlaylistEditor();
-  // 自動取得
-  var idx = PLAYLIST.length - 1;
-  fetchPlaylistMeta(raw).then(function(meta){
-    if (meta) {
-      if (meta.name) PLAYLIST[idx].name = meta.name;
-      if (meta.artist) PLAYLIST[idx].artist = meta.artist;
-      PLAYLIST[idx].preview = meta.preview || '';
-      PLAYLIST[idx].artwork = meta.artwork || '';
-      PLAYLIST[idx].source = meta.source || '';
-      savePlaylist();
-      renderPlaylistEditor();
-    }
-  });
-}
 // 検索語からメタデータ取得
 function fetchPlaylistMeta(term) {
   function fetchJson(url, ms) {
@@ -1536,8 +950,6 @@ function updateRadioNowPlaying(s) {
   setTxt('sheet-station', 'LIVE RADIO');
   setTxt('mini-title', s.name);
   setTxt('mini-artist', 'Live Radio');
-  var lt = document.getElementById('lcd-track'); if (lt) lt.textContent = 'TUNER';
-  var lm = document.getElementById('lcd-mode'); if (lm) lm.textContent = 'RADIO';
   // ジャケット：局アイコン or デフォルト
   var coverWrap = document.getElementById('cover-wrap');
   var vimg = document.getElementById('vinyl-img');
@@ -1731,8 +1143,6 @@ function renderProgress() {
     document.getElementById('mini-fill').style.width = '100%';
     document.getElementById('time-cur').textContent = 'LIVE';
     document.getElementById('time-tot').textContent = '●';
-    var ltr = document.getElementById('lcd-time');
-    if (ltr) ltr.textContent = 'LIVE';
     return;
   }
   var pct = audio.duration ? (audio.currentTime / audio.duration * 100) : 0;
@@ -1740,8 +1150,6 @@ function renderProgress() {
   document.getElementById('mini-fill').style.width = pct + '%';
   document.getElementById('time-cur').textContent = fmtTime(audio.currentTime);
   document.getElementById('time-tot').textContent = fmtTime(audio.duration);
-  var lt = document.getElementById('lcd-time');
-  if (lt) lt.textContent = fmtTime(audio.currentTime);
 }
 
 function rowHTML(i) {
@@ -1770,53 +1178,6 @@ function wireRows(container) {
     btn.addEventListener('click', function(e) {
       e.stopPropagation();
       toggleFav(parseInt(this.dataset.fav, 10));
-    });
-  });
-}
-function renderChannels() {
-  var box = document.getElementById('ch-scroll');
-  if (!box) return;
-  box.innerHTML = CHANNELS.map(function(c, i) {
-    return '<div class="ch-item" data-g="' + c.g + '">' +
-      '<div class="ch-cover ' + c.color + '" id="chcover-' + i + '"><img class="ch-img" id="chimg-' + i + '" alt=""><span class="ch-cover-name">' + c.name + '</span></div>' +
-      '<div class="ch-label2">' + c.name + '</div>' +
-    '</div>';
-  }).join('');
-  box.querySelectorAll('.ch-item').forEach(function(item) {
-    item.addEventListener('click', function() {
-      var g = this.dataset.g;
-      goToTracks(g);
-      var idx = TRACKS.findIndex(function(t){ return t.genre === g; });
-      if (idx >= 0) { playTrack(idx); openSheet(); }
-    });
-  });
-  CHANNELS.forEach(function(c, i) {
-    if (!c.art) return;
-    fetchArtworkOnly(c.art).then(function(url) {
-      if (!url) return;
-      var img = document.getElementById('chimg-' + i);
-      var cover = document.getElementById('chcover-' + i);
-      if (img && cover) {
-        img.src = url;
-        img.onload = function(){ cover.classList.add('loaded'); };
-      }
-    });
-  });
-}
-function renderColumns() {
-  var box = document.getElementById('col-scroll');
-  if (!box) return;
-  box.innerHTML = COLUMNS.map(function(c, i) {
-    return '<div class="col-card" data-i="' + i + '">' +
-      '<div class="col-tag">' + c.tag + '</div>' +
-      '<div class="col-title">' + c.title + '</div>' +
-      '<div class="col-body">' + c.teaser + '</div>' +
-      '<div class="col-more">Read →</div>' +
-    '</div>';
-  }).join('');
-  box.querySelectorAll('.col-card').forEach(function(card) {
-    card.addEventListener('click', function() {
-      openColumn(parseInt(this.dataset.i, 10));
     });
   });
 }
@@ -1924,22 +1285,6 @@ function renderDeepDive() {
     });
   });
 }
-function renderNotes() {
-  var box = document.getElementById('notes-list');
-  if (!box) return;
-  box.innerHTML = COLUMNS.map(function(c, i) {
-    return '<div class="note-row" data-i="' + i + '">' +
-      '<div class="note-row-tag">' + c.tag + '</div>' +
-      '<div class="note-row-title">' + c.title + '</div>' +
-      '<div class="note-row-teaser">' + c.teaser + '</div>' +
-    '</div>';
-  }).join('');
-  box.querySelectorAll('.note-row').forEach(function(row) {
-    row.addEventListener('click', function() {
-      openColumn(parseInt(this.dataset.i, 10));
-    });
-  });
-}
 // チャンネル用：アートワークURLだけ取得する軽量版
 function fetchArtworkOnly(term) {
   return new Promise(function(resolve) {
@@ -1963,25 +1308,6 @@ function fetchArtworkOnly(term) {
     });
   });
 }
-function renderTrackList() {
-  var list = document.getElementById('track-list');
-  var idx = TRACKS.map(function(t,i){ return i; })
-    .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
-  document.getElementById('track-count').textContent = idx.length + ' 曲';
-  list.innerHTML = idx.map(rowHTML).join('');
-  wireRows(list);
-}
-function renderFavList() {
-  var list = document.getElementById('fav-list');
-  var idx = Array.from(state.favs).sort(function(a,b){ return a-b; });
-  document.getElementById('fav-count').textContent = idx.length + ' 曲';
-  if (!idx.length) {
-    list.innerHTML = '<div class="empty-msg">まだお気に入りがありません。<br>♡ をタップして曲を登録しましょう</div>';
-    return;
-  }
-  list.innerHTML = idx.map(rowHTML).join('');
-  wireRows(list);
-}
 function renderSearchList() {
   var q = document.getElementById('search-input').value.trim().toLowerCase();
   var list = document.getElementById('search-list');
@@ -2000,26 +1326,6 @@ function renderSearchList() {
   }
   list.innerHTML = idx.map(rowHTML).join('');
   wireRows(list);
-}
-function renderStations() {
-  var list = document.getElementById('station-list');
-  list.innerHTML = STATIONS.map(function(s, i) {
-    return '<div class="station-row" data-s="' + i + '">' +
-      '<div class="s-art ' + s.color + '">' + s.icon + '</div>' +
-      '<div class="s-info"><div class="s-name">' + s.name + '</div><div class="s-genre">' + s.genre + '</div>' +
-      '<div class="s-listeners">' + s.listeners + ' 人が視聴中</div></div>' +
-      '<div class="live-badge">LIVE</div>' +
-    '</div>';
-  }).join('');
-  list.querySelectorAll('.station-row').forEach(function(row) {
-    row.addEventListener('click', function() {
-      var s = STATIONS[parseInt(this.dataset.s, 10)];
-      var idx = TRACKS.findIndex(function(t){ return t.genre === s.g; });
-      if (idx >= 0) { playTrack(idx); openSheet(); }
-      list.querySelectorAll('.station-row').forEach(function(r){ r.classList.remove('now'); });
-      this.classList.add('now');
-    });
-  });
 }
 function renderQueue() {
   // ラジオ再生中は019のUp Nextを隠す
@@ -2049,7 +1355,7 @@ function renderQueue() {
   });
 }
 function renderAll() {
-  renderTrackList(); renderFavList(); renderQueue();
+  renderQueue();
   if (document.getElementById('search-input').value.trim()) renderSearchList();
 }
 function renderNowPlaying() {
@@ -2069,30 +1375,10 @@ function renderNowPlaying() {
     mico.style.display = 'block';
     mico.textContent = t.icon;
   }
-  // NOW ON AIR（削除済みのため要素があるときだけ）
-  var onName = document.getElementById('onair-name');
-  if (onName) {
-    onName.textContent = t.artist;
-    document.getElementById('onair-track').textContent = t.name;
-    var oart = document.getElementById('onair-art');
-    oart.className = 'onair-art ' + t.color;
-    var oimg = document.getElementById('onair-img');
-    var oico = document.getElementById('onair-ico');
-    if (t.artwork) {
-      oimg.src = t.artwork; oimg.style.display = 'block';
-      oico.style.display = 'none';
-    } else {
-      oimg.style.display = 'none';
-      oico.style.display = 'block';
-      oico.textContent = t.icon;
-    }
-  }
   // SHEET
   document.getElementById('sheet-title').textContent = t.name;
   document.getElementById('sheet-artist').textContent = t.artist;
   document.getElementById('sheet-station').textContent = t.tag.toUpperCase() + ' CHANNEL';
-  var lt = document.getElementById('lcd-track');
-  if (lt) lt.textContent = 'T-' + String(state.currentIdx + 1).padStart(2, '0');
   var coverWrap = document.getElementById('cover-wrap');
   var vimg = document.getElementById('vinyl-img');
   var label = document.getElementById('vinyl-label');
@@ -2114,10 +1400,6 @@ function renderFavBtn() {
   btn.innerHTML = '<svg viewBox="0 0 24 24" width="22" height="22" fill="' + fill + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></svg>';
   btn.classList.toggle('on', isFav);
 }
-function updateSpin(playing) {
-  // ジャケット静止表示のため何もしない
-  return;
-}
 var SVG_PLAY = '<svg viewBox="0 0 24 24" width="30" height="30" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
 var SVG_PAUSE = '<svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>';
 var SVG_PLAY_MINI = '<svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
@@ -2126,13 +1408,10 @@ function renderPlayState() {
   document.getElementById('b-play').innerHTML = state.playing ? SVG_PAUSE : SVG_PLAY;
   var mini = document.getElementById('mini-play');
   if (mini) mini.innerHTML = state.playing ? SVG_PAUSE_MINI : SVG_PLAY_MINI;
-  updateSpin(state.playing);
-  ['sheet-info-wrap','track-list','fav-list','search-list','onair-card'].forEach(function(id) {
+  ['sheet-info-wrap','search-list'].forEach(function(id) {
     var el = document.getElementById(id);
     if (el) el.classList.toggle('playing-anim', state.playing);
   });
-  var ico = document.getElementById('sound-ico');
-  if (ico) ico.style.color = state.playing ? 'var(--blue)' : 'var(--muted)';
 }
 
 /* ════════ PLAYBACK ════════ */
@@ -2241,18 +1520,8 @@ function switchPage(page) {
   if (btn) btn.classList.add('active');
   document.querySelector('.content').scrollTop = 0;
   if (pg) pg.scrollTop = 0;
-  if (page === 'favs') renderFavList();
   if (page === 'deepdive') renderDeepDive();
 }
-function goToTracks(g) {
-  state.filter = g || 'all';
-  document.querySelectorAll('#genre-pills .pill').forEach(function(p) {
-    p.classList.toggle('active', p.dataset.g === state.filter);
-  });
-  renderTrackList(); renderQueue();
-  switchPage('tracks');
-}
-
 /* ════════ UI WIRING ════════ */
 function openSheet()  { document.getElementById('sheet').classList.add('open'); }
 function closeSheet() {
@@ -2323,19 +1592,7 @@ audio.volume = 1.0;
 document.querySelectorAll('.nav-btn[data-page]').forEach(function(btn) {
   btn.addEventListener('click', function() { switchPage(this.dataset.page); });
 });
-document.querySelectorAll('#genre-pills .pill').forEach(function(pill) {
-  pill.addEventListener('click', function() {
-    document.querySelectorAll('#genre-pills .pill').forEach(function(p){ p.classList.remove('active'); });
-    this.classList.add('active');
-    state.filter = this.dataset.g;
-    renderTrackList(); renderQueue();
-  });
-});
 document.getElementById('search-input').addEventListener('input', renderSearchList);
-
-document.querySelectorAll('.sec-link[data-viewall]').forEach(function(el) {
-  el.addEventListener('click', function(){ switchPage(this.dataset.viewall); });
-});
 
 // 記事モーダルを閉じる（要素があれば）
 var colClose = document.getElementById('col-sheet-close');
@@ -2350,8 +1607,6 @@ renderPlaylist();
 renderRadioGenres();
 loadRadioGenre();
 renderDeepDive();
-renderTrackList();
-renderFavList();
 renderSearchList();
 renderQueue();
 </script>
