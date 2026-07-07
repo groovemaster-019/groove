@@ -64,8 +64,6 @@ html, body {
       0 0 26px #A855F7;
   }
 }
-.brand-rule::before,
-
 /* ── PAGES ── */
 .content { flex:1; overflow:hidden; position:relative; }
 .page { position:absolute; inset:0; overflow-y:auto; -webkit-overflow-scrolling:touch; display:none; padding-bottom:14px; }
@@ -122,10 +120,9 @@ html, body {
 /* 記事一覧（Notesページ）*/
 .note-row {
   padding:16px 20px; border-bottom:1px solid var(--line);
-  cursor:pointer; user-select:none;
+  cursor:pointer; user-select:none; position:relative;
 }
 .note-row:active { background:var(--card); }
-.note-row { position:relative; }
 .note-row::before {
   content:''; position:absolute; left:8px; top:18px; bottom:18px; width:2px; border-radius:2px;
   background:linear-gradient(180deg, var(--neon), var(--neon2));
@@ -191,8 +188,6 @@ html, body {
 .radio-loading, .radio-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
 
 /* ── プレイリスト管理画面 ── */
-.pe-up,
-
 /* 記事モーダル */
 .col-modal {
   position:fixed; inset:0; z-index:120;
@@ -431,8 +426,6 @@ html, body {
 /* ガラスの斜め反射ハイライト（写真のような大きな光の帯）*/
 
 /* テキストラベル（画像が無いとき用）*/
-.vinyl.has-img + .vinyl-label,
-
 /* ── 液晶ディスプレイパネル ── */
 .player-body {
   width:248px; margin:0 auto 22px;
@@ -671,6 +664,10 @@ var TRACKS = [
 ];
 
 var DEEPDIVE = [
+  {"tag": "West Coast Deep Cut", "title": "DRESS CODE", "artist": "WC & The Maad Circle", "teaser": "1991年、Ice Cubeがエグゼクティブに就いたデビュー作。Coolioも在籍した南部LAの硬派クルーの一曲。", "blocks": [{"type": "text", "text": "1991年、Priority Recordsからリリースされたデビュー作『Ain't a Damn Thang Changed』収録。エグゼクティブ・プロデュースは、幼なじみで同郷のIce Cube。この一枚は、まだ売れる前のCoolio（後の“Gangsta's Paradise”）が在籍していたことでも知られる。"}, {"type": "head", "text": "MAADの意味"}, {"type": "text", "text": "グループ名の“Maad Circle”のMAADは、Minority Alliance of Anti-Discrimination（差別に抗するマイノリティ連合）の略。WC（William Calhoun Jr.）を中心に、Big Gee、DJ Crazy Toonesらで構成された。単なるギャングスタの誇示ではなく、南部LA〜コンプトンの労働者階級のリアル——ハッスル、家族の機能不全、地を這う日々——を生々しく描くのが持ち味だ。"}, {"type": "head", "text": "“Dress Code”というテーマ"}, {"type": "text", "text": "タイトルの“ドレスコード”は、クラブの服装規定を逆手にとった皮肉だ。高級クラブが「その格好じゃ入れない」とストリートの人間を締め出す——その線引きへの怒りと、俺たちには俺たちのコードがある、という反骨。着ているもので人を値踏みする社会構造そのものへの、West Sideからの返答になっている。"}, {"type": "head", "text": "その後の系譜"}, {"type": "text", "text": "WCはこの後グループを離れ、Ice Cube、Mack 10とスーパーグループWestside Connectionを結成する。つまりこの一枚は、90年代西海岸を象徴するあの連合の源流でもある。DJ Crazy ToonesはIce CubeのLench Mob Recordsで活動を続けた（2017年に急逝）。地味なデビュー作に見えて、West Coastの太い血脈がここから伸びていく。"}, {"type": "head", "text": "スラング早見"}, {"type": "text", "text": "dress code = クラブ等の服装規定（ここでは階級による締め出しの象徴）\nMAAD = Minority Alliance of Anti-Discrimination\nhustle = street で金を稼ぐこと\nthe West Side / West Up = 西海岸/ウェッサイの誇示\nloc = 仲間/いかれた奴（loco由来）\nfad = 流行り（“Caught n a Fad”＝流行に流される愚かさへの皮肉）"}]},
+  {"tag": "West Coast Deep Cut", "title": "PULL YA HOE CARD", "artist": "Kam", "teaser": "Ice Cubeのいとこ、ワッツの政治的MC。CMT & E-A-Skiが手がけた1995年のG-Funkジェム。", "blocks": [{"type": "text", "text": "1995年のセカンド『Made in America』収録。プロデュースはベイエリアの名匠CMT & E-A-Ski。きらめくキー、渦巻くシンセ、けだるい女性ボーカルが乗った、まさに西海岸G-Funkの旨みが詰まった一曲だ。"}, {"type": "head", "text": "KAMという存在"}, {"type": "text", "text": "Kam（本名Craig Miller）はロサンゼルス・ワッツ出身。Ice Cubeのいとこにあたり、Lench Mob人脈から1993年に強烈なデビュー作『Neva Again』を放った。Nation of Islam（ルイス・ファラカン）の影響を色濃く受けた、カリフォルニア屈指の“毒を持つ”政治的リリシスト。ワッツ暴動、人種差別、社会的不平等を、ギャングスタのフォーマットの中で正面から斬る。"}, {"type": "head", "text": "“Hoe Card”とは"}, {"type": "text", "text": "“pull ya hoe card”は西海岸スラングで、「お前の化けの皮を剥ぐ」「本性を暴く」の意。hoe card＝その人物の弱さ・偽物ぶりを示す“札”を、pull（引き抜く）して衆目に晒す。この曲でKamは、フッド（地元）への忠誠と裏切り者への警告を、フロウの心地よさとは裏腹に鋭く突きつける。甘いG-Funkの上に硬派なメッセージ、という対比がKamの真骨頂だ。"}, {"type": "head", "text": "アルバムの布陣"}, {"type": "text", "text": "『Made in America』はDJ Quik、Warren G、DJ Battlecat、Above the LawのCold 187um、ベイのCMT & E-A-Skiと、西海岸プロデューサーのオールスターが集結した一枚。Roger Troutman的なトークボックス、うねるベース、ツイングなギター——カリフォルニアの空気そのものが鳴っている。Dresta、MC Renも客演。"}, {"type": "head", "text": "スラング早見"}, {"type": "text", "text": "pull ya hoe card = 化けの皮を剥ぐ/本性を暴く\nhoe card = 偽物・弱さを示す“札”\nfar (fa) mine / down fa mine = 自分の仲間・信条のために貫く\nthe hood = 地元/ブロック\nrepresent = 地元や信条を体現・代表する\nNation = Nation of Islam(Kamの思想的背景)"}]},
+  {"tag": "West Coast Deep Cut", "title": "EAST SIDE RENDEZVOUS", "artist": "Kid Frost (Frost) feat. A.L.T. & O.G. Enius", "teaser": "チカーノ・ラップの父。イーストLAの帝王が1995年、Ruthless期に放ったローライダー・アンセム。", "blocks": [{"type": "text", "text": "1995年のアルバム『Smile Now, Die Later』のリードシングル。この時期、彼は「Kid Frost」から「Frost」へと改名し、Eazy-EのRuthless Recordsと契約していた。プロデュースはMonte Carlo、A.L.T.とO.G. Enius、そして歌手Diane Gordonが参加。ソウルフルなボーカルが乗った、スムースでアッパーなライドチューンだ。"}, {"type": "head", "text": "チカーノ・ラップの父"}, {"type": "text", "text": "Kid Frost（本名Arturo Molina Jr.）はイーストLA育ちのメキシカン・アメリカン。ラップ名は、彼がよくバトルしていたIce-Tへのオマージュだ。1990年の“La Raza”はチカーノ・ヒップホップの世界的アンセムとなり、彼は“Godfather of Chicano Rap”と呼ばれる。オールディーズやローライダー・クルージングの名曲をサンプリングし、Spanglish（英語とスペイン語の混成）で韻を踏むスタイルを確立。チカーノ文化を世界に広めた先駆者だ。"}, {"type": "head", "text": "“Rendezvous”の意味"}, {"type": "text", "text": "タイトルの“East Side Rendezvous”＝イーストサイドでの落ち合い/集い。rendezvous（ランデブー）はフランス語由来で「待ち合わせ」の意。バリオ（barrio＝メキシカン居住区）の仲間が集い、車を転がし、地元を祝福する——ギャングスタの緊張感よりも、コミュニティの誇りと結束を歌った一曲だ。硬派なイーストLAの空気と、祝祭的なグルーヴが同居している。"}, {"type": "head", "text": "スラング早見"}, {"type": "text", "text": "rendezvous = 落ち合い/集い(仏語由来)\nEast Side = イーストLA(チカーノ文化の中心地)\nbarrio = メキシカンの居住区/地元\nvato / homie = 仲間/兄弟(スペイン語スラング)\nfirme = イケてる/最高(チカーノ・スラング)\nlow-low = ローライダー(改造車)\nla raza = 同胞/我が民族"}]},
+  {"tag": "West Coast Deep Cut", "title": "DIPPIN'", "artist": "King Tee", "teaser": "Xzibitを世に出したコンプトンの重鎮。The Four Topsを下敷きにした、夏の日曜の至上ライドチューン。", "blocks": [{"type": "text", "text": "1995年のアルバム『IV Life』(MCA Records)のリードシングル。Billboardのラップ・チャートで46位を記録した。The Four Topsの“Cherish”をサンプリングした、夏の日曜にキャデラックで街を流す至上のライドチューン。オリジナルに加え、Vic Cによる、うねるシンセとジャジーなホーンを効かせたG-Funkリミックスも名高い。"}, {"type": "head", "text": "KING TEEという重鎮"}, {"type": "text", "text": "King Tee（King T、本名Roger McBride）はコンプトン出身の西海岸のパイオニア。Likwit Crewの創設者であり、そのスタイルはIce CubeからThe Notorious B.I.G.まで影響を与えた、過小評価されがちな超一流リリシストだ。プロデューサーDJ Poohを世に出し、Tha AlkaholiksやXzibitを見出して育てた“兄貴分”でもある。80年代、Mixmaster Spadeの元にJ-Ro、Coolio、WCらと集った“Compton Posse”は、“6 N The Morning”や“Boyz N The Hood”以前のリアリティ・ラップの源流だった。"}, {"type": "head", "text": "“Dippin'”というライドの美学"}, {"type": "text", "text": "“dippin'”は西海岸スラングで、ローライダーで街をゆったり流すこと。King Teeはこの曲で、暑い日曜にキャデラックでコーナーを回り、スイッチ（油圧）を入れ、デイトン・リムを光らせながら流す情景を描く。暴力ではなく、クルージングそのものの快楽と誇り。West Coastの“ライド・ミュージック”の核心にある、あの気だるくも満ち足りた時間が封じ込められている。The Four Topsのソウルを下敷きにしている点も、まさにG-Funkの精神だ。"}, {"type": "head", "text": "スラング早見"}, {"type": "text", "text": "dippin' = ローライダーで街をゆったり流す\nhittin' switches = 油圧スイッチで車を上下させる\nDaytons / Dayton rims = デイトン社の高級ワイヤーホイール\nflossin' = 見せびらかす/羽振りよく振る舞う\nrider / rida = 車を流す者/信頼できる仲間\nthe Likwit Crew = King Teeらが率いた西海岸クルー"}]},
   { tag:'West Coast Deep Cut', title:'CAPS GET PEELED', artist:'DFC feat. MC Eiht',
     teaser:'フリント発、コンプトン経由。MC Eiht & DJ Slipを迎えた1994年のミッドウェスト×西海岸クラシック。',
     blocks:[{"type": "text", "text": "1994年3月22日、Big Beat/Atlantic Recordsからリリースされたアルバム『Things in tha Hood』の先行シングル。チャートではBillboard 200で71位、R&B/Hip-Hopアルバム・チャートで7位まで上昇した、DFC最大のヒットだ。"}, {"type": "head", "text": "\"Dope Flint Connection\""}, {"type": "text", "text": "DFCはミシガン州フリント出身。グループ名は\"Dope Flint Connection\"の略で、自分たちの街フリントの名を看板に背負っている。メンバーはAl BreedとT-Double（T-Trouble E）。Al Breedは、あのMC Breedのいとこにあたる。\n\n注目すべきは出自だ。フリントはデトロイト近郊、いわゆる西海岸でも南部でもないミッドウェスト（中西部）。DFCは独立系として中西部から出てきた最初期のグループの一つで、後に西海岸G-Funkサウンドへ接近していく。この曲はまさにその\"西への接近\"を象徴する一曲だ。"}, {"type": "head", "text": "コンプトンとの接続"}, {"type": "text", "text": "\"Caps Get Peeled\"を決定的にウェッサイ印にしているのが、客演とプロダクションだ。プロデュースは\bDJ SlipとMC Eiht——どちらもCompton's Most Wanted（CMW）の中心人物。そしてMC Eihtはマイクも握る。あの\"Geah!\"の合いの手と、淡々としているのに底冷えするフロウ。コンプトンの最も信頼されるストーリーテラーの一人が、フリントのグループに本物の西海岸の質感を持ち込んだ。\n\nつまりこの曲は、ミッドウェストのDFCとコンプトンのMC Eiht/DJ Slipが交差した地点に立っている。地理を超えてG-Funkが広がっていく、その瞬間のドキュメントだ。"}, {"type": "head", "text": "サンプリング"}, {"type": "text", "text": "ビートの土台にはMichael Hendersonの\"Let Me Love You\"（70年代ソウルの名曲）が使われている。甘いソウルを、ローライダーが転がるための重いファンクに変換する——G-Funkの王道の手口だ。タイトルの\"Caps Get Peeled\"自体が、前に解説したKnock on Woodの\"peel your cap back\"と同じ\"頭を撃ち抜く\"の意。94年の西海岸の空気がそのまま封じ込められている。"}, {"type": "head", "text": "何を歌っているのか"},{"type": "text", "text": "タイトルが示す通り、テーマは街の掟と暴力のリアリティだ。だが単なる物騒な自慢話ではない。DFCのAl BreedとT-Doubleは、フリントの厳しいブロックで生き抜く日常——敵への警告、信頼できる仲間との結束、油断すれば足をすくわれるストリートの緊張感——を淡々と、しかし誇りを持って描く。\n\nそこにMC Eihtが乗ると、視点が一段冷たくなる。コンプトンで彼が積み上げてきた\"観察者\"としての語り口。撃つ側の高揚ではなく、撃たれる現実を知っている者の落ち着き。フリントのハングリーさと、コンプトンの達観——二つの都市の声が同じビートの上で噛み合うことで、\"Caps Get Peeled\"は地名を超えたストリート讃歌になっている。"},{"type": "head", "text": "対訳で読む（抜粋）"},{"type": "text", "text": "全部は載せないが、効いているラインを抜き出して読む。Al Breedの、ゲットーのリアルと達観が滲むバースから。"},{"type": "lyric", "orig": "For the one you love to hate / On a mission to be 6 feet deep", "tran": "お前らが憎んでやまない、その存在として／墓場行き(6 feet deep)を覚悟して、任務についてる", "note": "\"6 feet deep\"=墓の深さ＝死。\"the one you love to hate\"＝嫌われ者を演じきる覚悟。Al Breedの、死を見据えた淡々とした語り。"},{"type": "lyric", "orig": "It's a shame the way them cards were dealt / They put us in the ghetto and said, \"Go for self\"", "tran": "配られたカードが悪かったってのは、悲しい現実だ／俺たちをゲットーに放り込んで「自分の力で生きろ」と言い放ったのさ", "note": "\"cards were dealt\"＝生まれの環境を配られたトランプに喩える定番表現。社会への静かな告発が滲む、この曲の核心。"},{"type": "lyric", "orig": "so many ways to pull another jack / pull the hammer back and peel another cap", "tran": "強奪(jack)を働くだけでも手はいくらでもある／撃鉄(hammer)を起こして、また一つ頭を撃ち抜く(peel a cap)", "note": "\"jack\"=強奪する、\"hammer\"=拳銃の撃鉄/銃そのもの、\"peel a cap\"=頭を撃ち抜く。タイトル\"Caps Get Peeled\"に直結する締めのライン。"},{"type": "head", "text": "アルバムの豪華さ"}, {"type": "text", "text": "親アルバム『Things in tha Hood』のゲスト陣も凄まじい。MC Eihtに加え、Warren G、Nate Dogg、Bushwick Bill（Geto Boys）、そしていとこのMC Breed。Gファンク全盛期の西海岸人脈が、フリント発のアルバムに集結している。ミッドウェストの独立系グループがここまでの布陣を組めたこと自体が、DFCの実力と人脈の証だ。"}, {"type": "text", "text": "盛岡もフリントも、ラップの\"中心地\"ではない。それでも本物を鳴らせば、街の名前ごと刻まれる。DFCが\"Dope Flint Connection\"を名乗ったように、土地の名を背負って音を出すことの強さを、この曲は教えてくれる。"},{"type": "head", "text": "スラング早見"},{"type": "text", "text": "cap = 頭（caps get peeled＝頭が撃ち抜かれる）\npeel = 撃つ/撃ち抜く\nGeah! = MC Eihtの代名詞的な合いの手（イェー/そうだ）\nhood = 地元/ブロック\nthe Connection = 繋がり/結束（DFC＝Dope Flint Connection）\ncreep = 気配を消して動く\nbuster = 腰抜け/ニセモノ\nslippin' = 油断する\nG-funk = Pファンクを下敷きにした重く滑らかな西海岸サウンド"}] },
@@ -690,9 +687,7 @@ function storeSet(k, v) {
   try { localStorage.setItem(k, v); } catch (e) {}
 }
 
-/* ════════ TODAY'S PLAYLIST ════════ */
-// プレイリストの曲を保持。各曲: {name, artist, genre:'playlist', tag:'Playlist', preview, artwork, source}
-// プレイリストの曲をTRACKSの先頭に統合（再生エンジンはTRACKSのindexで動くため）
+/* ════════ 019 TRACK LIST (ホーム) ════════ */
 function renderPlaylist() {
   var box = document.getElementById('playlist-list');
   if (!box) return;
@@ -732,40 +727,6 @@ function esc(s) {
 // 管理画面
 // 曲を追加（アートワーク＆プレビュー自動取得）
 // 検索語からメタデータ取得
-function fetchPlaylistMeta(term) {
-  function fetchJson(url, ms) {
-    return new Promise(function(resolve) {
-      var done=false;
-      var timer=setTimeout(function(){if(!done){done=true;resolve(null);}}, ms||8000);
-      fetch(url).then(function(r){ return r.ok ? r.json() : null; })
-        .then(function(j){ if(!done){done=true;clearTimeout(timer);resolve(j);} })
-        .catch(function(){ if(!done){done=true;clearTimeout(timer);resolve(null);} });
-    });
-  }
-  return fetchJson('https://api.deezer.com/search?q=' + encodeURIComponent(term)).then(function(j){
-    var hit = j && (j.data||[]).find(function(x){ return x.preview; });
-    if (hit) {
-      return { name:hit.title, artist:(hit.artist&&hit.artist.name)||'',
-               preview:hit.preview, artwork:(hit.album&&(hit.album.cover_big||hit.album.cover_medium))||'', source:'Deezer' };
-    }
-    return searchDeezer(term).then(function(j2){
-      var h2 = j2 && (j2.data||[]).find(function(x){ return x.preview; });
-      if (h2) {
-        return { name:h2.title, artist:(h2.artist&&h2.artist.name)||'',
-                 preview:h2.preview, artwork:(h2.album&&(h2.album.cover_big||h2.album.cover_medium))||'', source:'Deezer' };
-      }
-      return fetchJson('https://itunes.apple.com/search?term=' + encodeURIComponent(term) + '&media=music&entity=song&limit=5&country=JP').then(function(j3){
-        var h3 = j3 && (j3.results||[]).find(function(x){ return x.previewUrl; });
-        if (h3) {
-          return { name:h3.trackName, artist:h3.artistName||'',
-                   preview:h3.previewUrl, artwork:(h3.artworkUrl100||'').replace('100x100','400x400'), source:'Apple Music' };
-        }
-        return null;
-      });
-    });
-  });
-}
-
 /* ════════ LIVE RADIO ════════ */
 var RADIO_GENRES = [
   { key:'hiphop',    label:'Hip Hop',    terms:['hip hop','rap'],
@@ -944,23 +905,10 @@ function playRadio(i) {
   openSheet();
 }
 function updateRadioNowPlaying(s) {
-  var setTxt = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
-  setTxt('sheet-title', s.name);
-  setTxt('sheet-artist', (s.country || 'Live Radio'));
-  setTxt('sheet-station', 'LIVE RADIO');
-  setTxt('mini-title', s.name);
-  setTxt('mini-artist', 'Live Radio');
-  // ジャケット：局アイコン or デフォルト
-  var coverWrap = document.getElementById('cover-wrap');
-  var vimg = document.getElementById('vinyl-img');
-  var label = document.getElementById('vinyl-label');
-  if (s.favicon && vimg && coverWrap) {
-    vimg.src = s.favicon;
-    coverWrap.classList.add('has-img');
-  } else if (coverWrap) {
-    coverWrap.classList.remove('has-img');
-    if (label) label.textContent = '📻';
-  }
+  setNowText(s.name, s.country || 'Live Radio');
+  var station = document.getElementById('sheet-station');
+  if (station) station.textContent = 'LIVE RADIO';
+  setCover(s.favicon || '', '📻');
   var ptag = document.getElementById('preview-tag');
   if (ptag) ptag.textContent = 'ライブ配信中 · Radio Browser';
   // laut.fm系なら「今流れてる曲」を取得して表示
@@ -985,11 +933,7 @@ function startNowPlaying(s) {
     if (!state.isRadio || radioState.currentUuid !== s.uuid) return;
     if (!title && !artist) return;
     var nowText = artist ? (artist + ' — ' + title) : title;
-    var setTxt = function(id, v){ var el = document.getElementById(id); if (el) el.textContent = v; };
-    setTxt('sheet-title', nowText);
-    setTxt('sheet-artist', s.name);
-    setTxt('mini-title', nowText);
-    setTxt('mini-artist', s.name);
+    setNowText(nowText, s.name);
     var pt = document.getElementById('preview-tag');
     if (pt) pt.textContent = '♪ NOW PLAYING · ' + s.name;
   };
@@ -1023,7 +967,7 @@ function startNowPlaying(s) {
 /* ════════ STATE ════════ */
 var state = {
   currentIdx: -1, playing: false, shuffle: false,
-  volume: 0.7, filter: 'all', favs: new Set(), loading: false
+  favs: new Set(), loading: false, isRadio: false
 };
 (function() {
   var saved = storeGet('groove-favs');
@@ -1031,7 +975,7 @@ var state = {
 })();
 function saveFavs() { storeSet('groove-favs', JSON.stringify(Array.from(state.favs))); }
 
-/* ════════ REAL MUSIC PLAYER (iTunes 30s preview) ════════ */
+/* ════════ AUDIO ENGINE (30秒プレビュー: Deezer / Apple Music) ════════ */
 var audio = new Audio();
 audio.preload = 'auto';
 
@@ -1132,6 +1076,42 @@ audio.addEventListener('play',  function(){ if (state.currentIdx >= 0) { state.p
 audio.addEventListener('pause', function(){ if (state.currentIdx >= 0 && !audio.ended) { state.playing = false; renderPlayState(); } });
 
 /* ════════ RENDER ════════ */
+// ── プレイヤー表示の共通ヘルパー（ジャケット・タイトル等を1箇所で管理）──
+function setCover(imgUrl, fallbackText) {
+  var wrap = document.getElementById('cover-wrap');
+  var img = document.getElementById('vinyl-img');
+  var label = document.getElementById('vinyl-label');
+  if (!wrap) return;
+  if (imgUrl) {
+    if (img) img.src = imgUrl;
+    wrap.classList.add('has-img');
+  } else {
+    wrap.classList.remove('has-img');
+    if (label) label.textContent = fallbackText || 'GC';
+  }
+}
+function setMiniArt(imgUrl, iconChar, colorClass) {
+  var miniArt = document.getElementById('mini-art');
+  var mimg = document.getElementById('mini-img');
+  var mico = document.getElementById('mini-ico');
+  if (miniArt && colorClass) miniArt.className = 'mini-art ' + colorClass;
+  if (imgUrl) {
+    if (mimg) { mimg.src = imgUrl; mimg.style.display = 'block'; }
+    if (mico) mico.style.display = 'none';
+  } else {
+    if (mimg) mimg.style.display = 'none';
+    if (mico) { mico.style.display = 'block'; mico.textContent = iconChar || '🎵'; }
+  }
+}
+// プレイヤーのタイトル/アーティスト（sheet + mini を一括更新）
+function setNowText(title, subtitle) {
+  ['sheet-title','mini-title'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.textContent = title;
+  });
+  ['sheet-artist','mini-artist'].forEach(function(id){
+    var el = document.getElementById(id); if (el) el.textContent = subtitle;
+  });
+}
 function fmtTime(sec) {
   if (!isFinite(sec)) sec = 0;
   var m = Math.floor(sec/60), s = Math.floor(sec%60);
@@ -1162,8 +1142,8 @@ function rowHTML(i) {
     '<div class="t-art ' + t.color + artClass + '"' + artStyle + '>' + t.icon +
       '<div class="t-playing-icon"><div class="t-eq"><span></span><span></span><span></span></div></div>' +
     '</div>' +
-    '<div class="t-info"><div class="t-name">' + t.name + '</div><div class="t-artist">' + t.artist + '</div></div>' +
-    '<div class="t-genre-tag">' + t.tag + '</div>' +
+    '<div class="t-info"><div class="t-name">' + esc(t.name) + '</div><div class="t-artist">' + esc(t.artist) + '</div></div>' +
+    '<div class="t-genre-tag">' + esc(t.tag) + '</div>' +
     '<button class="fav-btn' + (isFav ? ' faved' : '') + '" data-fav="' + i + '">' + (isFav ? '♥' : '♡') + '</button>' +
   '</div>';
 }
@@ -1328,25 +1308,19 @@ function renderSearchList() {
   wireRows(list);
 }
 function renderQueue() {
-  // ラジオ再生中は019のUp Nextを隠す
+  // ラジオ再生中は019のUp NextとSpotifyボタンを隠す
   var qSection = document.getElementById('q-section');
   var spotifyWrap = document.getElementById('spotify-wrap');
-  if (state.isRadio) {
-    if (qSection) qSection.style.display = 'none';
-    if (spotifyWrap) spotifyWrap.style.display = 'none';
-    return;
-  }
-  if (qSection) qSection.style.display = '';
-  if (spotifyWrap) spotifyWrap.style.display = '';
+  var show = !state.isRadio;
+  if (qSection) qSection.style.display = show ? '' : 'none';
+  if (spotifyWrap) spotifyWrap.style.display = show ? '' : 'none';
+  if (!show) return;
   var list = document.getElementById('queue-list');
-  var idx = TRACKS.map(function(t,i){ return i; })
-    .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
-  list.innerHTML = idx.map(function(i, n) {
-    var t = TRACKS[i];
+  list.innerHTML = TRACKS.map(function(t, i) {
     var isNow = i === state.currentIdx;
     return '<div class="q-row' + (isNow ? ' now' : '') + '" data-i="' + i + '">' +
-      '<div class="q-num">' + (isNow ? '♪' : (n+1)) + '</div>' +
-      '<div class="qr-info"><div class="qr-name">' + t.name + '</div><div class="qr-artist">' + t.artist + '</div></div>' +
+      '<div class="q-num">' + (isNow ? '♪' : (i+1)) + '</div>' +
+      '<div class="qr-info"><div class="qr-name">' + esc(t.name) + '</div><div class="qr-artist">' + esc(t.artist) + '</div></div>' +
       '<div class="qr-dur">0:30</div>' +
     '</div>';
   }).join('');
@@ -1361,35 +1335,13 @@ function renderAll() {
 function renderNowPlaying() {
   if (state.currentIdx < 0) return;
   var t = TRACKS[state.currentIdx];
-  document.getElementById('mini-title').textContent = t.name;
-  document.getElementById('mini-artist').textContent = t.artist;
-  var miniArt = document.getElementById('mini-art');
-  miniArt.className = 'mini-art ' + t.color;
-  var mimg = document.getElementById('mini-img');
-  var mico = document.getElementById('mini-ico');
-  if (t.artwork) {
-    mimg.src = t.artwork; mimg.style.display = 'block';
-    mico.style.display = 'none';
-  } else {
-    mimg.style.display = 'none';
-    mico.style.display = 'block';
-    mico.textContent = t.icon;
-  }
-  // SHEET
-  document.getElementById('sheet-title').textContent = t.name;
-  document.getElementById('sheet-artist').textContent = t.artist;
-  document.getElementById('sheet-station').textContent = t.tag.toUpperCase() + ' CHANNEL';
-  var coverWrap = document.getElementById('cover-wrap');
-  var vimg = document.getElementById('vinyl-img');
-  var label = document.getElementById('vinyl-label');
-  if (t.artwork) {
-    vimg.src = t.artwork;
-    coverWrap.classList.add('has-img');
-  } else {
-    coverWrap.classList.remove('has-img');
-    label.textContent = t.tag.toUpperCase();
-  }
-  document.getElementById('preview-tag').textContent = t.preview ? '30秒プレビュー · ' + (t.source || 'Apple Music') + '提供' : '';
+  setNowText(t.name, t.artist);
+  setMiniArt(t.artwork, t.icon, t.color);
+  setCover(t.artwork, t.tag.toUpperCase());
+  var station = document.getElementById('sheet-station');
+  if (station) station.textContent = t.tag.toUpperCase() + ' CHANNEL';
+  var pt = document.getElementById('preview-tag');
+  if (pt) pt.textContent = t.preview ? '30秒プレビュー · ' + (t.source || 'Apple Music') + '提供' : '';
   renderFavBtn();
   renderAll();
 }
@@ -1472,8 +1424,7 @@ function toggleFav(i) {
   renderAll();
 }
 function getPool() {
-  return TRACKS.map(function(t,i){ return i; })
-    .filter(function(i){ return state.filter === 'all' || TRACKS[i].genre === state.filter; });
+  return TRACKS.map(function(t, i){ return i; });
 }
 function nextTrack() {
   // ラジオ再生中は「次の局」へ（019に切り替わらない）
