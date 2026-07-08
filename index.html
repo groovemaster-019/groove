@@ -16,17 +16,32 @@
   --ice:#E6EEF9; --muted:#A3B1C6; --dim:#5B6B85;
   --gold:#C9A24B;
   --neon:#EC4899; --neon2:#A855F7;
+  /* 立体感トークン */
+  --edge-light:rgba(255,255,255,.07);   /* 上面のハイライト */
+  --edge-dark:rgba(0,0,0,.55);          /* 落ち影 */
+  --inset-light:inset 0 1px 0 rgba(255,255,255,.06);
+  --card-raise:0 2px 6px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.04) inset;
 }
 
 html, body {
   height: 100%;
-  background: var(--bg); color: var(--ice);
+  color: var(--ice);
   font-family: 'Montserrat', sans-serif;
   -webkit-tap-highlight-color: transparent;
   overscroll-behavior: none;
+  /* 奥行きのある背景：中央やや上を持ち上げ、周辺を落とす */
+  background:
+    radial-gradient(120% 80% at 50% 0%, #0B0E16 0%, #070910 45%, #040507 100%),
+    var(--bg);
+  background-attachment: fixed;
+}
+/* 微細なノイズ質感（マット塗装のような肌理）を全面に薄く重ねる */
+body::before {
+  content:''; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-.app { display:flex; flex-direction:column; height:100dvh; overflow:hidden; }
+.app { display:flex; flex-direction:column; height:100dvh; overflow:hidden; position:relative; z-index:1; }
 
 /* ── HEADER ── */
 .brand-logo {
@@ -109,7 +124,6 @@ html, body {
   background:linear-gradient(90deg, var(--neon), var(--neon2));
   box-shadow:0 0 8px rgba(236,72,153,.55);
 }
-@keyframes eqbar { from{height:4px;opacity:.5} to{height:24px;opacity:1} }
 
 /* ── SECTION HEADERS ── */
 .sec-head { display:flex; justify-content:space-between; align-items:center; padding:24px 20px 0; }
@@ -119,20 +133,36 @@ html, body {
 
 /* 記事一覧（Notesページ）*/
 .note-row {
-  padding:16px 20px; border-bottom:1px solid var(--line);
-  cursor:pointer; user-select:none; position:relative;
+  position:relative; margin:9px 16px; padding:15px 16px 15px 22px;
+  cursor:pointer; user-select:none; border-radius:13px; overflow:hidden;
+  background:linear-gradient(158deg, #171B26 0%, #0F131C 60%, #0C0F17 100%);
+  box-shadow:
+    0 6px 16px rgba(0,0,0,.45),
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 -10px 24px rgba(0,0,0,.25) inset,
+    0 0 0 1px rgba(0,0,0,.35);
+  transition:transform .12s ease, box-shadow .12s ease;
 }
-.note-row:active { background:var(--card); }
+.note-row:active {
+  transform:translateY(1px) scale(.994);
+  box-shadow:0 3px 9px rgba(0,0,0,.4), 0 1px 0 rgba(255,255,255,.04) inset, 0 0 0 1px rgba(0,0,0,.35);
+}
+/* 上端に一筋のハイライト（照明が当たっている縁）*/
+.note-row::after {
+  content:''; position:absolute; left:14px; right:14px; top:0; height:1px; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+}
 .note-row::before {
-  content:''; position:absolute; left:8px; top:18px; bottom:18px; width:2px; border-radius:2px;
+  content:''; position:absolute; left:0; top:0; bottom:0; width:3px;
   background:linear-gradient(180deg, var(--neon), var(--neon2));
-  opacity:.85;
+  box-shadow:0 0 12px rgba(236,72,153,.5);
 }
 .note-row-tag { font-size:9px; letter-spacing:2.5px; text-transform:uppercase; font-weight:700;
   background:linear-gradient(90deg, var(--neon), var(--neon2));
   -webkit-background-clip:text; background-clip:text; color:transparent;
 }
-.note-row-title { font-family:'Anton',sans-serif; font-size:18px; line-height:1.1; margin-top:6px; color:var(--ice); }
+.note-row-title { font-family:'Anton',sans-serif; font-size:18px; line-height:1.1; margin-top:6px; color:var(--ice);
+  text-shadow:0 1px 2px rgba(0,0,0,.5); }
 .note-row-teaser { font-size:11px; line-height:1.6; color:var(--muted); margin-top:6px; }
 
 /* ── Today's Playlist ── */
@@ -144,11 +174,20 @@ html, body {
 .pl-row.playing { background:rgba(59,130,246,.12); }
 .pl-num { width:20px; text-align:center; font-size:12px; color:var(--muted); font-weight:700; flex-shrink:0; }
 .pl-art {
-  width:46px; height:46px; border-radius:8px; flex-shrink:0;
-  background:var(--card); overflow:hidden; position:relative;
+  width:46px; height:46px; border-radius:9px; flex-shrink:0;
+  background:linear-gradient(160deg, #1a2233, #0c1018); overflow:hidden; position:relative;
   display:flex; align-items:center; justify-content:center; font-size:18px;
+  box-shadow:
+    0 3px 7px rgba(0,0,0,.5),
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 0 0 1px rgba(0,0,0,.4);
 }
-.pl-art img { width:100%; height:100%; object-fit:cover; }
+/* ジャケットに斜めの光沢を一枚 */
+.pl-art::after {
+  content:''; position:absolute; inset:0; border-radius:9px; pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,0) 42%);
+}
+.pl-art img { width:100%; height:100%; object-fit:cover; position:relative; z-index:1; }
 .pl-meta { flex:1; min-width:0; }
 .pl-name { font-size:13px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .pl-artist { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
@@ -158,24 +197,49 @@ html, body {
 .radio-genres::-webkit-scrollbar { display:none; }
 .radio-genre-pill {
   flex-shrink:0; padding:8px 16px; border-radius:20px; cursor:pointer; user-select:none;
-  background:var(--card); border:1px solid var(--line); color:var(--muted);
+  background:linear-gradient(180deg, #1a1f2b, #12151d); color:var(--muted);
   font-size:12px; font-weight:700; letter-spacing:.5px; white-space:nowrap;
+  box-shadow:
+    0 2px 5px rgba(0,0,0,.4),
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(0,0,0,.35);
+  transition:transform .1s ease;
 }
-.radio-genre-pill.active { background:var(--blue); border-color:var(--blue); color:#fff; }
+.radio-genre-pill:active { transform:translateY(1px); }
+.radio-genre-pill.active {
+  background:linear-gradient(180deg, #4C8DF8, #2563EB); color:#fff;
+  box-shadow:
+    0 3px 10px rgba(37,99,235,.5),
+    0 1px 0 rgba(255,255,255,.25) inset,
+    0 0 0 1px rgba(37,99,235,.6);
+}
 .radio-row {
   display:flex; align-items:center; gap:12px;
   padding:11px 20px; cursor:pointer; user-select:none;
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid rgba(0,0,0,.4);
+  box-shadow:0 1px 0 rgba(255,255,255,.03);
+  transition:background .12s ease;
 }
-.radio-row:active { background:var(--card); }
-.radio-row.playing { background:rgba(59,130,246,.12); }
+.radio-row:active { background:rgba(255,255,255,.03); }
+.radio-row.playing {
+  background:linear-gradient(90deg, rgba(59,130,246,.16), rgba(59,130,246,.06));
+  box-shadow:0 1px 0 rgba(255,255,255,.04), inset 3px 0 0 var(--blue);
+}
 .radio-ico {
   width:44px; height:44px; border-radius:10px; flex-shrink:0;
-  background:linear-gradient(135deg, #1e2a3f, #0d1420);
+  background:linear-gradient(160deg, #223250, #0b111c);
   display:flex; align-items:center; justify-content:center; font-size:20px;
   overflow:hidden; position:relative;
+  box-shadow:
+    0 3px 7px rgba(0,0,0,.5),
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(0,0,0,.4);
 }
-.radio-ico img { width:100%; height:100%; object-fit:cover; }
+.radio-ico::after {
+  content:''; position:absolute; inset:0; border-radius:10px; pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 45%);
+}
+.radio-ico img { width:100%; height:100%; object-fit:cover; position:relative; z-index:1; }
 .radio-meta { flex:1; min-width:0; }
 .radio-name { font-size:13px; font-weight:600; color:var(--ice); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .radio-sub { font-size:11px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; }
@@ -187,7 +251,6 @@ html, body {
 .radio-row.playing .radio-live { background:var(--blue); }
 .radio-loading, .radio-empty { padding:24px 20px; text-align:center; color:var(--muted); font-size:12px; line-height:1.7; }
 
-/* ── プレイリスト管理画面 ── */
 /* 記事モーダル */
 .col-modal {
   position:fixed; inset:0; z-index:120;
@@ -199,8 +262,11 @@ html, body {
   width:100%; max-height:82vh; overflow-y:auto;
   background:linear-gradient(180deg, #0E1422, var(--bg) 40%);
   border-top-left-radius:20px; border-top-right-radius:20px;
-  border-top:1px solid var(--line);
+  border-top:1px solid rgba(255,255,255,.08);
   padding:20px 22px max(28px, env(safe-area-inset-bottom));
+  box-shadow:
+    0 -14px 40px rgba(0,0,0,.6),
+    0 1px 0 rgba(255,255,255,.10) inset;
 }
 .col-sheet-bar { width:36px; height:4px; background:var(--line); border-radius:2px; margin:0 auto 16px; }
 .col-sheet-tag { font-size:10px; letter-spacing:2.5px; text-transform:uppercase; font-weight:700;
@@ -217,12 +283,20 @@ html, body {
 .dd-image img { width:100%; border-radius:12px; display:block; }
 .dd-caption { font-size:10px; color:var(--muted); margin-top:6px; text-align:center; letter-spacing:.5px; }
 .dd-video { margin:16px 0; }
-.dd-video iframe, .dd-video video { width:100%; aspect-ratio:16/9; border-radius:12px; display:block; background:#000; border:none; }
+.dd-video iframe, .dd-video video {
+  width:100%; aspect-ratio:16/9; border-radius:12px; display:block; background:#000; border:none;
+  box-shadow:0 8px 22px rgba(0,0,0,.55), 0 0 0 1px rgba(0,0,0,.5);
+}
 .dd-video video { aspect-ratio:auto; max-height:70vh; }
+.dd-image img { box-shadow:0 8px 22px rgba(0,0,0,.5), 0 0 0 1px rgba(0,0,0,.4); }
 .dd-lyric {
   margin:14px 0; padding:14px 16px; border-radius:12px;
   background:linear-gradient(150deg, #141A28, #0A0E16);
-  border:1px solid var(--line); border-left:3px solid var(--blue);
+  border-left:3px solid var(--blue);
+  box-shadow:
+    0 4px 14px rgba(0,0,0,.4),
+    0 1px 0 rgba(255,255,255,.05) inset,
+    0 0 0 1px rgba(0,0,0,.35);
 }
 .dd-lyric-orig { font-size:14px; font-weight:600; color:var(--ice); line-height:1.5; font-style:italic; }
 .dd-lyric-tran { font-size:13px; color:#9fbfff; line-height:1.7; margin-top:8px; white-space:pre-line; }
@@ -260,14 +334,23 @@ html, body {
 .track-row.now { background:rgba(59,130,246,.10); border-left:3px solid var(--blue); padding-left:17px; }
 .track-row.now .t-name { color:var(--blue); }
 .t-art {
-  width:50px; height:50px; border-radius:6px;
+  width:50px; height:50px; border-radius:8px;
   display:flex; align-items:center; justify-content:center;
-  font-size:22px; flex-shrink:0; position:relative;
+  font-size:22px; flex-shrink:0; position:relative; overflow:hidden;
+  background:linear-gradient(160deg, #1a2233, #0c1018);
   background-size:cover; background-position:center;
-  border:1px solid var(--line);
+  box-shadow:
+    0 3px 8px rgba(0,0,0,.5),
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(0,0,0,.4);
+}
+/* 斜めの光沢 */
+.t-art::after {
+  content:''; position:absolute; inset:0; border-radius:8px; pointer-events:none; z-index:2;
+  background:linear-gradient(135deg, rgba(255,255,255,.15) 0%, rgba(255,255,255,0) 44%);
 }
 .t-art.has-img { font-size:0; }
-.t-playing-icon { position:absolute; inset:0; border-radius:6px; background:rgba(7,13,26,.55); display:none; align-items:center; justify-content:center; }
+.t-playing-icon { position:absolute; inset:0; border-radius:8px; background:rgba(7,13,26,.55); display:none; align-items:center; justify-content:center; z-index:3; }
 .track-row.now .t-playing-icon { display:flex; }
 .t-eq { display:flex; align-items:flex-end; gap:2px; height:16px; }
 .t-eq span { width:3px; border-radius:1px; background:var(--blue); height:4px; }
@@ -310,22 +393,37 @@ html, body {
 
 /* ── MINI PLAYER ── */
 .mini {
-  flex-shrink:0; background:var(--panel);
-  border-top:1px solid var(--line);
+  flex-shrink:0;
+  background:linear-gradient(180deg, #12161F 0%, #0C0F16 100%);
   padding:10px 16px;
   display:flex; align-items:center; gap:12px;
-  cursor:pointer; position:relative;
+  cursor:pointer; position:relative; z-index:2;
+  box-shadow:
+    0 -6px 18px rgba(0,0,0,.45),
+    0 1px 0 rgba(255,255,255,.05) inset;
+}
+/* パネル上端の照明ライン */
+.mini::after {
+  content:''; position:absolute; left:0; right:0; top:0; height:1px; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
 }
 .mini-prog { position:absolute; top:0; left:0; right:0; height:2px; background:var(--line); }
 .mini-prog-fill { height:100%; background:var(--blue); width:0%; }
 .mini-art {
-  width:42px; height:42px; border-radius:6px;
+  width:42px; height:42px; border-radius:8px;
   display:flex; align-items:center; justify-content:center;
   font-size:18px; flex-shrink:0;
-  background-color:var(--card);
-  border:1px solid var(--line); overflow:hidden;
+  background:linear-gradient(160deg, #1a2233, #0c1018); overflow:hidden; position:relative;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.5),
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(0,0,0,.4);
 }
-.mini-art img { width:100%; height:100%; object-fit:contain; display:block; }
+.mini-art::after {
+  content:''; position:absolute; inset:0; border-radius:8px; pointer-events:none;
+  background:linear-gradient(135deg, rgba(255,255,255,.14) 0%, rgba(255,255,255,0) 45%);
+}
+.mini-art img { width:100%; height:100%; object-fit:contain; display:block; position:relative; z-index:1; }
 .mini-art.has-img { font-size:0; }
 .mini-info { flex:1; min-width:0; }
 .mini-title { font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -341,10 +439,16 @@ html, body {
 
 /* ── NAV ── */
 .nav {
-  flex-shrink:0; background:#070A10;
-  border-top:1px solid var(--line);
+  flex-shrink:0;
+  background:linear-gradient(180deg, #0A0D13 0%, #05070C 100%);
   display:flex;
   padding-bottom:max(8px, env(safe-area-inset-bottom));
+  position:relative; z-index:2;
+  box-shadow:0 -4px 14px rgba(0,0,0,.4);
+}
+.nav::before {
+  content:''; position:absolute; left:0; right:0; top:0; height:1px; pointer-events:none;
+  background:linear-gradient(90deg, transparent, rgba(255,255,255,.08), transparent);
 }
 .nav-btn {
   flex:1; display:flex; flex-direction:column; align-items:center; gap:4px;
@@ -381,59 +485,37 @@ html, body {
 /* ── ALBUM COVER (大ジャケット) ── */
 .cover-wrap {
   width:min(78vw, 320px); aspect-ratio:1/1; margin:0 auto;
-  border-radius:18px; overflow:hidden; position:relative; flex-shrink:0;
+  border-radius:16px; overflow:hidden; position:relative; flex-shrink:0;
   background:linear-gradient(145deg, #1a2030, #0a0d14);
   box-shadow:
-    0 24px 60px rgba(0,0,0,.6),
+    0 30px 60px rgba(0,0,0,.7),
+    0 12px 24px rgba(0,0,0,.5),
     0 6px 70px rgba(236,72,153,.10),
     0 -4px 60px rgba(168,85,247,.08),
-    0 0 0 1px rgba(255,255,255,.06) inset;
+    0 1px 0 rgba(255,255,255,.10) inset,
+    0 0 0 1px rgba(0,0,0,.5);
 }
 .cover-img { width:100%; height:100%; object-fit:cover; display:none; }
 .cover-wrap.has-img .cover-img { display:block; }
+/* ジャケット表面の照明：上からの光の映り込みと、下側のわずかな陰り */
+.cover-wrap::after {
+  content:''; position:absolute; inset:0; border-radius:16px; pointer-events:none; z-index:2;
+  background:
+    linear-gradient(150deg, rgba(255,255,255,.16) 0%, rgba(255,255,255,.03) 22%, rgba(255,255,255,0) 42%),
+    linear-gradient(0deg, rgba(0,0,0,.32) 0%, rgba(0,0,0,0) 30%);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
+}
 .cover-fallback {
   position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
   font-family:'Anton',sans-serif; font-size:64px; color:rgba(255,255,255,.14); letter-spacing:2px;
+  text-shadow:0 2px 4px rgba(0,0,0,.5);
 }
 .cover-wrap.has-img .cover-fallback { display:none; }
 
-/* ジャケット画像を円盤全面に */
-/* ディスクの虹色レインボー反射＋細い溝 */
-/* 回転中のモーションブラー */
-
-/* ディスク投入（上から落ちてセット＆バウンド）*/
-/* スピンアップ（ゆっくり→高速へ加速）*/
-
-/* 再生中：ジャケット静止＋ゆっくり呼吸する発光＋光沢が走る */
-/* 光沢の帯が斜めに走る */
-@keyframes disc-shine {
-  0%   { transform:translateX(-30%) rotate(0deg); opacity:0; }
-  18%  { opacity:1; }
-  40%  { transform:translateX(30%) rotate(0deg); opacity:0; }
-  100% { transform:translateX(30%) rotate(0deg); opacity:0; }
-}
-
-/* ── ポータブルCDプレイヤー筐体 ── */
-/* 筐体のヘアライン質感 */
-/* CD本体（筐体の中で回る）*/
-/* 中央：爪付きスピンドル */
-/* 中央：爪でCDを掴むハブ */
-/* 3つの爪（CDを外周方向に押さえる）*/
-/* 中央の軸ピン */
-
-/* ── リアルなガラスカバー（覗き窓）── */
-/* ガラス全面のうっすら反射＋窓の上下フチ */
-/* ガラスの斜め反射ハイライト（写真のような大きな光の帯）*/
-
-/* テキストラベル（画像が無いとき用）*/
-/* ── 液晶ディスプレイパネル ── */
 .player-body {
   width:248px; margin:0 auto 22px;
   display:flex; flex-direction:column; align-items:center;
 }
-/* 青く光る液晶画面 */
-/* 液晶のドット網点 */
-/* ボリュームダイヤル */
 
 .sheet-info { text-align:center; padding:0 24px 16px; flex-shrink:0; }
 .sheet-title { font-family:'Anton',sans-serif; font-size:28px; letter-spacing:2px; }
@@ -458,10 +540,15 @@ html, body {
 
 .ctrls { display:flex; align-items:center; justify-content:center; gap:18px; padding:6px 24px 16px; flex-shrink:0; }
 .c-btn {
-  background:none; border:none; color:var(--muted); font-size:22px;
-  cursor:pointer; min-width:48px; min-height:48px;
+  background:radial-gradient(120% 120% at 50% 25%, #171C27, #0E1219);
+  border:none; color:var(--ice); font-size:22px;
+  cursor:pointer; width:52px; height:52px; border-radius:50%;
   display:flex; align-items:center; justify-content:center;
-  transition:color .15s;
+  box-shadow:
+    0 3px 8px rgba(0,0,0,.45),
+    0 1px 0 rgba(255,255,255,.06) inset,
+    0 0 0 1px rgba(0,0,0,.4);
+  transition:transform .1s ease, color .15s;
 }
 .c-btn.on { color:var(--blue); }
 .c-btn:active { transform:scale(.9); }
